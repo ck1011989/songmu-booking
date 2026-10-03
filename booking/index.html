@@ -1,24 +1,179 @@
 <!doctype html>
 <html lang="zh-Hant">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>鬆沐整復｜LINE 預約</title>
-<meta name="theme-color" content="#263a32">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>我要預約｜鬆沐整復</title>
 <style>
-*{box-sizing:border-box}body{margin:0;background:#f5f1e8;color:#26332d;font-family:-apple-system,BlinkMacSystemFont,"Noto Sans TC","Segoe UI",sans-serif}.wrap{max-width:680px;margin:auto;padding:28px 18px 50px}.hero{text-align:center;padding:28px 8px 20px}.mark{font-size:42px}.hero h1{margin:8px 0 4px;font-size:30px;letter-spacing:.12em}.hero p{margin:0;color:#6b766f}.card{background:#fff;border-radius:22px;padding:22px;margin:14px 0;box-shadow:0 8px 28px #20372a12}h2{font-size:18px;margin:0 0 16px}.service{display:flex;justify-content:space-between;gap:12px;padding:13px 0;border-bottom:1px solid #eee9df}.service:last-child{border:0}.price{font-weight:700;white-space:nowrap}.new{background:#e7efe8;border-radius:14px;padding:14px;margin-top:14px;text-align:center;font-weight:700}.btn{display:block;width:100%;border:0;border-radius:16px;padding:17px;text-align:center;text-decoration:none;font-size:17px;font-weight:800;margin-top:12px}.line{background:#06c755;color:white}.map{background:#263a32;color:white}.hint{font-size:14px;color:#68736d;line-height:1.7}.info{line-height:1.9}.footer{text-align:center;color:#7d857f;font-size:13px;padding-top:14px}
+:root{
+  --brand:#8a725f; --brand2:#6f5949; --ink:#3f3934; --muted:#a69d95;
+  --line:#ddd4cc; --bg:#fbf9f6; --soft:#f1ece6;
+}
+*{box-sizing:border-box}
+body{margin:0;background:#e9e3dc;font-family:-apple-system,BlinkMacSystemFont,"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;color:var(--ink)}
+.app{max-width:760px;margin:auto;background:var(--bg);min-height:100dvh;padding-bottom:92px;position:relative}
+header{padding:25px 28px 14px;border-bottom:1px solid #eee;position:sticky;top:0;background:rgba(251,249,246,.96);z-index:5}
+header h1{font-size:26px;margin:0 0 4px;font-weight:800}
+header small{color:#aaa}
+.steps{display:flex;gap:24px;overflow:auto;padding:26px 24px 20px;white-space:nowrap;scrollbar-width:none}
+.step{font-size:18px;color:#bbb}
+.step.active{color:var(--brand);font-weight:700}
+main{padding:10px 28px 30px}
+h2{text-align:center;font-size:25px;margin:18px 0 25px}
+.card{border:2px solid #c7c7c7;border-radius:18px;padding:24px;margin-bottom:18px;line-height:1.65;font-size:18px;background:var(--bg)}
+.card.choice{cursor:pointer}
+.card.choice.selected{border-color:var(--brand);background:#f5f0ea}
+.card h3{margin:0 0 8px;font-size:20px}
+.note{font-size:17px;line-height:1.75}
+label{display:block;margin:14px 0 7px;font-weight:700}
+input,select,textarea{width:100%;font-size:17px;padding:14px;border:1px solid #ccc;border-radius:10px;background:var(--bg)}
+textarea{min-height:100px;resize:vertical}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.actions{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:min(760px,100%);display:flex;justify-content:space-between;gap:18px;padding:14px 22px calc(14px + env(safe-area-inset-bottom));background:rgba(251,249,246,.97);border-top:1px solid #ddd;z-index:10}
+button{font:inherit;font-size:18px;border:2px solid var(--brand);background:var(--bg);color:var(--brand);padding:11px 24px;border-radius:10px;min-width:135px}
+button.primary{background:var(--brand);color:#fff}
+button:disabled{opacity:.35}
+.price{color:var(--brand);font-weight:800}
+.hidden{display:none}
+.summary div{padding:8px 0;border-bottom:1px dashed #ddd}
+.badge{display:inline-block;padding:3px 9px;border-radius:99px;background:var(--soft);font-size:14px}
+@media(max-width:520px){
+ header{padding:20px 20px 12px} header h1{font-size:22px}
+ main{padding:6px 20px 26px}.steps{padding-left:20px;gap:20px}.step{font-size:17px}
+ .card{padding:20px;font-size:17px}.grid{grid-template-columns:1fr}
+ button{min-width:120px;padding:10px 15px}
+}
 </style>
-</head><body><main class="wrap">
-<section class="hero"><div class="mark">🌿</div><h1>鬆沐整復</h1><p>讓身體慢下來，好好鬆一回</p></section>
-<section class="card"><h2>服務項目</h2>
-<div class="service"><span>肌肉舒壓・30 分鐘</span><span class="price">$600</span></div>
-<div class="service"><span>半身放鬆・60 分鐘</span><span class="price">$1,200</span></div>
-<div class="service"><span>全身放鬆・90 分鐘</span><span class="price">$1,600</span></div>
-<div class="service"><span>全身・120 分鐘</span><span class="price">$2,000</span></div>
-<div class="service"><span>運動功能評估＆居家運動建議</span><span class="price">＋$300</span></div>
-<div class="new">新客體驗｜全身 90 分鐘 $1,300</div></section>
-<section class="card"><h2>預約方式</h2><p class="hint">點擊下方按鈕加入 LINE 官方帳號，傳送「我要預約」，並留下姓名、希望日期／時段與服務項目，我們會再與你確認。</p>
-<a class="btn line" href="https://line.me/R/ti/p/%40227osyby">LINE 預約｜@227osyby</a></section>
-<section class="card"><h2>工作室資訊</h2><div class="info">📍 434 臺中市龍井區東海里藝術街18-1號<br>📅 採預約制，提前預約更方便<br>🚗 可到府服務，車馬費另計</div>
-<a class="btn map" href="https://www.google.com/maps/search/?api=1&query=434%E8%87%BA%E4%B8%AD%E5%B8%82%E9%BE%8D%E4%BA%95%E5%8D%80%E6%9D%B1%E6%B5%B7%E9%87%8C%E8%97%9D%E8%A1%93%E8%A1%9718-1%E8%99%9F">開啟 Google 地圖</a></section>
-<div class="footer">鬆沐整復｜LINE 官方帳號 @227osyby</div>
-</main></body></html>
+</head>
+<body>
+<div class="app">
+<header>
+  <h1>鬆沐整復｜線上預約</h1>
+  <small>鬆一點・舒服一點・讓身體慢慢回到自在</small>
+</header>
+<div class="steps" id="steps"></div>
+<main id="content"></main>
+<div class="actions">
+  <button id="prev">上一步 Prev</button>
+  <button class="primary" id="next">下一步 Next</button>
+</div>
+</div>
+<script>
+const data = {
+  store:"鬆沐整復｜沙鹿・東海",
+  staff:"不指定",
+  service:"",
+  price:"",
+  date:"",
+  time:"",
+  name:"",
+  phone:"",
+  line:"",
+  note:""
+};
+const labels=["1. 門店","2. 預約","3. 人員","4. 服務","5. 時間","6. 資料","7. 確認"];
+let page=0;
+const pages=[
+()=>`
+<h2>預約鬆沐</h2>
+<div class="card choice selected">
+ <h3>🌿 鬆沐整復｜沙鹿・東海</h3>
+ <div>一個讓身體慢下來、好好放鬆的空間<br>採預約制・詳細地址於預約確認後提供</div>
+ <span class="badge">工作室</span>
+</div>`,
+()=>`
+<h2>預約注意事項 (Notice)</h2>
+<div class="card note">
+ <b>預約前請詳閱</b><br><br>
+ ⏰ <b>預約時間</b><br>
+ 為了讓每位客人都能有完整、舒服的放鬆時間，預約時段保留 10 分鐘。若可能晚到，麻煩提前用 LINE 告訴我們。<br><br>
+ 📍 <b>入店方式</b><br>
+ 工作室位於沙鹿／東海生活圈，採完全預約制；詳細地址於預約成立後提供。<br><br>
+ ⚠️ <b>服務提醒</b><br>
+ 如果有近期受傷、手術、懷孕或其他需要特別留意的身體狀況，預約時先告訴我們，我們會依狀況調整服務內容。<br><br>
+ 📱 <b>聯絡方式</b><br>
+ LINE 官方帳號：@227osyby
+</div>`,
+()=>`
+<h2>選擇服務人員</h2>
+<div class="card choice selected"><h3>不指定</h3><div>由鬆沐整復安排服務</div></div>`,
+()=>`
+<h2>今天想怎麼放鬆？</h2>
+${serviceCard("肌肉舒壓 30 分鐘","600")}
+${serviceCard("半身放鬆 60 分鐘","1200")}
+${serviceCard("全身放鬆 90 分鐘","1600")}
+${serviceCard("全身 120 分鐘","2000")}
+${serviceCard("新客體驗｜全身 90 分鐘","1300")}
+${serviceCard("運動功能評估＆居家運動建議","300")}`,
+()=>`
+<h2>挑一個適合你的時間</h2>
+<div class="card">
+<label>預約日期</label>
+<input id="date" type="date" value="${data.date}">
+<label>預約時間</label>
+<select id="time">
+<option value="">請選擇時間</option>
+${["10:00","11:30","13:00","14:30","16:00","17:30","19:00","20:30"].map(t=>`<option ${data.time===t?"selected":""}>${t}</option>`).join("")}
+</select>
+<p style="color:#888;font-size:14px">※ 此示範版為前端預約介面；正式上線可再串接 Google Calendar / Google Sheets 來阻擋已被預約的時段。</p>
+</div>`,
+()=>`
+<h2>留下聯絡資料</h2>
+<div class="card">
+<label>姓名 *</label><input id="name" value="${data.name}" placeholder="請輸入姓名">
+<label>手機 *</label><input id="phone" value="${data.phone}" inputmode="tel" placeholder="09xxxxxxxx">
+<label>LINE ID</label><input id="line" value="${data.line}" placeholder="方便聯繫用">
+<label>備註</label><textarea id="note" placeholder="想加強的部位、身體狀況、到府需求等">${data.note}</textarea>
+</div>`,
+()=>`
+<h2>最後確認一下 🌿</h2>
+<div class="card summary">
+ <div><b>門店：</b>${data.store}</div>
+ <div><b>服務人員：</b>${data.staff}</div>
+ <div><b>服務：</b>${data.service||"尚未選擇"}</div>
+ <div><b>費用：</b><span class="price">${data.price?"NT$ "+data.price:"-"}</span></div>
+ <div><b>時間：</b>${data.date||"-"} ${data.time||""}</div>
+ <div><b>姓名：</b>${data.name||"-"}</div>
+ <div><b>手機：</b>${data.phone||"-"}</div>
+ <div><b>LINE：</b>${data.line||"-"}</div>
+ <div><b>備註：</b>${data.note||"無"}</div>
+</div>
+<div class="card" style="background:#faf7f5">
+送出後可改成：① 寫入 Google Sheets、② 自動寄通知、③ 導回 LINE 官方帳號、④ 建立 Google Calendar 行程。
+</div>`
+];
+function serviceCard(name,price){
+ const sel=data.service===name?"selected":"";
+ return `<div class="card choice ${sel}" onclick="chooseService('${name}','${price}')">
+ <h3>${name}</h3><div class="price">NT$ ${price}</div></div>`;
+}
+function chooseService(name,price){data.service=name;data.price=price;render()}
+function save(){
+ if(page===4){
+   const d=document.querySelector("#date"), t=document.querySelector("#time");
+   if(d)data.date=d.value;if(t)data.time=t.value;
+ }
+ if(page===5){
+   ["name","phone","line","note"].forEach(k=>{const e=document.querySelector("#"+k);if(e)data[k]=e.value})
+ }
+}
+function render(){
+ document.querySelector("#steps").innerHTML=labels.map((x,i)=>`<span class="step ${i===page?"active":""}">${x}</span>`).join("");
+ document.querySelector("#content").innerHTML=pages[page]();
+ document.querySelector(".step.active")?.scrollIntoView({behavior:"smooth",inline:"center",block:"nearest"});
+ document.querySelector("#prev").disabled=page===0;
+ document.querySelector("#next").textContent=page===pages.length-1?"送出預約":"下一步 Next";
+}
+document.querySelector("#prev").onclick=()=>{save();if(page>0){page--;render()}};
+document.querySelector("#next").onclick=()=>{
+ save();
+ if(page===3&&!data.service){alert("請先選擇服務");return}
+ if(page===4&&(!data.date||!data.time)){alert("請選擇日期與時間");return}
+ if(page===5&&(!data.name||!data.phone)){alert("請填寫姓名與手機");return}
+ if(page<pages.length-1){page++;render();return}
+ alert("預約資料已完成！正式版可在這裡串接 Google Sheets / Calendar / LINE 通知。");
+};
+render();
+</script>
+</body>
+</html>
