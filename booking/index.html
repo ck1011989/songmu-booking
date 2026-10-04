@@ -96,7 +96,7 @@ function openTimes(date) {
 function openDates(){return Object.keys(availability).filter(d=>/^\d{4}-\d{2}-\d{2}$/.test(d)&&d>=todayTaipei()&&openTimes(d).length).sort()}
 function esc(value){return String(value).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
 const data = {
-  store:"鬆沐整復｜沙鹿・東海",
+  store:"鬆沐整復｜東海",
   staff:"不指定",
   service:"",
   price:"",
@@ -115,7 +115,7 @@ const pages=[
 <h2>預約鬆沐</h2>
 ${memberPanel()}
 <div class="card choice selected">
- <h3>🌿 鬆沐整復｜沙鹿・東海</h3>
+ <h3>🌿 鬆沐整復｜東海</h3>
  <div>一個讓身體慢下來、好好放鬆的空間<br>採預約制<br>434 臺中市龍井區東海里藝術街 18-1 號</div>
  <span class="badge">工作室</span>
 </div>`,
