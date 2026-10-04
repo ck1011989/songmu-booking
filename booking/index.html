@@ -63,7 +63,7 @@ button:disabled{opacity:.35}
 // 編輯 booking/availability.json 可調整開放日期與各日期的開始時段。
 const API="https://wwavyzxxfspulofwpkmn.supabase.co/functions/v1/booking-api";const APIKEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind3YXZ5enh4ZnNwdWxvZndwa21uIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTExMTI0MjgsImV4cCI6MjEwNjY4ODQyOH0.Xc6e5AIerl7E9KlWfd-aY2GyftQ_UNpBR7-YIOVw9Ik";const apiHeaders={apikey:APIKEY,Authorization:"Bearer "+APIKEY};
 let member=null,lineToken=null,lineConfig=null,lineMessage="正在載入會員功能…";
-function memberPanel(){return '<div class="card"><h3>LINE 會員</h3><p>'+esc(lineMessage)+'</p>'+(!member&&lineConfig?.enabled?'<button type="button" onclick="lineLogin()">使用 LINE 登入</button>':'')+'</div>'}
+function memberPanel(){return '<div class="card"><h3>新客體驗</h3><p>'+esc(lineMessage)+'</p>'+(!member&&lineConfig?.enabled?'<button type="button" onclick="lineLogin()">使用 LINE 登入</button>':'')+'</div>'}
 async function loadLineMember(){
  if(!window.liff)throw Error("LINE 登入載入失敗");
  await liff.init({liffId:lineConfig.liff_id});
@@ -137,7 +137,6 @@ ${memberPanel()}
 <div class="card choice selected"><h3>不指定</h3><div>由鬆沐整復安排服務</div></div>`,
 ()=>`
 <h2>今天想怎麼放鬆？</h2>
-${memberPanel()}
 ${serviceCard("肌肉舒壓 30 分鐘","600")}
 ${serviceCard("半身放鬆 60 分鐘","1200")}
 ${serviceCard("全身放鬆 90 分鐘","1600")}
