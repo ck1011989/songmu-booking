@@ -166,10 +166,10 @@ ${member?.eligible&&!member?.active_trial?serviceCard("新客體驗｜全身 90 
 <div class="card plan-card">
 <span class="badge">全身放鬆 90 分鐘 × 10 次</span>
 <h3>鬆活方案｜買 10 次 NT$13,000</h3>
-<p>平均每次 <b>NT$1,300</b>，另贈送 10 次運動功能評估＆居家運動建議，每次服務共 90 分鐘。</p>
+<p>平均每次 <b>NT$1,300</b>，另贈送 10 次運動功能評估＆居家運動建議。</p>
 <div class="savings"><div class="price">單次 NT$1,300，立省 NT$500</div></div>
 ${serviceCard(PLAN,"13000")}
-<p class="note">本次安排共 90 分鐘，含贈送的運動功能評估＆居家運動建議。方案購買與付款由店家確認。</p>
+<p class="note">方案含贈送的運動功能評估＆居家運動建議。方案購買與付款由店家確認。</p>
 </div>
 ${data.service?'<div class="card selection-total" aria-live="polite"><h3>本次選擇</h3><div>'+esc(serviceDescription())+'</div><div>預留 '+serviceMinutes()+' 分鐘</div><div class="price">'+(data.service===PLAN?'方案總價':'合計')+' NT$'+serviceTotal().toLocaleString()+'</div></div>':""}`,
 ()=>`
