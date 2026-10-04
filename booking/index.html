@@ -50,6 +50,7 @@ button:disabled{opacity:.35}
 <header>
   <h1>鬆沐整復｜線上預約</h1>
   <small>鬆一點・舒服一點・讓身體慢慢回到自在</small>
+<nav aria-label="網站導覽" style="margin-top:12px"><a href="../booking/" aria-current="page">線上預約</a> · <a href="../price/">服務價目</a></nav>
 </header>
 <div class="steps" id="steps"></div>
 <main id="content"></main>
@@ -63,7 +64,7 @@ button:disabled{opacity:.35}
 let availability = {};
 let availabilityError = false;
 const todayTaipei = () => new Intl.DateTimeFormat("sv-SE",{timeZone:"Asia/Taipei",year:"numeric",month:"2-digit",day:"2-digit"}).format(new Date());
-function serviceMinutes(){const m=data.service.match(/(30|60|90|120) 分鐘/);return m?Number(m[1]):data.service==="全身 120 分鐘"?120:30}
+function serviceMinutes(){const m=data.service.match(/\b(120|90|60|30) 分鐘/);return m?Number(m[1]):data.service==="全身 120 分鐘"?120:30}
 function openTimes(date) {
  const day=availability[date];if(!day)return [];
  const toMinutes=t=>{const [hour,min]=t.split(":").map(Number);return hour*60+min};
@@ -127,12 +128,12 @@ ${serviceCard("運動功能評估＆居家運動建議（暫預留 30 分鐘）"
 ()=>`
 <h2>挑一個適合你的時間</h2>
 <div class="card">
-<label>預約日期</label>
+<label for="date">預約日期</label>
 <select id="date" onchange="changeDate(this.value)">
 <option value="">請選擇開放日期</option>
 ${openDates().map(d=>`<option value="${d}" ${data.date===d?"selected":""}>${d}</option>`).join("")}
 </select>
-<label>預約時間</label>
+<label for="time">預約時間</label>
 <select id="time"><option value="">請選擇時間</option>
 ${openTimes(data.date).map(t=>`<option ${data.time===t?"selected":""}>${t}</option>`).join("")}</select>
 <p class="note">${availabilityError?"時段載入失敗，請重新整理或聯絡 LINE。":openDates().length?"服務至 24:00；已確認預約之間預留 10 分鐘整理。時段以店家最後確認為準。":"目前尚未公布開放時段，歡迎透過 LINE 詢問。"}</p>
@@ -141,10 +142,10 @@ ${openTimes(data.date).map(t=>`<option ${data.time===t?"selected":""}>${t}</opti
 ()=>`
 <h2>留下聯絡資料</h2>
 <div class="card">
-<label>姓名 *</label><input id="name" value="${esc(data.name)}" placeholder="請輸入姓名">
-<label>手機 *</label><input id="phone" value="${esc(data.phone)}" inputmode="tel" placeholder="09xxxxxxxx">
-<label>LINE ID</label><input id="line" value="${esc(data.line)}" placeholder="方便聯繫用">
-<label>備註</label><textarea id="note" placeholder="想加強的部位、身體狀況、到府需求等">${esc(data.note)}</textarea>
+<label for="name">姓名 *</label><input id="name" value="${esc(data.name)}" placeholder="請輸入姓名">
+<label for="phone">手機 *</label><input id="phone" value="${esc(data.phone)}" inputmode="tel" placeholder="09xxxxxxxx">
+<label for="line">LINE ID</label><input id="line" value="${esc(data.line)}" placeholder="方便聯繫用">
+<label for="note">備註</label><textarea id="note" placeholder="想加強的部位、身體狀況、到府需求等">${esc(data.note)}</textarea>
 </div>`,
 ()=>`
 <h2>最後確認一下 🌿</h2>
@@ -185,7 +186,7 @@ function render(){
  document.querySelector(".step.active")?.scrollIntoView({behavior:"smooth",inline:"center",block:"nearest"});
  document.querySelector("#prev").disabled=page===0;
  document.querySelector("#next").disabled=page===4&&!openDates().length;
- document.querySelector("#next").textContent=page===pages.length-1?"送出預約":"下一步 Next";
+ document.querySelector("#next").textContent=page===pages.length-1?"產生預約訊息":"下一步 Next";
 }
 document.querySelector("#prev").onclick=()=>{save();if(page>0){page--;render()}};
 document.querySelector("#next").onclick=()=>{
