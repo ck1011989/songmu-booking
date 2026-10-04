@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="description" content="鬆沐整復服務價目：肌肉舒壓、半身與全身放鬆、新客體驗、運動功能評估。"><title>服務價目｜鬆沐整復</title><style>
+:root{
+  --brand:#8a725f; --brand2:#6f5949; --ink:#3f3934; --muted:#a69d95;
+  --line:#ddd4cc; --bg:#fbf9f6; --soft:#f1ece6;
+}
+*{box-sizing:border-box}
+body{margin:0;background:#e9e3dc;font-family:-apple-system,BlinkMacSystemFont,"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;color:var(--ink)}
+.app{max-width:760px;margin:auto;background:var(--bg);min-height:100dvh;padding-bottom:92px;position:relative}
+header{padding:25px 28px 14px;border-bottom:1px solid #eee;position:sticky;top:0;background:rgba(251,249,246,.96);z-index:5}
+header h1{font-size:26px;margin:0 0 4px;font-weight:800}
+header small{color:#aaa}
+.steps{display:flex;gap:24px;overflow:auto;padding:26px 24px 20px;white-space:nowrap;scrollbar-width:none}
+.step{font-size:18px;color:#bbb}
+.step.active{color:var(--brand);font-weight:700}
+main{padding:10px 28px 30px}
+h2{text-align:center;font-size:25px;margin:18px 0 25px}
+.card{border:2px solid #c7c7c7;border-radius:18px;padding:24px;margin-bottom:18px;line-height:1.65;font-size:18px;background:var(--bg)}
+.card.choice{cursor:pointer}
+.card.choice.selected{border-color:var(--brand);background:#f5f0ea}
+.card h3{margin:0 0 8px;font-size:20px}
+.note{font-size:17px;line-height:1.75}
+label{display:block;margin:14px 0 7px;font-weight:700}
+input,select,textarea{width:100%;font-size:17px;padding:14px;border:1px solid #ccc;border-radius:10px;background:var(--bg)}
+textarea{min-height:100px;resize:vertical}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.actions{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:min(760px,100%);display:flex;justify-content:space-between;gap:18px;padding:14px 22px calc(14px + env(safe-area-inset-bottom));background:rgba(251,249,246,.97);border-top:1px solid #ddd;z-index:10}
+button{font:inherit;font-size:18px;border:2px solid var(--brand);background:var(--bg);color:var(--brand);padding:11px 24px;border-radius:10px;min-width:135px}
+button.primary{background:var(--brand);color:#fff}
+button:disabled{opacity:.35}
+.price{color:var(--brand);font-weight:800}
+.hidden{display:none}
+.summary div{padding:8px 0;border-bottom:1px dashed #ddd}
+.badge{display:inline-block;padding:3px 9px;border-radius:99px;background:var(--soft);font-size:14px}
+@media(max-width:520px){
+ header{padding:20px 20px 12px} header h1{font-size:22px}
+ main{padding:6px 20px 26px}.steps{padding-left:20px;gap:20px}.step{font-size:17px}
+ .card{padding:20px;font-size:17px}.grid{grid-template-columns:1fr}
+ button{min-width:120px;padding:10px 15px}
+}
+
+a{color:var(--brand2)}nav{margin-top:12px}nav a{display:inline-block;padding:8px 0}
+.service-row{display:flex;justify-content:space-between;gap:16px;align-items:center}
+.service-row p{margin:0;color:#756b62;font-size:16px}
+.service-row .price{white-space:nowrap;font-size:22px}
+.cta{display:block;text-align:center;text-decoration:none;padding:14px;background:var(--brand);color:white;border-radius:10px;font-weight:700}
+footer{padding:8px 28px 28px;line-height:1.8}
+</style></head><body><div class="app" style="padding-bottom:24px"><header><h1>鬆沐整復｜服務價目</h1><small>鬆一點・舒服一點・讓身體慢慢回到自在</small><nav aria-label="網站導覽"><a href="../booking/">線上預約</a> · <a href="../price/" aria-current="page">服務價目</a></nav></header><main><h2>今天想怎麼放鬆？</h2><p class="note" style="text-align:center">採預約制，所有費用皆以新臺幣計價。</p>
+<section class="card service-row"><div><h3>肌肉舒壓</h3><p>30 分鐘</p></div><div class="price">NT$ 600</div></section>
+<section class="card service-row"><div><h3>半身放鬆</h3><p>60 分鐘</p></div><div class="price">NT$ 1,200</div></section>
+<section class="card service-row"><div><h3>全身放鬆</h3><p>90 分鐘</p></div><div class="price">NT$ 1,600</div></section>
+<section class="card service-row"><div><h3>全身放鬆</h3><p>120 分鐘</p></div><div class="price">NT$ 2,000</div></section>
+<section class="card service-row"><div><h3>新客體驗｜全身</h3><p>90 分鐘</p></div><div class="price">NT$ 1,300</div></section>
+<section class="card service-row"><div><h3>運動功能評估＆居家運動建議</h3><p>暫預留 30 分鐘</p></div><div class="price">NT$ 300</div></section>
+<div class="card note">可預約日期與時段依當月開放安排。請選擇服務後查看可預約時間，並透過 LINE 傳送預約申請；收到店家回覆確認後，預約才成立。</div>
+<a class="cta" href="../booking/">選擇服務・線上預約</a></main><footer><strong>鬆沐整復｜沙鹿・東海</strong><br>434 臺中市龍井區東海里藝術街 18-1 號<br><a href="https://line.me/R/ti/p/%40227osyby" target="_blank" rel="noopener">聯絡 LINE：@227osyby</a></footer></div></body></html>
