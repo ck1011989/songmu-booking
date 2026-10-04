@@ -60,6 +60,7 @@ button:disabled{opacity:.35}
 </div>
 <script>
 // 編輯 booking/availability.json 可調整開放日期與各日期的開始時段。
+const API="https://wwavyzxxfspulofwpkmn.supabase.co/functions/v1/booking-api";const APIKEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind3YXZ5enh4ZnNwdWxvZndwa21uIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTExMTI0MjgsImV4cCI6MjEwNjY4ODQyOH0.Xc6e5AIerl7E9KlWfd-aY2GyftQ_UNpBR7-YIOVw9Ik";const apiHeaders={apikey:APIKEY,Authorization:"Bearer "+APIKEY};
 let availability = {};
 let availabilityError = false;
 const todayTaipei = () => new Intl.DateTimeFormat("sv-SE",{timeZone:"Asia/Taipei",year:"numeric",month:"2-digit",day:"2-digit"}).format(new Date());
@@ -88,6 +89,7 @@ const data = {
   name:"",
   phone:"",
   line:"",
+  symptoms:"",
   note:""
 };
 const labels=["1. 門店","2. 預約","3. 人員","4. 服務","5. 時間","6. 資料","7. 確認"];
@@ -144,7 +146,7 @@ ${openTimes(data.date).map(t=>`<option ${data.time===t?"selected":""}>${t}</opti
 <label for="name">姓名 *</label><input id="name" value="${esc(data.name)}" placeholder="請輸入姓名">
 <label for="phone">手機 *</label><input id="phone" value="${esc(data.phone)}" inputmode="tel" placeholder="09xxxxxxxx">
 <label for="line">LINE ID</label><input id="line" value="${esc(data.line)}" placeholder="方便聯繫用">
-<label for="note">備註</label><textarea id="note" placeholder="想加強的部位、身體狀況、到府需求等">${esc(data.note)}</textarea>
+<label for="symptoms">症狀／想改善的部位</label><textarea id="symptoms" maxlength="4000" placeholder="例如：肩頸緊繃、腰部痠痛">${esc(data.symptoms)}</textarea><label for="note">備註</label><textarea id="note" placeholder="想加強的部位、身體狀況、到府需求等">${esc(data.note)}</textarea>
 </div>`,
 ()=>`
 <h2>最後確認一下 🌿</h2>
@@ -160,7 +162,7 @@ ${openTimes(data.date).map(t=>`<option ${data.time===t?"selected":""}>${t}</opti
  <div><b>備註：</b>${esc(data.note||"無")}</div>
 </div>
 <div class="card" style="background:#faf7f5">
-下一步會產生預約訊息。請複製並貼到鬆沐 LINE；收到店家回覆確認後，預約才成立。
+<label><input id="consent" type="checkbox" style="width:auto"> 我同意鬆沐為安排服務與聯繫，儲存姓名、手機及填寫的症狀。可透過 LINE 申請更正或刪除資料。</label><p>送出後會儲存為待確認申請；收到店家回覆確認後，預約才成立。</p>
 </div>`
 ];
 function serviceCard(name,price){
@@ -176,7 +178,7 @@ function save(){
    if(d)data.date=d.value;if(t)data.time=t.value;
  }
  if(page===5){
-   ["name","phone","line","note"].forEach(k=>{const e=document.querySelector("#"+k);if(e)data[k]=e.value})
+   ["name","phone","line","symptoms","note"].forEach(k=>{const e=document.querySelector("#"+k);if(e)data[k]=e.value})
  }
 }
 function render(){
@@ -185,23 +187,28 @@ function render(){
  document.querySelector(".step.active")?.scrollIntoView({behavior:"smooth",inline:"center",block:"nearest"});
  document.querySelector("#prev").disabled=page===0;
  document.querySelector("#next").disabled=page===4&&!openDates().length;
- document.querySelector("#next").textContent=page===pages.length-1?"產生預約訊息":"下一步 Next";
+ document.querySelector("#next").textContent=page===pages.length-1?"送出預約申請":"下一步 Next";
 }
 document.querySelector("#prev").onclick=()=>{save();if(page>0){page--;render()}};
-document.querySelector("#next").onclick=()=>{
+document.querySelector("#next").onclick=async()=>{
  save();
  if(page===3&&!data.service){alert("請先選擇服務");return}
  if(page===4&&(!openDates().includes(data.date)||!openTimes(data.date).includes(data.time))){alert("請選擇日期與時間");return}
  if(page===5&&(!data.name.trim()||!/^09\d{8}$/.test(data.phone.trim()))){alert("請填寫姓名與有效的台灣手機號碼（09 開頭共 10 碼）");return}
  if(page<pages.length-1){page++;render();return}
  if(!openTimes(data.date).includes(data.time)){alert("此時段已過期，請重新選擇。");page=4;render();return}
- const message = ["鬆沐整復預約申請","服務："+data.service,"費用：NT$ "+data.price,"日期："+data.date,"時間："+data.time,"姓名："+data.name,"手機："+data.phone,"LINE："+(data.line||"未填"),"備註："+(data.note||"無"),"請協助確認是否可以安排，謝謝。"].join("\n");
- document.querySelector("#content").innerHTML = '<h2>將預約訊息傳給鬆沐</h2><div class="card"><p>尚未完成預約，請將以下訊息貼到 LINE，等候店家確認。</p><textarea id="request" readonly style="min-height:300px"></textarea><button id="copy">複製預約訊息</button><p id="copy-status" role="status"></p><a href="https://line.me/R/ti/p/%40227osyby" target="_blank" rel="noopener">開啟鬆沐 LINE</a></div>';
- document.querySelector("#request").value=message;
- document.querySelector("#copy").onclick=async()=>{try{await navigator.clipboard.writeText(message);document.querySelector("#copy-status").textContent="已複製，請開啟 LINE 貼上並傳送。"}catch{document.querySelector("#request").select();document.querySelector("#copy-status").textContent="請長按訊息或手動複製。"}};
- document.querySelector("#next").disabled=true;
+ if(!document.querySelector("#consent")?.checked){alert("請先勾選資料儲存同意");return}
+ const btn=document.querySelector("#next");btn.disabled=true;btn.textContent="正在送出…";
+ try{
+ data.request_id ||= crypto.randomUUID();
+ const r=await fetch(API,{method:"POST",headers:{...apiHeaders,"Content-Type":"application/json"},body:JSON.stringify({...data,name:data.name.trim(),phone:data.phone.trim(),starts_at:data.date+"T"+data.time+":00+08:00",consent:true})});
+ const value=await r.json();if(!r.ok||!value.id)throw Error(value.error||"送出失敗");
+ document.querySelector("#content").innerHTML='<h2>已收到預約申請 🌿</h2><div class="card"><p>資料已儲存，等待鬆沐確認。收到店家回覆後，預約才成立。</p><p id="receipt"></p><a href="https://line.me/R/ti/p/%40227osyby" target="_blank" rel="noopener">聯絡鬆沐 LINE</a></div>';
+ document.querySelector("#receipt").textContent="申請編號："+value.id;
+ document.querySelector("#prev").disabled=true;document.querySelector("#prev").onclick=null;btn.textContent="已送出";
+ }catch(e){alert(e.message);btn.disabled=false;btn.textContent="重新送出"}
 };
-fetch("./availability.json",{cache:"no-store"}).then(r=>{if(!r.ok)throw Error("load");return r.json()}).then(value=>{if(!value||typeof value!=="object"||Array.isArray(value)||Object.values(value).some(v=>!v||!/^([01]\d|2[0-3]):[0-5]\d$/.test(v.start)||!/^(([01]\d|2[0-3]):[0-5]\d|24:00)$/.test(v.end)||!Array.isArray(v.bookings)))throw Error("format");availability=value;render()}).catch(()=>{availabilityError=true;render()});
+fetch(API,{cache:"no-store",headers:apiHeaders}).then(r=>{if(!r.ok)throw Error("load");return r.json()}).then(value=>{availability=value;render()}).catch(()=>{availabilityError=true;render()});
 render();
 </script>
 </body>
