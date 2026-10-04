@@ -59,6 +59,25 @@ button:disabled{opacity:.35}
 </div>
 </div>
 <script>
+// 編輯 booking/availability.json 可調整開放日期與各日期的開始時段。
+let availability = {};
+let availabilityError = false;
+const todayTaipei = () => new Intl.DateTimeFormat("sv-SE",{timeZone:"Asia/Taipei",year:"numeric",month:"2-digit",day:"2-digit"}).format(new Date());
+function serviceMinutes(){const m=data.service.match(/(30|60|90|120) 分鐘/);return m?Number(m[1]):data.service==="全身 120 分鐘"?120:30}
+function openTimes(date) {
+ const day=availability[date];if(!day)return [];
+ const toMinutes=t=>{const [hour,min]=t.split(":").map(Number);return hour*60+min};
+ const start=toMinutes(day.start),end=toMinutes(day.end),result=[];
+ const blocked=day.bookings||[];
+ for(let t=start;t+serviceMinutes()<=end;t+=30){
+  const time=String(Math.floor(t/60)).padStart(2,"0")+":"+String(t%60).padStart(2,"0");
+  if(new Date(date+"T"+time+":00+08:00").getTime()<=Date.now())continue;
+  if(blocked.some(x=>t<toMinutes(x.end)+10&&t+serviceMinutes()+10>toMinutes(x.start)))continue;
+  result.push(time);
+ }return result;
+}
+function openDates(){return Object.keys(availability).filter(d=>/^\d{4}-\d{2}-\d{2}$/.test(d)&&d>=todayTaipei()&&openTimes(d).length).sort()}
+function esc(value){return String(value).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
 const data = {
   store:"鬆沐整復｜沙鹿・東海",
   staff:"不指定",
@@ -78,7 +97,7 @@ const pages=[
 <h2>預約鬆沐</h2>
 <div class="card choice selected">
  <h3>🌿 鬆沐整復｜沙鹿・東海</h3>
- <div>一個讓身體慢下來、好好放鬆的空間<br>採預約制・詳細地址於預約確認後提供</div>
+ <div>一個讓身體慢下來、好好放鬆的空間<br>採預約制<br>434 臺中市龍井區東海里藝術街 18-1 號</div>
  <span class="badge">工作室</span>
 </div>`,
 ()=>`
@@ -88,7 +107,7 @@ const pages=[
  ⏰ <b>預約時間</b><br>
  為了讓每位客人都能有完整、舒服的放鬆時間，預約時段保留 10 分鐘。若可能晚到，麻煩提前用 LINE 告訴我們。<br><br>
  📍 <b>入店方式</b><br>
- 工作室位於沙鹿／東海生活圈，採完全預約制；詳細地址於預約成立後提供。<br><br>
+ 434 臺中市龍井區東海里藝術街 18-1 號，採完全預約制。<br><br>
  ⚠️ <b>服務提醒</b><br>
  如果有近期受傷、手術、懷孕或其他需要特別留意的身體狀況，預約時先告訴我們，我們會依狀況調整服務內容。<br><br>
  📱 <b>聯絡方式</b><br>
@@ -104,26 +123,28 @@ ${serviceCard("半身放鬆 60 分鐘","1200")}
 ${serviceCard("全身放鬆 90 分鐘","1600")}
 ${serviceCard("全身 120 分鐘","2000")}
 ${serviceCard("新客體驗｜全身 90 分鐘","1300")}
-${serviceCard("運動功能評估＆居家運動建議","300")}`,
+${serviceCard("運動功能評估＆居家運動建議（暫預留 30 分鐘）","300")}`,
 ()=>`
 <h2>挑一個適合你的時間</h2>
 <div class="card">
 <label>預約日期</label>
-<input id="date" type="date" value="${data.date}">
-<label>預約時間</label>
-<select id="time">
-<option value="">請選擇時間</option>
-${["10:00","11:30","13:00","14:30","16:00","17:30","19:00","20:30"].map(t=>`<option ${data.time===t?"selected":""}>${t}</option>`).join("")}
+<select id="date" onchange="changeDate(this.value)">
+<option value="">請選擇開放日期</option>
+${openDates().map(d=>`<option value="${d}" ${data.date===d?"selected":""}>${d}</option>`).join("")}
 </select>
-<p style="color:#888;font-size:14px">※ 此示範版為前端預約介面；正式上線可再串接 Google Calendar / Google Sheets 來阻擋已被預約的時段。</p>
+<label>預約時間</label>
+<select id="time"><option value="">請選擇時間</option>
+${openTimes(data.date).map(t=>`<option ${data.time===t?"selected":""}>${t}</option>`).join("")}</select>
+<p class="note">${availabilityError?"時段載入失敗，請重新整理或聯絡 LINE。":openDates().length?"服務至 24:00；已確認預約之間預留 10 分鐘整理。時段以店家最後確認為準。":"目前尚未公布開放時段，歡迎透過 LINE 詢問。"}</p>
+<a href="https://line.me/R/ti/p/%40227osyby" target="_blank" rel="noopener">聯絡鬆沐 LINE｜@227osyby</a>
 </div>`,
 ()=>`
 <h2>留下聯絡資料</h2>
 <div class="card">
-<label>姓名 *</label><input id="name" value="${data.name}" placeholder="請輸入姓名">
-<label>手機 *</label><input id="phone" value="${data.phone}" inputmode="tel" placeholder="09xxxxxxxx">
-<label>LINE ID</label><input id="line" value="${data.line}" placeholder="方便聯繫用">
-<label>備註</label><textarea id="note" placeholder="想加強的部位、身體狀況、到府需求等">${data.note}</textarea>
+<label>姓名 *</label><input id="name" value="${esc(data.name)}" placeholder="請輸入姓名">
+<label>手機 *</label><input id="phone" value="${esc(data.phone)}" inputmode="tel" placeholder="09xxxxxxxx">
+<label>LINE ID</label><input id="line" value="${esc(data.line)}" placeholder="方便聯繫用">
+<label>備註</label><textarea id="note" placeholder="想加強的部位、身體狀況、到府需求等">${esc(data.note)}</textarea>
 </div>`,
 ()=>`
 <h2>最後確認一下 🌿</h2>
@@ -133,13 +154,13 @@ ${["10:00","11:30","13:00","14:30","16:00","17:30","19:00","20:30"].map(t=>`<opt
  <div><b>服務：</b>${data.service||"尚未選擇"}</div>
  <div><b>費用：</b><span class="price">${data.price?"NT$ "+data.price:"-"}</span></div>
  <div><b>時間：</b>${data.date||"-"} ${data.time||""}</div>
- <div><b>姓名：</b>${data.name||"-"}</div>
- <div><b>手機：</b>${data.phone||"-"}</div>
- <div><b>LINE：</b>${data.line||"-"}</div>
- <div><b>備註：</b>${data.note||"無"}</div>
+ <div><b>姓名：</b>${esc(data.name||"-")}</div>
+ <div><b>手機：</b>${esc(data.phone||"-")}</div>
+ <div><b>LINE：</b>${esc(data.line||"-")}</div>
+ <div><b>備註：</b>${esc(data.note||"無")}</div>
 </div>
 <div class="card" style="background:#faf7f5">
-送出後可改成：① 寫入 Google Sheets、② 自動寄通知、③ 導回 LINE 官方帳號、④ 建立 Google Calendar 行程。
+下一步會產生預約訊息。請複製並貼到鬆沐 LINE；收到店家回覆確認後，預約才成立。
 </div>`
 ];
 function serviceCard(name,price){
@@ -147,7 +168,8 @@ function serviceCard(name,price){
  return `<div class="card choice ${sel}" onclick="chooseService('${name}','${price}')">
  <h3>${name}</h3><div class="price">NT$ ${price}</div></div>`;
 }
-function chooseService(name,price){data.service=name;data.price=price;render()}
+function changeDate(value){data.date=value;data.time="";render()}
+function chooseService(name,price){data.service=name;data.price=price;data.date="";data.time="";render()}
 function save(){
  if(page===4){
    const d=document.querySelector("#date"), t=document.querySelector("#time");
@@ -162,17 +184,24 @@ function render(){
  document.querySelector("#content").innerHTML=pages[page]();
  document.querySelector(".step.active")?.scrollIntoView({behavior:"smooth",inline:"center",block:"nearest"});
  document.querySelector("#prev").disabled=page===0;
+ document.querySelector("#next").disabled=page===4&&!openDates().length;
  document.querySelector("#next").textContent=page===pages.length-1?"送出預約":"下一步 Next";
 }
 document.querySelector("#prev").onclick=()=>{save();if(page>0){page--;render()}};
 document.querySelector("#next").onclick=()=>{
  save();
  if(page===3&&!data.service){alert("請先選擇服務");return}
- if(page===4&&(!data.date||!data.time)){alert("請選擇日期與時間");return}
- if(page===5&&(!data.name||!data.phone)){alert("請填寫姓名與手機");return}
+ if(page===4&&(!openDates().includes(data.date)||!openTimes(data.date).includes(data.time))){alert("請選擇日期與時間");return}
+ if(page===5&&(!data.name.trim()||!/^09\d{8}$/.test(data.phone.trim()))){alert("請填寫姓名與有效的台灣手機號碼（09 開頭共 10 碼）");return}
  if(page<pages.length-1){page++;render();return}
- alert("預約資料已完成！正式版可在這裡串接 Google Sheets / Calendar / LINE 通知。");
+ if(!openTimes(data.date).includes(data.time)){alert("此時段已過期，請重新選擇。");page=4;render();return}
+ const message = ["鬆沐整復預約申請","服務："+data.service,"費用：NT$ "+data.price,"日期："+data.date,"時間："+data.time,"姓名："+data.name,"手機："+data.phone,"LINE："+(data.line||"未填"),"備註："+(data.note||"無"),"請協助確認是否可以安排，謝謝。"].join("\n");
+ document.querySelector("#content").innerHTML = '<h2>將預約訊息傳給鬆沐</h2><div class="card"><p>尚未完成預約，請將以下訊息貼到 LINE，等候店家確認。</p><textarea id="request" readonly style="min-height:300px"></textarea><button id="copy">複製預約訊息</button><p id="copy-status" role="status"></p><a href="https://line.me/R/ti/p/%40227osyby" target="_blank" rel="noopener">開啟鬆沐 LINE</a></div>';
+ document.querySelector("#request").value=message;
+ document.querySelector("#copy").onclick=async()=>{try{await navigator.clipboard.writeText(message);document.querySelector("#copy-status").textContent="已複製，請開啟 LINE 貼上並傳送。"}catch{document.querySelector("#request").select();document.querySelector("#copy-status").textContent="請長按訊息或手動複製。"}};
+ document.querySelector("#next").disabled=true;
 };
+fetch("./availability.json",{cache:"no-store"}).then(r=>{if(!r.ok)throw Error("load");return r.json()}).then(value=>{if(!value||typeof value!=="object"||Array.isArray(value)||Object.values(value).some(v=>!v||!/^([01]\\d|2[0-3]):[0-5]\\d$/.test(v.start)||!/^(([01]\\d|2[0-3]):[0-5]\\d|24:00)$/.test(v.end)||!Array.isArray(v.bookings)))throw Error("format");availability=value;render()}).catch(()=>{availabilityError=true;render()});
 render();
 </script>
 </body>
