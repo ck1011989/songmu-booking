@@ -77,8 +77,8 @@ async function loadLineMember(){
  lineToken=liff.getIDToken();if(!lineToken)throw Error("LINE 登入缺少必要授權，請聯絡店家");
  const r=await fetch(API,{method:"POST",headers:{...apiHeaders,"Content-Type":"application/json"},body:JSON.stringify({action:"member",line_id_token:lineToken})});const v=await r.json();if(!r.ok)throw Error(v.error);
  member=v;
- lineMessage=v.eligible?(v.active_trial?"已有新客申請待處理，請先聯絡店家。":"你符合 $1300 新客體驗資格；完成服務後才會核銷。"):"你已完成過服務，已為你選擇一般全身 90 分鐘 NT$1600。";
- if(!data.service){data.service=v.eligible&&!v.active_trial?"新客體驗｜全身 90 分鐘":"全身放鬆 90 分鐘";data.price=v.eligible&&!v.active_trial?"1300":"1600"}render();
+ lineMessage=v.eligible?(v.active_trial?"已有新客申請待處理，請先聯絡店家。":"你符合 $1300 新客體驗資格；完成服務後才會核銷。"):"你已完成過服務，已為你選擇一般全身 90 分鐘 NT$1500。";
+ if(!data.service){data.service=v.eligible&&!v.active_trial?"新客體驗｜全身 90 分鐘":"全身放鬆 90 分鐘";data.price=v.eligible&&!v.active_trial?"1300":"1500"}render();
 }
 async function lineLogin(){try{await liff.init({liffId:lineConfig.liff_id});if(!liff.isLoggedIn()){liff.login({redirectUri:location.origin+location.pathname+"?release=line-member"});return}await loadLineMember()}catch(e){lineMessage=e.message;render()}}
 fetch(API+"?action=config",{headers:apiHeaders,cache:"no-store"}).then(r=>r.json()).then(async c=>{lineConfig=c;if(!c.enabled){lineMessage="$1300 新客體驗的 LINE 資格驗證尚未啟用；可先預約一般服務或聯絡鬆沐。";render();return}await loadLineMember()}).catch(()=>{lineMessage="會員驗證暫時無法使用，請聯絡鬆沐。";render()});
@@ -88,7 +88,7 @@ let availabilityError = false;
 const todayTaipei = () => new Intl.DateTimeFormat("sv-SE",{timeZone:"Asia/Taipei",year:"numeric",month:"2-digit",day:"2-digit"}).format(new Date());
 const ASSESSMENT="運動功能評估＆居家運動建議（暫預留 30 分鐘）";
 const PLAN="鬆活方案｜全身放鬆 90 分鐘 × 10 次";
-const SERVICES=[["肌肉舒壓 30 分鐘",600,30],["半身放鬆 60 分鐘",1200,60],["全身放鬆 90 分鐘",1600,90],["全身 120 分鐘",2000,120],["新客體驗｜全身 90 分鐘",1300,90],[ASSESSMENT,300,30],[PLAN,14500,90]];
+const SERVICES=[["肌肉舒壓 30 分鐘",600,30],["半身放鬆 60 分鐘",1100,60],["全身放鬆 90 分鐘",1500,90],["全身 120 分鐘",2000,120],["新客體驗｜全身 90 分鐘",1300,90],[ASSESSMENT,300,30],[PLAN,14500,90]];
 function serviceMinutes(){return (SERVICES.find(x=>x[0]===data.service)?.[2]||30)+(data.assessment?30:0)}
 function serviceTotal(){return (SERVICES.find(x=>x[0]===data.service)?.[1]||0)+(data.assessment?300:0)}
 function serviceDescription(){return data.service+(data.service===PLAN?"（含贈送評估）":"")+(data.assessment?" ＋ 運動功能評估＆居家運動建議":"")}
@@ -153,8 +153,8 @@ ${memberPanel()}
 <h3 class="section-title">1. 選擇放鬆服務</h3>
 <p class="note">選擇一項放鬆服務，再依需要加選下方評估。</p>
 ${serviceCard("肌肉舒壓 30 分鐘","600")}
-${serviceCard("半身放鬆 60 分鐘","1200")}
-${serviceCard("全身放鬆 90 分鐘","1600")}
+${serviceCard("半身放鬆 60 分鐘","1100")}
+${serviceCard("全身放鬆 90 分鐘","1500")}
 ${serviceCard("全身 120 分鐘","2000")}
 ${member?.eligible&&!member?.active_trial?serviceCard("新客體驗｜全身 90 分鐘","1300"):""}
 <h3 class="section-title">2. 運動功能評估＆居家運動建議</h3>
@@ -165,9 +165,9 @@ ${member?.eligible&&!member?.active_trial?serviceCard("新客體驗｜全身 90 
 <h3 class="section-title">3. 鬆活方案</h3>
 <div class="card plan-card">
 <span class="badge">全身放鬆 90 分鐘 × 10 次</span>
-<h3>鬆活方案｜買 10 次 NT$14,500</h3>
+<h3>鬆活方案｜買 10 次 NT$13,500</h3>
 <p>平均每次 <b>NT$1,450</b>，另贈送 10 次運動功能評估＆居家運動建議，每次服務共 90 分鐘。</p>
-<div class="savings"><div>單次組合：NT$1,600＋NT$300＝<b>NT$1,900</b></div><div>10 次原價：NT$1,900 × 10＝NT$19,000</div><div>方案平均每次 <b>NT$1,450</b>，每次省 NT$450</div><div class="price">10 次總共立省 NT$4,500</div></div>
+<div class="savings"><div>單次組合：NT$1,500＋NT$300＝<b>NT$1,800</b></div><div>10 次原價：NT$1,800 × 10＝NT$18,000</div><div>方案平均每次 <b>NT$1,450</b>，每次省 NT$350</div><div class="price">10 次總共立省 NT$3,500</div></div>
 ${serviceCard(PLAN,"14500")}
 <p class="note">本次安排共 90 分鐘，含贈送的運動功能評估＆居家運動建議。方案購買與付款由店家確認。</p>
 </div>
