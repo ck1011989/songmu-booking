@@ -58,9 +58,25 @@ button:disabled{opacity:.35}
   <button class="primary" id="next">下一步 Next</button>
 </div>
 </div>
+<script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
 <script>
 // 編輯 booking/availability.json 可調整開放日期與各日期的開始時段。
 const API="https://wwavyzxxfspulofwpkmn.supabase.co/functions/v1/booking-api";const APIKEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind3YXZ5enh4ZnNwdWxvZndwa21uIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTExMTI0MjgsImV4cCI6MjEwNjY4ODQyOH0.Xc6e5AIerl7E9KlWfd-aY2GyftQ_UNpBR7-YIOVw9Ik";const apiHeaders={apikey:APIKEY,Authorization:"Bearer "+APIKEY};
+let member=null,lineToken=null,lineConfig=null,lineMessage="正在載入會員功能…";
+function memberPanel(){return '<div class="card"><h3>LINE 會員</h3><p>'+esc(lineMessage)+'</p>'+(!member&&lineConfig?.enabled?'<button type="button" onclick="lineLogin()">使用 LINE 登入</button>':'')+'</div>'}
+async function loadLineMember(){
+ if(!window.liff)throw Error("LINE 登入載入失敗");
+ await liff.init({liffId:lineConfig.liff_id});
+ if(!liff.isLoggedIn()){lineMessage="登入後自動確認 $1300 新客體驗資格；一般服務可直接預約。";render();return}
+ lineToken=liff.getIDToken();if(!lineToken)throw Error("LINE 登入缺少必要授權，請聯絡店家");
+ const r=await fetch(API,{method:"POST",headers:{...apiHeaders,"Content-Type":"application/json"},body:JSON.stringify({action:"member",line_id_token:lineToken})});const v=await r.json();if(!r.ok)throw Error(v.error);
+ member=v;
+ lineMessage=v.eligible?(v.active_trial?"已有新客申請待處理，請先聯絡店家。":"你符合 $1300 新客體驗資格；完成服務後才會核銷。"):"你已完成過服務，已為你選擇一般全身 90 分鐘 NT$1600。";
+ if(!data.service){data.service=v.eligible&&!v.active_trial?"新客體驗｜全身 90 分鐘":"全身放鬆 90 分鐘";data.price=v.eligible&&!v.active_trial?"1300":"1600"}render();
+}
+async function lineLogin(){try{await liff.init({liffId:lineConfig.liff_id});if(!liff.isLoggedIn()){liff.login({redirectUri:location.origin+location.pathname+"?release=line-member"});return}await loadLineMember()}catch(e){lineMessage=e.message;render()}}
+fetch(API+"?action=config",{headers:apiHeaders,cache:"no-store"}).then(r=>r.json()).then(async c=>{lineConfig=c;if(!c.enabled){lineMessage="$1300 新客體驗的 LINE 資格驗證尚未啟用；可先預約一般服務或聯絡鬆沐。";render();return}await loadLineMember()}).catch(()=>{lineMessage="會員驗證暫時無法使用，請聯絡鬆沐。";render()});
+
 let availability = {};
 let availabilityError = false;
 const todayTaipei = () => new Intl.DateTimeFormat("sv-SE",{timeZone:"Asia/Taipei",year:"numeric",month:"2-digit",day:"2-digit"}).format(new Date());
@@ -97,6 +113,7 @@ let page=0;
 const pages=[
 ()=>`
 <h2>預約鬆沐</h2>
+${memberPanel()}
 <div class="card choice selected">
  <h3>🌿 鬆沐整復｜沙鹿・東海</h3>
  <div>一個讓身體慢下來、好好放鬆的空間<br>採預約制<br>434 臺中市龍井區東海里藝術街 18-1 號</div>
@@ -120,11 +137,12 @@ const pages=[
 <div class="card choice selected"><h3>不指定</h3><div>由鬆沐整復安排服務</div></div>`,
 ()=>`
 <h2>今天想怎麼放鬆？</h2>
+${memberPanel()}
 ${serviceCard("肌肉舒壓 30 分鐘","600")}
 ${serviceCard("半身放鬆 60 分鐘","1200")}
 ${serviceCard("全身放鬆 90 分鐘","1600")}
 ${serviceCard("全身 120 分鐘","2000")}
-${serviceCard("新客體驗｜全身 90 分鐘","1300")}
+${member?.eligible&&!member?.active_trial?serviceCard("新客體驗｜全身 90 分鐘","1300"):""}
 ${serviceCard("運動功能評估＆居家運動建議（暫預留 30 分鐘）","300")}`,
 ()=>`
 <h2>挑一個適合你的時間</h2>
@@ -172,7 +190,7 @@ function serviceCard(name,price){
  <h3>${name}</h3><div class="price">NT$ ${price}</div></div>`;
 }
 function changeDate(value){data.date=value;data.time="";render()}
-function chooseService(name,price){data.service=name;data.price=price;data.date="";data.time="";render()}
+function chooseService(name,price){if(name==="新客體驗｜全身 90 分鐘"&&(!member?.eligible||member?.active_trial)){alert("請先完成 LINE 資格驗證");return}data.service=name;data.price=price;data.date="";data.time="";render()}
 function save(){
  if(page===4){
    const d=document.querySelector("#date"), t=document.querySelector("#time");
@@ -202,7 +220,7 @@ document.querySelector("#next").onclick=async()=>{
  const btn=document.querySelector("#next");btn.disabled=true;btn.textContent="正在送出…";
  try{
  data.request_id ||= crypto.randomUUID();
- const r=await fetch(API,{method:"POST",headers:{...apiHeaders,"Content-Type":"application/json"},body:JSON.stringify({...data,name:data.name.trim(),phone:data.phone.trim(),starts_at:data.date+"T"+data.time+":00+08:00",consent:true})});
+ const r=await fetch(API,{method:"POST",headers:{...apiHeaders,"Content-Type":"application/json"},body:JSON.stringify({...data,line_id_token:lineToken,name:data.name.trim(),phone:data.phone.trim(),starts_at:data.date+"T"+data.time+":00+08:00",consent:true})});
  const value=await r.json();if(!r.ok||!value.id)throw Error(value.error||"送出失敗");
  document.querySelector("#content").innerHTML='<h2>已收到預約申請 🌿</h2><div class="card"><p>資料已儲存，等待鬆沐確認。收到店家回覆後，預約才成立。</p><p id="receipt"></p><a href="https://line.me/R/ti/p/%40227osyby" target="_blank" rel="noopener">聯絡鬆沐 LINE</a></div>';
  document.querySelector("#receipt").textContent="申請編號："+value.id;
