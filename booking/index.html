@@ -201,7 +201,7 @@ document.querySelector("#next").onclick=()=>{
  document.querySelector("#copy").onclick=async()=>{try{await navigator.clipboard.writeText(message);document.querySelector("#copy-status").textContent="已複製，請開啟 LINE 貼上並傳送。"}catch{document.querySelector("#request").select();document.querySelector("#copy-status").textContent="請長按訊息或手動複製。"}};
  document.querySelector("#next").disabled=true;
 };
-fetch("./availability.json",{cache:"no-store"}).then(r=>{if(!r.ok)throw Error("load");return r.json()}).then(value=>{if(!value||typeof value!=="object"||Array.isArray(value)||Object.values(value).some(v=>!v||!/^([01]\\d|2[0-3]):[0-5]\\d$/.test(v.start)||!/^(([01]\\d|2[0-3]):[0-5]\\d|24:00)$/.test(v.end)||!Array.isArray(v.bookings)))throw Error("format");availability=value;render()}).catch(()=>{availabilityError=true;render()});
+fetch("./availability.json",{cache:"no-store"}).then(r=>{if(!r.ok)throw Error("load");return r.json()}).then(value=>{if(!value||typeof value!=="object"||Array.isArray(value)||Object.values(value).some(v=>!v||!/^([01]\d|2[0-3]):[0-5]\d$/.test(v.start)||!/^(([01]\d|2[0-3]):[0-5]\d|24:00)$/.test(v.end)||!Array.isArray(v.bookings)))throw Error("format");availability=value;render()}).catch(()=>{availabilityError=true;render()});
 render();
 </script>
 </body>
