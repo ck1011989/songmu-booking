@@ -34,6 +34,12 @@ button{font:inherit;font-size:18px;border:2px solid var(--brand);background:var(
 button.primary{background:var(--brand);color:#fff}
 button:disabled{opacity:.35}
 .price{color:var(--brand);font-weight:800}
+.section-title{font-size:20px;margin:32px 0 8px;color:var(--brand2)}
+.check-choice{display:flex;gap:12px;align-items:flex-start;cursor:pointer;margin:0}
+.check-choice input{width:22px;height:22px;flex:none;accent-color:var(--brand);margin-top:4px}
+.plan-card{background:#f1ece3;border-color:#71806b}
+.savings{background:#fff9ef;padding:15px;border-radius:12px;margin-bottom:18px}
+.selection-total{border-color:var(--brand);background:#f5f0ea}
 .hidden{display:none}
 .summary div{padding:8px 0;border-bottom:1px dashed #ddd}
 .badge{display:inline-block;padding:3px 9px;border-radius:99px;background:var(--soft);font-size:14px}
@@ -80,7 +86,13 @@ fetch(API+"?action=config",{headers:apiHeaders,cache:"no-store"}).then(r=>r.json
 let availability = {};
 let availabilityError = false;
 const todayTaipei = () => new Intl.DateTimeFormat("sv-SE",{timeZone:"Asia/Taipei",year:"numeric",month:"2-digit",day:"2-digit"}).format(new Date());
-function serviceMinutes(){const m=data.service.match(/\b(120|90|60|30) 分鐘/);return m?Number(m[1]):data.service==="全身 120 分鐘"?120:30}
+const ASSESSMENT="運動功能評估＆居家運動建議（暫預留 30 分鐘）";
+const PLAN="鬆活方案｜全身放鬆 90 分鐘 × 10 次";
+const SERVICES=[["肌肉舒壓 30 分鐘",600,30],["半身放鬆 60 分鐘",1200,60],["全身放鬆 90 分鐘",1600,90],["全身 120 分鐘",2000,120],["新客體驗｜全身 90 分鐘",1300,90],[ASSESSMENT,300,30],[PLAN,14500,90]];
+function serviceMinutes(){return (SERVICES.find(x=>x[0]===data.service)?.[2]||30)+(data.assessment?30:0)}
+function serviceTotal(){return (SERVICES.find(x=>x[0]===data.service)?.[1]||0)+(data.assessment?300:0)}
+function serviceDescription(){return data.service+(data.service===PLAN?"（含贈送評估）":"")+(data.assessment?" ＋ 運動功能評估＆居家運動建議":"")}
+function resetServiceTime(){data.date="";data.time="";delete data.request_id;data.price=String(serviceTotal())}
 function openTimes(date) {
  const day=availability[date];if(!day)return [];
  const toMinutes=t=>{const [hour,min]=t.split(":").map(Number);return hour*60+min};
@@ -100,6 +112,7 @@ const data = {
   staff:"不指定",
   service:"",
   price:"",
+  assessment:false,
   date:"",
   time:"",
   name:"",
@@ -137,12 +150,28 @@ ${memberPanel()}
 <div class="card choice selected"><h3>不指定</h3><div>由鬆沐整復安排服務</div></div>`,
 ()=>`
 <h2>今天想怎麼放鬆？</h2>
+<h3 class="section-title">1. 選擇放鬆服務</h3>
+<p class="note">選擇一項放鬆服務，再依需要加選下方評估。</p>
 ${serviceCard("肌肉舒壓 30 分鐘","600")}
 ${serviceCard("半身放鬆 60 分鐘","1200")}
 ${serviceCard("全身放鬆 90 分鐘","1600")}
 ${serviceCard("全身 120 分鐘","2000")}
 ${member?.eligible&&!member?.active_trial?serviceCard("新客體驗｜全身 90 分鐘","1300"):""}
-${serviceCard("運動功能評估＆居家運動建議（暫預留 30 分鐘）","300")}`,
+<h3 class="section-title">2. 運動功能評估＆居家運動建議</h3>
+<p class="note">可單獨預約，或加在放鬆服務後。額外 NT$300，暫預留 30 分鐘。</p>
+<div class="card">
+<label class="check-choice"><input id="assessment" type="checkbox" ${data.assessment||data.service===ASSESSMENT?"checked":""} ${data.service===PLAN?"disabled":""} onchange="toggleAssessment(this.checked)"> ${data.service===PLAN?"方案每次已含贈送評估，不需重複加選":"選擇運動功能評估＆居家運動建議"}</label>
+</div>
+<h3 class="section-title">3. 鬆活方案</h3>
+<div class="card plan-card">
+<span class="badge">全身放鬆 90 分鐘 × 10 次</span>
+<h3>鬆活方案｜買 10 次 NT$14,500</h3>
+<p>平均每次 <b>NT$1,450</b>，另贈送 10 次運動功能評估＆居家運動建議，每次服務共 90 分鐘。</p>
+<div class="savings"><div>單次組合：NT$1,600＋NT$300＝<b>NT$1,900</b></div><div>10 次原價：NT$1,900 × 10＝NT$19,000</div><div>方案平均每次 <b>NT$1,450</b>，每次省 NT$450</div><div class="price">10 次總共立省 NT$4,500</div></div>
+${serviceCard(PLAN,"14500")}
+<p class="note">本次安排共 90 分鐘，含贈送的運動功能評估＆居家運動建議。方案購買與付款由店家確認。</p>
+</div>
+${data.service?'<div class="card selection-total" aria-live="polite"><h3>本次選擇</h3><div>'+esc(serviceDescription())+'</div><div>預留 '+serviceMinutes()+' 分鐘</div><div class="price">'+(data.service===PLAN?'方案總價':'合計')+' NT$'+serviceTotal().toLocaleString()+'</div></div>':""}`,
 ()=>`
 <h2>挑一個適合你的時間</h2>
 <div class="card">
@@ -170,9 +199,9 @@ ${openTimes(data.date).map(t=>`<option ${data.time===t?"selected":""}>${t}</opti
 <div class="card summary">
  <div><b>門店：</b>${data.store}</div>
  <div><b>服務人員：</b>${data.staff}</div>
- <div><b>服務：</b>${data.service||"尚未選擇"}</div>
- <div><b>費用：</b><span class="price">${data.price?"NT$ "+data.price:"-"}</span></div>
- <div><b>時間：</b>${data.date||"-"} ${data.time||""}</div>
+ <div><b>服務：</b>${esc(serviceDescription()||"尚未選擇")}</div>
+ <div><b>費用：</b><span class="price">${data.service?"NT$ "+serviceTotal().toLocaleString():"-"}</span></div>
+ <div><b>預留時間：</b>${serviceMinutes()} 分鐘</div>\n <div><b>時間：</b>${data.date||"-"} ${data.time||""}</div>
  <div><b>姓名：</b>${esc(data.name||"-")}</div>
  <div><b>手機：</b>${esc(data.phone||"-")}</div>
  <div><b>LINE：</b>${esc(data.line||"-")}</div>
@@ -186,10 +215,23 @@ ${openTimes(data.date).map(t=>`<option ${data.time===t?"selected":""}>${t}</opti
 function serviceCard(name,price){
  const sel=data.service===name?"selected":"";
  return `<div class="card choice ${sel}" onclick="chooseService('${name}','${price}')">
- <h3>${name}</h3><div class="price">NT$ ${price}</div></div>`;
+ <h3>${name}</h3><div class="price">NT$ ${Number(price).toLocaleString()}</div></div>`;
 }
 function changeDate(value){data.date=value;data.time="";render()}
-function chooseService(name,price){if(name==="新客體驗｜全身 90 分鐘"&&(!member?.eligible||member?.active_trial)){alert("請先完成 LINE 資格驗證");return}data.service=name;data.price=price;data.date="";data.time="";render()}
+function chooseService(name,price){
+ if(name==="新客體驗｜全身 90 分鐘"&&(!member?.eligible||member?.active_trial)){alert("請先完成 LINE 資格驗證");return}
+ if(data.service===name&&name!==PLAN){data.service=data.assessment?ASSESSMENT:"";data.assessment=false}
+ else {if(data.service===ASSESSMENT&&name!==PLAN)data.assessment=true;data.service=name}
+ if(name===PLAN){data.assessment=false}
+ resetServiceTime();render()
+}
+function toggleAssessment(checked){
+ if(data.service===PLAN)return;
+ if(!data.service||data.service===ASSESSMENT){data.service=checked?ASSESSMENT:"";data.assessment=false}
+ else data.assessment=checked;
+ resetServiceTime();render()
+}
+
 function save(){
  if(page===4){
    const d=document.querySelector("#date"), t=document.querySelector("#time");
