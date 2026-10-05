@@ -160,14 +160,14 @@ ${member?.eligible&&!member?.active_trial?serviceCard("新客體驗｜全身 90 
 <h3 class="section-title">2. 運動功能評估＆居家運動建議</h3>
 <p class="note">可單獨預約，或加在放鬆服務後。額外 NT$300，暫預留 30 分鐘。</p>
 <div class="card">
-<label class="check-choice"><input id="assessment" type="checkbox" ${data.assessment||data.service===ASSESSMENT?"checked":""} ${data.service===PLAN?"disabled":""} onchange="toggleAssessment(this.checked)"> ${data.service===PLAN?"方案每次已含贈送評估，不需重複加選":"選擇運動功能評估＆居家運動建議"}</label>
+<label class="check-choice"><input id="assessment" type="checkbox" ${data.assessment||data.service===ASSESSMENT?"checked":""} ${data.service===PLAN?"disabled":""} onchange="toggleAssessment(this.checked)"> ${data.service===PLAN?"方案含贈送評估，不需重複加選":"選擇運動功能評估＆居家運動建議"}</label>
 </div>
 <h3 class="section-title">3. 鬆活方案</h3>
 <div class="card plan-card">
 <span class="badge">全身放鬆 90 分鐘 × 10 次</span>
 <h3>鬆活方案｜買 10 次 NT$13,000</h3>
 <p>平均每次 <b>NT$1,300</b>，另贈送運動功能評估＆居家運動建議。</p>
-<div class="savings"><div class="price">單次 NT$1,300，立省 NT$500</div></div>
+<div class="savings"><div class="price">平均每次 NT$1,300</div></div>
 ${serviceCard(PLAN,"13000")}
 <p class="note">方案含贈送的運動功能評估＆居家運動建議。方案購買與付款由店家確認。</p>
 </div>
