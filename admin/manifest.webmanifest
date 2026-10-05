@@ -1,0 +1,14 @@
+{
+  "name": "鬆沐預約管理",
+  "short_name": "鬆沐管理",
+  "description": "鬆沐美式整復預約管理後台",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#fbf9f6",
+  "theme_color": "#705943",
+  "lang": "zh-Hant",
+  "icons": [
+    {"src":"./icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}
+  ]
+}
