@@ -11,19 +11,19 @@
   "lang": "zh-Hant",
   "icons": [
     {
-      "src": "/songmu-booking/admin/icon-192.png",
+      "src": "/songmu-booking/admin/icon-192-v2.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/songmu-booking/admin/icon-512.png",
+      "src": "/songmu-booking/admin/icon-512-v2.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/songmu-booking/admin/icon-maskable-512.png",
+      "src": "/songmu-booking/admin/icon-maskable-512-v2.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"

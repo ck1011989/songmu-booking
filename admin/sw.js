@@ -1,6 +1,6 @@
 const CACHE='songmu-admin-v2';
 const BASE='/songmu-booking/admin/';
-const SHELL=[BASE,BASE+'index.html',BASE+'config.js',BASE+'xlsx.js',BASE+'manifest.webmanifest',BASE+'icon.svg',BASE+'icon-192.png',BASE+'icon-512.png',BASE+'icon-maskable-512.png'];
+const SHELL=[BASE,BASE+'index.html',BASE+'config.js',BASE+'xlsx.js',BASE+'manifest.webmanifest',BASE+'icon.svg',BASE+'icon-192-v2.png',BASE+'icon-512-v2.png',BASE+'icon-maskable-512-v2.png'];
 self.addEventListener('install',event=>event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(SHELL)).then(()=>self.skipWaiting())));
 self.addEventListener('activate',event=>event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(key=>key.startsWith('songmu-admin-')&&key!==CACHE).map(key=>caches.delete(key)))).then(()=>self.clients.claim())));
 self.addEventListener('fetch',event=>{
