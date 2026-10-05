@@ -1,5 +1,17 @@
-const CACHE='songmu-admin-v1';
-const SHELL=['./','./index.html','./config.js','./xlsx.js','./manifest.webmanifest','./icon.svg'];
-self.addEventListener('install',e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll(SHELL)).then(()=>self.skipWaiting())));
-self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));
-self.addEventListener('fetch',e=>{if(e.request.method!=='GET')return;const u=new URL(e.request.url);if(u.origin!==location.origin)return;e.respondWith(fetch(e.request).then(r=>{const copy=r.clone();caches.open(CACHE).then(c=>c.put(e.request,copy));return r}).catch(()=>caches.match(e.request))) });
+const CACHE='songmu-admin-v2';
+const BASE='/songmu-booking/admin/';
+const SHELL=[BASE,BASE+'index.html',BASE+'config.js',BASE+'xlsx.js',BASE+'manifest.webmanifest',BASE+'icon.svg',BASE+'icon-192.png',BASE+'icon-512.png',BASE+'icon-maskable-512.png'];
+self.addEventListener('install',event=>event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(SHELL)).then(()=>self.skipWaiting())));
+self.addEventListener('activate',event=>event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(key=>key.startsWith('songmu-admin-')&&key!==CACHE).map(key=>caches.delete(key)))).then(()=>self.clients.claim())));
+self.addEventListener('fetch',event=>{
+ const request=event.request,url=new URL(request.url);
+ if(request.method!=='GET'||url.origin!==self.location.origin||!url.pathname.startsWith(BASE))return;
+ const recovery=url.searchParams.has('code')||url.searchParams.has('token')||url.searchParams.has('token_hash')||url.searchParams.has('access_token')||url.searchParams.has('error');
+ if(recovery){event.respondWith(fetch(request).catch(()=>caches.match(BASE)));return}
+ if(request.mode==='navigate'){
+ event.respondWith(fetch(request).then(response=>{if(response.ok&&url.pathname===BASE&&!url.search)event.waitUntil(caches.open(CACHE).then(cache=>cache.put(BASE,response.clone())));return response}).catch(()=>caches.match(BASE)));
+ return;
+ }
+ if(!SHELL.includes(url.pathname)||url.search)return;
+ event.respondWith(fetch(request).then(response=>{if(response.ok)event.waitUntil(caches.open(CACHE).then(cache=>cache.put(request,response.clone())));return response}).catch(()=>caches.match(request)));
+});
