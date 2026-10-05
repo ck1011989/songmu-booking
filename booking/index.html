@@ -5,271 +5,37 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>我要預約｜鬆沐整復</title>
 <style>
-:root{
-  --brand:#8a725f; --brand2:#6f5949; --ink:#3f3934; --muted:#a69d95;
-  --line:#ddd4cc; --bg:#fbf9f6; --soft:#f1ece6;
-}
-*{box-sizing:border-box}
-body{margin:0;background:#e9e3dc;font-family:-apple-system,BlinkMacSystemFont,"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;color:var(--ink)}
-.app{max-width:760px;margin:auto;background:var(--bg);min-height:100dvh;padding-bottom:92px;position:relative}
-header{padding:25px 28px 14px;border-bottom:1px solid #eee;position:sticky;top:0;background:rgba(251,249,246,.96);z-index:5}
-header h1{font-size:26px;margin:0 0 4px;font-weight:800}
-header small{color:#aaa}
-.steps{display:flex;gap:24px;overflow:auto;padding:26px 24px 20px;white-space:nowrap;scrollbar-width:none}
-.step{font-size:18px;color:#bbb}
-.step.active{color:var(--brand);font-weight:700}
-main{padding:10px 28px 30px}
-h2{text-align:center;font-size:25px;margin:18px 0 25px}
-.card{border:2px solid #c7c7c7;border-radius:18px;padding:24px;margin-bottom:18px;line-height:1.65;font-size:18px;background:var(--bg)}
-.card.choice{cursor:pointer}
-.card.choice.selected{border-color:var(--brand);background:#f5f0ea}
-.card h3{margin:0 0 8px;font-size:20px}
-.note{font-size:17px;line-height:1.75}
-label{display:block;margin:14px 0 7px;font-weight:700}
-input,select,textarea{width:100%;font-size:17px;padding:14px;border:1px solid #ccc;border-radius:10px;background:var(--bg)}
-textarea{min-height:100px;resize:vertical}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.actions{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:min(760px,100%);display:flex;justify-content:space-between;gap:18px;padding:14px 22px calc(14px + env(safe-area-inset-bottom));background:rgba(251,249,246,.97);border-top:1px solid #ddd;z-index:10}
-button{font:inherit;font-size:18px;border:2px solid var(--brand);background:var(--bg);color:var(--brand);padding:11px 24px;border-radius:10px;min-width:135px}
-button.primary{background:var(--brand);color:#fff}
-button:disabled{opacity:.35}
-.price{color:var(--brand);font-weight:800}
-.section-title{font-size:20px;margin:32px 0 8px;color:var(--brand2)}
-.check-choice{display:flex;gap:12px;align-items:flex-start;cursor:pointer;margin:0}
-.check-choice input{width:22px;height:22px;flex:none;accent-color:var(--brand);margin-top:4px}
-.plan-card{background:#f1ece3;border-color:#71806b}
-.savings{background:#fff9ef;padding:15px;border-radius:12px;margin-bottom:18px}
-.selection-total{border-color:var(--brand);background:#f5f0ea}
-.hidden{display:none}
-.summary div{padding:8px 0;border-bottom:1px dashed #ddd}
-.badge{display:inline-block;padding:3px 9px;border-radius:99px;background:var(--soft);font-size:14px}
-@media(max-width:520px){
- header{padding:20px 20px 12px} header h1{font-size:22px}
- main{padding:6px 20px 26px}.steps{padding-left:20px;gap:20px}.step{font-size:17px}
- .card{padding:20px;font-size:17px}.grid{grid-template-columns:1fr}
- button{min-width:120px;padding:10px 15px}
-}
+:root{--brand:#8a725f;--brand2:#6f5949;--ink:#3f3934;--muted:#a69d95;--line:#ddd4cc;--bg:#fbf9f6;--soft:#f1ece6}
+*{box-sizing:border-box}body{margin:0;background:#e9e3dc;font-family:-apple-system,BlinkMacSystemFont,"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;color:var(--ink)}
+.app{max-width:760px;margin:auto;background:var(--bg);min-height:100dvh;padding-bottom:92px;position:relative}header{padding:25px 28px 14px;border-bottom:1px solid #eee;position:sticky;top:0;background:rgba(251,249,246,.96);z-index:5}header h1{font-size:26px;margin:0 0 4px;font-weight:800}header small{color:#aaa}.steps{display:flex;gap:24px;overflow:auto;padding:26px 24px 20px;white-space:nowrap;scrollbar-width:none}.step{font-size:18px;color:#bbb}.step.active{color:var(--brand);font-weight:700}main{padding:10px 28px 30px}h2{text-align:center;font-size:25px;margin:18px 0 25px}.card{border:2px solid #c7c7c7;border-radius:18px;padding:24px;margin-bottom:18px;line-height:1.65;font-size:18px;background:var(--bg)}.card.choice{cursor:pointer}.card.choice.selected{border-color:var(--brand);background:#f5f0ea}.card h3{margin:0 0 8px;font-size:20px}.note{font-size:17px;line-height:1.75}label{display:block;margin:14px 0 7px;font-weight:700}input,select,textarea{width:100%;font-size:17px;padding:14px;border:1px solid #ccc;border-radius:10px;background:var(--bg)}textarea{min-height:100px;resize:vertical}.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.actions{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:min(760px,100%);display:flex;justify-content:space-between;gap:18px;padding:14px 22px calc(14px + env(safe-area-inset-bottom));background:rgba(251,249,246,.97);border-top:1px solid #ddd;z-index:10}button{font:inherit;font-size:18px;border:2px solid var(--brand);background:var(--bg);color:var(--brand);padding:11px 24px;border-radius:10px;min-width:135px}button.primary{background:var(--brand);color:#fff}button:disabled{opacity:.35}.price{color:var(--brand);font-weight:800}.section-title{font-size:20px;margin:32px 0 8px;color:var(--brand2)}.check-choice{display:flex;gap:12px;align-items:flex-start;cursor:pointer;margin:0}.check-choice input{width:22px;height:22px;flex:none;accent-color:var(--brand);margin-top:4px}.plan-card{background:#f1ece3;border-color:#71806b}.savings{background:#fff9ef;padding:15px;border-radius:12px;margin-bottom:18px}.selection-total{border-color:var(--brand);background:#f5f0ea}.hidden{display:none}.summary div{padding:8px 0;border-bottom:1px dashed #ddd}.badge{display:inline-block;padding:3px 9px;border-radius:99px;background:var(--soft);font-size:14px}
+.notice-backdrop{position:fixed;inset:0;background:rgba(35,31,28,.58);z-index:1000;display:none;align-items:center;justify-content:center;padding:24px}.notice-backdrop.show{display:flex}.notice-box{width:min(420px,100%);background:var(--bg);border-radius:22px;padding:26px 24px 22px;box-shadow:0 18px 60px rgba(0,0,0,.24);text-align:center}.notice-icon{font-size:34px;margin-bottom:6px}.notice-box h3{font-size:22px;margin:0 0 12px;color:var(--brand2)}.notice-box p{font-size:18px;line-height:1.65;margin:0 0 22px;white-space:pre-line}.notice-box button{width:100%;background:var(--brand);color:#fff}
+@media(max-width:520px){header{padding:20px 20px 12px}header h1{font-size:22px}main{padding:6px 20px 26px}.steps{padding-left:20px;gap:20px}.step{font-size:17px}.card{padding:20px;font-size:17px}.grid{grid-template-columns:1fr}button{min-width:120px;padding:10px 15px}}
 </style>
-</head>
-<body>
-<div class="app">
-<header>
-  <h1>鬆沐整復｜線上預約</h1>
-  <small>鬆一點・舒服一點・讓身體慢慢回到自在</small>
-</header>
-<div class="steps" id="steps"></div>
-<main id="content"></main>
-<div class="actions">
-  <button id="prev">上一步 Prev</button>
-  <button class="primary" id="next">下一步 Next</button>
-</div>
-</div>
-<script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
-<script>
-// 編輯 booking/availability.json 可調整開放日期與各日期的開始時段。
+</head><body>
+<div class="app"><header><h1>鬆沐整復｜線上預約</h1><small>鬆一點・舒服一點・讓身體慢慢回到自在</small></header><div class="steps" id="steps"></div><main id="content"></main><div class="actions"><button id="prev">上一步 Prev</button><button class="primary" id="next">下一步 Next</button></div></div>
+<div class="notice-backdrop" id="notice" role="dialog" aria-modal="true" aria-labelledby="notice-title"><div class="notice-box"><div class="notice-icon">🌿</div><h3 id="notice-title">鬆沐預約提醒</h3><p id="notice-message"></p><button type="button" onclick="closeNotice()">確定</button></div></div>
+<script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script><script>
 const API="https://wwavyzxxfspulofwpkmn.supabase.co/functions/v1/booking-api";const APIKEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind3YXZ5enh4ZnNwdWxvZndwa21uIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTExMTI0MjgsImV4cCI6MjEwNjY4ODQyOH0.Xc6e5AIerl7E9KlWfd-aY2GyftQ_UNpBR7-YIOVw9Ik";const apiHeaders={apikey:APIKEY,Authorization:"Bearer "+APIKEY};
-let member=null,lineToken=null,lineConfig=null,lineMessage="正在載入會員功能…";
-function memberPanel(){return '<div class="card"><h3>新客體驗</h3><p>'+esc(lineMessage)+'</p>'+(!member&&lineConfig?.enabled?'<button type="button" onclick="lineLogin()">使用 LINE 登入</button>':'')+'</div>'}
-async function loadLineMember(){
- if(!window.liff)throw Error("LINE 登入載入失敗");
- await liff.init({liffId:lineConfig.liff_id});
- if(!liff.isLoggedIn()){lineMessage="登入後自動確認 $1300 新客體驗資格；一般服務可直接預約。";render();return}
- lineToken=liff.getIDToken();if(!lineToken)throw Error("LINE 登入缺少必要授權，請聯絡店家");
- const r=await fetch(API,{method:"POST",headers:{...apiHeaders,"Content-Type":"application/json"},body:JSON.stringify({action:"member",line_id_token:lineToken})});const v=await r.json();if(!r.ok)throw Error(v.error);
- member=v;
- lineMessage=v.eligible?(v.active_trial?"已有新客申請待處理，請先聯絡店家。":"你符合 $1300 新客體驗資格；完成服務後才會核銷。"):"你已完成過服務，已為你選擇一般全身 90 分鐘 NT$1500。";
- if(!data.service){data.service=v.eligible&&!v.active_trial?"新客體驗｜全身 90 分鐘":"全身放鬆 90 分鐘";data.price=v.eligible&&!v.active_trial?"1300":"1500"}render();
-}
-async function lineLogin(){try{await liff.init({liffId:lineConfig.liff_id});if(!liff.isLoggedIn()){liff.login({redirectUri:location.origin+location.pathname+"?release=line-member"});return}await loadLineMember()}catch(e){lineMessage=e.message;render()}}
-fetch(API+"?action=config",{headers:apiHeaders,cache:"no-store"}).then(r=>r.json()).then(async c=>{lineConfig=c;if(!c.enabled){lineMessage="$1300 新客體驗的 LINE 資格驗證尚未啟用；可先預約一般服務或聯絡鬆沐。";render();return}await loadLineMember()}).catch(()=>{lineMessage="會員驗證暫時無法使用，請聯絡鬆沐。";render()});
-
-let availability = {};
-let availabilityError = false;
-const todayTaipei = () => new Intl.DateTimeFormat("sv-SE",{timeZone:"Asia/Taipei",year:"numeric",month:"2-digit",day:"2-digit"}).format(new Date());
-const ASSESSMENT="運動功能評估＆居家運動建議（暫預留 30 分鐘）";
-const PLAN="鬆活方案｜全身放鬆 90 分鐘 × 10 次";
-const SERVICES=[["肌肉舒壓 30 分鐘",600,30],["半身放鬆 60 分鐘",1100,60],["全身放鬆 90 分鐘",1500,90],["全身 120 分鐘",2000,120],["新客體驗｜全身 90 分鐘",1300,90],[ASSESSMENT,300,30],[PLAN,13000,90]];
-function serviceMinutes(){return (SERVICES.find(x=>x[0]===data.service)?.[2]||30)+(data.assessment?30:0)}
-function serviceTotal(){return (SERVICES.find(x=>x[0]===data.service)?.[1]||0)+(data.assessment?300:0)}
-function serviceDescription(){return data.service+(data.service===PLAN?"（含贈送評估）":"")+(data.assessment?" ＋ 運動功能評估＆居家運動建議":"")}
-function resetServiceTime(){data.date="";data.time="";delete data.request_id;data.price=String(serviceTotal())}
-function openTimes(date) {
- const day=availability[date];if(!day)return [];
- const toMinutes=t=>{const [hour,min]=t.split(":").map(Number);return hour*60+min};
- const start=toMinutes(day.start),end=toMinutes(day.end),result=[];
- const blocked=day.bookings||[];
- for(let t=start;t+serviceMinutes()<=end;t+=30){
-  const time=String(Math.floor(t/60)).padStart(2,"0")+":"+String(t%60).padStart(2,"0");
-  if(new Date(date+"T"+time+":00+08:00").getTime()<=Date.now())continue;
-  if(blocked.some(x=>t<toMinutes(x.end)+10&&t+serviceMinutes()+10>toMinutes(x.start)))continue;
-  result.push(time);
- }return result;
-}
-function openDates(){return Object.keys(availability).filter(d=>/^\d{4}-\d{2}-\d{2}$/.test(d)&&d>=todayTaipei()&&openTimes(d).length).sort()}
-function esc(value){return String(value).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
-const data = {
-  store:"鬆沐整復｜東海",
-  staff:"不指定",
-  service:"",
-  price:"",
-  assessment:false,
-  date:"",
-  time:"",
-  name:"",
-  phone:"",
-  line:"",
-  symptoms:"",
-  note:""
-};
-const labels=["1. 門店","2. 預約","3. 人員","4. 服務","5. 時間","6. 資料","7. 確認"];
-let page=0;
+function showNotice(message,title="鬆沐預約提醒"){document.querySelector("#notice-title").textContent=title;document.querySelector("#notice-message").textContent=message;document.querySelector("#notice").classList.add("show");document.body.style.overflow="hidden"}function closeNotice(){document.querySelector("#notice").classList.remove("show");document.body.style.overflow=""}document.querySelector("#notice").addEventListener("click",e=>{if(e.target.id==="notice")closeNotice()});
+let member=null,lineToken=null,lineConfig=null,lineMessage="正在載入會員功能…";function memberPanel(){return '<div class="card"><h3>新客體驗</h3><p>'+esc(lineMessage)+'</p>'+(!member&&lineConfig?.enabled?'<button type="button" onclick="lineLogin()">使用 LINE 登入</button>':'')+'</div>'}
+async function loadLineMember(){if(!window.liff)throw Error("LINE 登入載入失敗");await liff.init({liffId:lineConfig.liff_id});if(!liff.isLoggedIn()){lineMessage="登入後自動確認 $1300 新客體驗資格；一般服務可直接預約。";render();return}lineToken=liff.getIDToken();if(!lineToken)throw Error("LINE 登入缺少必要授權，請聯絡店家");const r=await fetch(API,{method:"POST",headers:{...apiHeaders,"Content-Type":"application/json"},body:JSON.stringify({action:"member",line_id_token:lineToken})});const v=await r.json();if(!r.ok)throw Error(v.error);member=v;lineMessage=v.eligible?(v.active_trial?"已有新客申請待處理，請先聯絡店家。":"你符合 $1300 新客體驗資格；完成服務後才會核銷。"):"你已完成過服務，已為你選擇一般全身 90 分鐘 NT$1500。";if(!data.service){data.service=v.eligible&&!v.active_trial?"新客體驗｜全身 90 分鐘":"全身放鬆 90 分鐘";data.price=v.eligible&&!v.active_trial?"1300":"1500"}render()}
+async function lineLogin(){try{await liff.init({liffId:lineConfig.liff_id});if(!liff.isLoggedIn()){liff.login({redirectUri:location.origin+location.pathname+"?release=line-member"});return}await loadLineMember()}catch(e){lineMessage=e.message;render()}}fetch(API+"?action=config",{headers:apiHeaders,cache:"no-store"}).then(r=>r.json()).then(async c=>{lineConfig=c;if(!c.enabled){lineMessage="$1300 新客體驗的 LINE 資格驗證尚未啟用；可先預約一般服務或聯絡鬆沐。";render();return}await loadLineMember()}).catch(()=>{lineMessage="會員驗證暫時無法使用，請聯絡鬆沐。";render()});
+let availability={};let availabilityError=false;const todayTaipei=()=>new Intl.DateTimeFormat("sv-SE",{timeZone:"Asia/Taipei",year:"numeric",month:"2-digit",day:"2-digit"}).format(new Date());const ASSESSMENT="運動功能評估＆居家運動建議（暫預留 30 分鐘）";const PLAN="鬆活方案｜全身放鬆 90 分鐘 × 10 次";const SERVICES=[["肌肉舒壓 30 分鐘",600,30],["半身放鬆 60 分鐘",1100,60],["全身放鬆 90 分鐘",1500,90],["全身 120 分鐘",2000,120],["新客體驗｜全身 90 分鐘",1300,90],[ASSESSMENT,300,30],[PLAN,13000,90]];
+function serviceMinutes(){return(SERVICES.find(x=>x[0]===data.service)?.[2]||30)+(data.assessment?30:0)}function serviceTotal(){return(SERVICES.find(x=>x[0]===data.service)?.[1]||0)+(data.assessment?300:0)}function serviceDescription(){return data.service+(data.service===PLAN?"（含贈送評估）":"")+(data.assessment?" ＋ 運動功能評估＆居家運動建議":"")}function resetServiceTime(){data.date="";data.time="";delete data.request_id;data.price=String(serviceTotal())}
+function openTimes(date){const day=availability[date];if(!day)return[];const toMinutes=t=>{const[hour,min]=t.split(":").map(Number);return hour*60+min};const start=toMinutes(day.start),end=toMinutes(day.end),result=[],blocked=day.bookings||[];for(let t=start;t+serviceMinutes()<=end;t+=30){const time=String(Math.floor(t/60)).padStart(2,"0")+":"+String(t%60).padStart(2,"0");if(new Date(date+"T"+time+":00+08:00").getTime()<=Date.now())continue;if(blocked.some(x=>t<toMinutes(x.end)+10&&t+serviceMinutes()+10>toMinutes(x.start)))continue;result.push(time)}return result}function openDates(){return Object.keys(availability).filter(d=>/^\d{4}-\d{2}-\d{2}$/.test(d)&&d>=todayTaipei()&&openTimes(d).length).sort()}function esc(value){return String(value).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+const data={store:"鬆沐整復｜東海",staff:"不指定",service:"",price:"",assessment:false,date:"",time:"",name:"",phone:"",line:"",symptoms:"",note:""};const labels=["1. 門店","2. 預約","3. 人員","4. 服務","5. 時間","6. 資料","7. 確認"];let page=0;
+function serviceCard(name,price){const sel=data.service===name?"selected":"";return `<div class="card choice ${sel}" onclick="chooseService('${name}','${price}')"><h3>${name}</h3><div class="price">NT$ ${Number(price).toLocaleString()}</div></div>`}
 const pages=[
-()=>`
-<h2>預約鬆沐</h2>
-${memberPanel()}
-<div class="card choice selected">
- <h3>🌿 鬆沐整復｜東海</h3>
- <div>一個讓身體慢下來、好好放鬆的空間<br>採預約制<br>434 臺中市龍井區東海里藝術街 18-1 號</div>
- <span class="badge">工作室</span>
-</div>`,
-()=>`
-<h2>預約注意事項 (Notice)</h2>
-<div class="card note">
- <b>預約前請詳閱</b><br><br>
- ⏰ <b>預約時間</b><br>
- 為了讓每位客人都能有完整、舒服的放鬆時間，預約時段保留 10 分鐘。若可能晚到，麻煩提前用 LINE 告訴我們。<br><br>
- 📍 <b>入店方式</b><br>
- 434 臺中市龍井區東海里藝術街 18-1 號，採完全預約制。<br><br>
- ⚠️ <b>服務提醒</b><br>
- 如果有近期受傷、手術、懷孕或其他需要特別留意的身體狀況，預約時先告訴我們，我們會依狀況調整服務內容。<br><br>
- 📱 <b>聯絡方式</b><br>
- LINE 官方帳號：@227osyby
-</div>`,
-()=>`
-<h2>選擇服務人員</h2>
-<div class="card choice selected"><h3>不指定</h3><div>由鬆沐整復安排服務</div></div>`,
-()=>`
-<h2>今天想怎麼放鬆？</h2>
-<h3 class="section-title">1. 選擇放鬆服務</h3>
-<p class="note">選擇一項放鬆服務，再依需要加選下方評估。</p>
-${serviceCard("肌肉舒壓 30 分鐘","600")}
-${serviceCard("半身放鬆 60 分鐘","1100")}
-${serviceCard("全身放鬆 90 分鐘","1500")}
-${serviceCard("全身 120 分鐘","2000")}
-${member?.eligible&&!member?.active_trial?serviceCard("新客體驗｜全身 90 分鐘","1300"):""}
-<h3 class="section-title">2. 運動功能評估＆居家運動建議</h3>
-<p class="note">可單獨預約，或加在放鬆服務後。額外 NT$300，暫預留 30 分鐘。</p>
-<div class="card">
-<label class="check-choice"><input id="assessment" type="checkbox" ${data.assessment||data.service===ASSESSMENT?"checked":""} ${data.service===PLAN?"disabled":""} onchange="toggleAssessment(this.checked)"> ${data.service===PLAN?"方案含贈送評估，不需重複加選":"選擇運動功能評估＆居家運動建議"}</label>
-</div>
-<h3 class="section-title">3. 鬆活方案</h3>
-<div class="card plan-card">
-<span class="badge">全身放鬆 90 分鐘 × 10 次</span>
-<h3>鬆活方案｜買 10 次 NT$13,000</h3>
-<p>平均每次 <b>NT$1,300</b>，另贈送運動功能評估＆居家運動建議。</p>
-<div class="savings"><div class="price">一次 NT$1,300，立省 NT$500</div><p class="note">以全身 90 分鐘 NT$1,500＋運動功能評估＆居家運動建議 NT$300，單次組合原價 NT$1,800 計算。</p></div>
-${serviceCard(PLAN,"13000")}
-<p class="note">方案含贈送的運動功能評估＆居家運動建議。方案購買與付款由店家確認。</p>
-</div>
-${data.service?'<div class="card selection-total" aria-live="polite"><h3>本次選擇</h3><div>'+esc(serviceDescription())+'</div><div>預留 '+serviceMinutes()+' 分鐘</div><div class="price">'+(data.service===PLAN?'方案總價':'合計')+' NT$'+serviceTotal().toLocaleString()+'</div></div>':""}`,
-()=>`
-<h2>挑一個適合你的時間</h2>
-<div class="card">
-<label for="date">預約日期</label>
-<select id="date" onchange="changeDate(this.value)">
-<option value="">請選擇開放日期</option>
-${openDates().map(d=>`<option value="${d}" ${data.date===d?"selected":""}>${d}</option>`).join("")}
-</select>
-<label for="time">預約時間</label>
-<select id="time"><option value="">請選擇時間</option>
-${openTimes(data.date).map(t=>`<option ${data.time===t?"selected":""}>${t}</option>`).join("")}</select>
-<p class="note">${availabilityError?"時段載入失敗，請重新整理或聯絡 LINE。":openDates().length?"服務至 24:00；已確認預約之間預留 10 分鐘整理。時段以店家最後確認為準。":"目前尚未公布開放時段，歡迎透過 LINE 詢問。"}</p>
-<a href="https://line.me/R/ti/p/%40227osyby" target="_blank" rel="noopener">聯絡鬆沐 LINE｜@227osyby</a>
-</div>`,
-()=>`
-<h2>留下聯絡資料</h2>
-<div class="card">
-<label for="name">姓名 *</label><input id="name" value="${esc(data.name)}" placeholder="請輸入姓名">
-<label for="phone">手機 *</label><input id="phone" value="${esc(data.phone)}" inputmode="tel" placeholder="09xxxxxxxx">
-<label for="line">LINE ID</label><input id="line" value="${esc(data.line)}" placeholder="方便聯繫用">
-<label for="symptoms">症狀／想改善的部位</label><textarea id="symptoms" maxlength="4000" placeholder="例如：肩頸緊繃、腰部痠痛">${esc(data.symptoms)}</textarea><label for="note">備註</label><textarea id="note" placeholder="想加強的部位、身體狀況、到府需求等">${esc(data.note)}</textarea>
-</div>`,
-()=>`
-<h2>最後確認一下 🌿</h2>
-<div class="card summary">
- <div><b>門店：</b>${data.store}</div>
- <div><b>服務人員：</b>${data.staff}</div>
- <div><b>服務：</b>${esc(serviceDescription()||"尚未選擇")}</div>
- <div><b>費用：</b><span class="price">${data.service?"NT$ "+serviceTotal().toLocaleString():"-"}</span></div>
- <div><b>預留時間：</b>${serviceMinutes()} 分鐘</div>\n <div><b>時間：</b>${data.date||"-"} ${data.time||""}</div>
- <div><b>姓名：</b>${esc(data.name||"-")}</div>
- <div><b>手機：</b>${esc(data.phone||"-")}</div>
- <div><b>LINE：</b>${esc(data.line||"-")}</div>
- <div><b>症狀：</b>${esc(data.symptoms||"未填")}</div>
- <div><b>備註：</b>${esc(data.note||"無")}</div>
-</div>
-<div class="card" style="background:#faf7f5">
-<label><input id="consent" type="checkbox" style="width:auto"> 我同意鬆沐為安排服務與聯繫，儲存姓名、手機及填寫的症狀。可透過 LINE 申請更正或刪除資料。</label><p>送出後會儲存為待確認申請；收到店家回覆確認後，預約才成立。</p>
-</div>`
-];
-function serviceCard(name,price){
- const sel=data.service===name?"selected":"";
- return `<div class="card choice ${sel}" onclick="chooseService('${name}','${price}')">
- <h3>${name}</h3><div class="price">NT$ ${Number(price).toLocaleString()}</div></div>`;
-}
-function changeDate(value){data.date=value;data.time="";render()}
-function chooseService(name,price){
- if(name==="新客體驗｜全身 90 分鐘"&&(!member?.eligible||member?.active_trial)){alert("請先完成 LINE 資格驗證");return}
- if(data.service===name&&name!==PLAN){data.service=data.assessment?ASSESSMENT:"";data.assessment=false}
- else {if(data.service===ASSESSMENT&&name!==PLAN)data.assessment=true;data.service=name}
- if(name===PLAN){data.assessment=false}
- resetServiceTime();render()
-}
-function toggleAssessment(checked){
- if(data.service===PLAN)return;
- if(!data.service||data.service===ASSESSMENT){data.service=checked?ASSESSMENT:"";data.assessment=false}
- else data.assessment=checked;
- resetServiceTime();render()
-}
-
-function save(){
- if(page===4){
-   const d=document.querySelector("#date"), t=document.querySelector("#time");
-   if(d)data.date=d.value;if(t)data.time=t.value;
- }
- if(page===5){
-   ["name","phone","line","symptoms","note"].forEach(k=>{const e=document.querySelector("#"+k);if(e)data[k]=e.value})
- }
-}
-function render(){
- document.querySelector("#steps").innerHTML=labels.map((x,i)=>`<span class="step ${i===page?"active":""}">${x}</span>`).join("");
- document.querySelector("#content").innerHTML=pages[page]();
- document.querySelector(".step.active")?.scrollIntoView({behavior:"smooth",inline:"center",block:"nearest"});
- document.querySelector("#prev").disabled=page===0;
- document.querySelector("#next").disabled=page===4&&!openDates().length;
- document.querySelector("#next").textContent=page===pages.length-1?"送出預約申請":"下一步 Next";
-}
-document.querySelector("#prev").onclick=()=>{save();if(page>0){page--;render()}};
-document.querySelector("#next").onclick=async()=>{
- save();
- if(page===3&&!data.service){alert("請先選擇服務");return}
- if(page===4&&(!openDates().includes(data.date)||!openTimes(data.date).includes(data.time))){alert("請選擇日期與時間");return}
- if(page===5&&(!data.name.trim()||!/^09\d{8}$/.test(data.phone.trim()))){alert("請填寫姓名與有效的台灣手機號碼（09 開頭共 10 碼）");return}
- if(page<pages.length-1){page++;render();return}
- if(!openTimes(data.date).includes(data.time)){alert("此時段已過期，請重新選擇。");page=4;render();return}
- if(!document.querySelector("#consent")?.checked){alert("請先勾選資料儲存同意");return}
- const btn=document.querySelector("#next");btn.disabled=true;btn.textContent="正在送出…";
- try{
- data.request_id ||= crypto.randomUUID();
- const r=await fetch(API,{method:"POST",headers:{...apiHeaders,"Content-Type":"application/json"},body:JSON.stringify({...data,line_id_token:lineToken,name:data.name.trim(),phone:data.phone.trim(),starts_at:data.date+"T"+data.time+":00+08:00",consent:true})});
- const value=await r.json();if(!r.ok||!value.id)throw Error(value.error||"送出失敗");
- document.querySelector("#content").innerHTML='<h2>已收到預約申請 🌿</h2><div class="card"><p>資料已儲存，等待鬆沐確認。收到店家回覆後，預約才成立。</p><p id="receipt"></p><a href="https://line.me/R/ti/p/%40227osyby" target="_blank" rel="noopener">聯絡鬆沐 LINE</a></div>';
- document.querySelector("#receipt").textContent="申請編號："+value.id;
- document.querySelector("#prev").disabled=true;document.querySelector("#prev").onclick=null;btn.textContent="已送出";
- }catch(e){alert(e.message);btn.disabled=false;btn.textContent="重新送出"}
-};
-fetch(API,{cache:"no-store",headers:apiHeaders}).then(r=>{if(!r.ok)throw Error("load");return r.json()}).then(value=>{availability=value;render()}).catch(()=>{availabilityError=true;render()});
-render();
-</script>
-</body>
-</html>
+()=>`<h2>預約鬆沐</h2>${memberPanel()}<div class="card choice selected"><h3>🌿 鬆沐整復｜東海</h3><div>一個讓身體慢下來、好好放鬆的空間<br>採預約制<br>434 臺中市龍井區東海里藝術街 18-1 號</div><span class="badge">工作室</span></div>`,
+()=>`<h2>預約注意事項 (Notice)</h2><div class="card note"><b>預約前請詳閱</b><br><br>⏰ <b>預約時間</b><br>為了讓每位客人都能有完整、舒服的放鬆時間，預約時段保留 10 分鐘。若可能晚到，麻煩提前用 LINE 告訴我們。<br><br>📍 <b>入店方式</b><br>434 臺中市龍井區東海里藝術街 18-1 號，採完全預約制。<br><br>⚠️ <b>服務提醒</b><br>如果有近期受傷、手術、懷孕或其他需要特別留意的身體狀況，預約時先告訴我們，我們會依狀況調整服務內容。<br><br>📱 <b>聯絡方式</b><br>LINE 官方帳號：@227osyby</div>`,
+()=>`<h2>選擇服務人員</h2><div class="card choice selected"><h3>不指定</h3><div>由鬆沐整復安排服務</div></div>`,
+()=>`<h2>今天想怎麼放鬆？</h2><h3 class="section-title">1. 選擇放鬆服務</h3><p class="note">選擇一項放鬆服務，再依需要加選下方評估。</p>${serviceCard("肌肉舒壓 30 分鐘","600")}${serviceCard("半身放鬆 60 分鐘","1100")}${serviceCard("全身放鬆 90 分鐘","1500")}${serviceCard("全身 120 分鐘","2000")}${member?.eligible&&!member?.active_trial?serviceCard("新客體驗｜全身 90 分鐘","1300"):""}<h3 class="section-title">2. 運動功能評估＆居家運動建議</h3><p class="note">可單獨預約，或加在放鬆服務後。額外 NT$300，暫預留 30 分鐘。</p><div class="card"><label class="check-choice"><input id="assessment" type="checkbox" ${data.assessment||data.service===ASSESSMENT?"checked":""} ${data.service===PLAN?"disabled":""} onchange="toggleAssessment(this.checked)"> ${data.service===PLAN?"方案含贈送評估，不需重複加選":"選擇運動功能評估＆居家運動建議"}</label></div><h3 class="section-title">3. 鬆活方案</h3><div class="card plan-card"><span class="badge">全身放鬆 90 分鐘 × 10 次</span><h3>鬆活方案｜買 10 次 NT$13,000</h3><p>平均每次 <b>NT$1,300</b>，另贈送運動功能評估＆居家運動建議。</p><div class="savings"><div class="price">一次 NT$1,300，立省 NT$500</div><p class="note">以全身 90 分鐘 NT$1,500＋運動功能評估＆居家運動建議 NT$300，單次組合原價 NT$1,800 計算。</p></div>${serviceCard(PLAN,"13000")}<p class="note">方案含贈送的運動功能評估＆居家運動建議。方案購買與付款由店家確認。</p></div>${data.service?'<div class="card selection-total" aria-live="polite"><h3>本次選擇</h3><div>'+esc(serviceDescription())+'</div><div>預留 '+serviceMinutes()+' 分鐘</div><div class="price">'+(data.service===PLAN?'方案總價':'合計')+' NT$'+serviceTotal().toLocaleString()+'</div></div>':""}`,
+()=>`<h2>挑一個適合你的時間</h2><div class="card"><label for="date">預約日期</label><select id="date" onchange="changeDate(this.value)"><option value="">請選擇開放日期</option>${openDates().map(d=>`<option value="${d}" ${data.date===d?"selected":""}>${d}</option>`).join("")}</select><label for="time">預約時間</label><select id="time"><option value="">請選擇時間</option>${openTimes(data.date).map(t=>`<option ${data.time===t?"selected":""}>${t}</option>`).join("")}</select><p class="note">${availabilityError?"時段載入失敗，請重新整理或聯絡 LINE。":openDates().length?"服務至 24:00；已確認預約之間預留 10 分鐘整理。時段以店家最後確認為準。":"目前尚未公布開放時段，歡迎透過 LINE 詢問。"}</p><a href="https://line.me/R/ti/p/%40227osyby" target="_blank" rel="noopener">聯絡鬆沐 LINE｜@227osyby</a></div>`,
+()=>`<h2>留下聯絡資料</h2><div class="card"><label for="name">姓名 *</label><input id="name" value="${esc(data.name)}" placeholder="請輸入姓名"><label for="phone">手機 *</label><input id="phone" value="${esc(data.phone)}" inputmode="tel" placeholder="09xxxxxxxx"><label for="line">LINE ID</label><input id="line" value="${esc(data.line)}" placeholder="方便聯繫用"><label for="symptoms">症狀／想改善的部位</label><textarea id="symptoms" maxlength="4000" placeholder="例如：肩頸緊繃、腰部痠痛">${esc(data.symptoms)}</textarea><label for="note">備註</label><textarea id="note" placeholder="想加強的部位、身體狀況、到府需求等">${esc(data.note)}</textarea></div>`,
+()=>`<h2>最後確認一下 🌿</h2><div class="card summary"><div><b>門店：</b>${data.store}</div><div><b>服務人員：</b>${data.staff}</div><div><b>服務：</b>${esc(serviceDescription()||"尚未選擇")}</div><div><b>費用：</b><span class="price">${data.service?"NT$ "+serviceTotal().toLocaleString():"-"}</span></div><div><b>預留時間：</b>${serviceMinutes()} 分鐘</div><div><b>時間：</b>${data.date||"-"} ${data.time||""}</div><div><b>姓名：</b>${esc(data.name||"-")}</div><div><b>手機：</b>${esc(data.phone||"-")}</div><div><b>LINE：</b>${esc(data.line||"-")}</div><div><b>症狀：</b>${esc(data.symptoms||"未填")}</div><div><b>備註：</b>${esc(data.note||"無")}</div></div><div class="card" style="background:#faf7f5"><label><input id="consent" type="checkbox" style="width:auto"> 我同意鬆沐為安排服務與聯繫，儲存姓名、手機及填寫的症狀。可透過 LINE 申請更正或刪除資料。</label><p>送出後會儲存為待確認申請；收到店家回覆確認後，預約才成立。</p></div>`];
+function changeDate(value){data.date=value;data.time="";render()}function chooseService(name,price){if(name==="新客體驗｜全身 90 分鐘"&&(!member?.eligible||member?.active_trial)){showNotice("請先完成 LINE 資格驗證");return}if(data.service===name&&name!==PLAN){data.service=data.assessment?ASSESSMENT:"";data.assessment=false}else{if(data.service===ASSESSMENT&&name!==PLAN)data.assessment=true;data.service=name}if(name===PLAN)data.assessment=false;resetServiceTime();render()}function toggleAssessment(checked){if(data.service===PLAN)return;if(!data.service||data.service===ASSESSMENT){data.service=checked?ASSESSMENT:"";data.assessment=false}else data.assessment=checked;resetServiceTime();render()}
+function save(){if(page===4){const d=document.querySelector("#date"),t=document.querySelector("#time");if(d)data.date=d.value;if(t)data.time=t.value}if(page===5){["name","phone","line","symptoms","note"].forEach(k=>{const e=document.querySelector("#"+k);if(e)data[k]=e.value})}}
+function render(){document.querySelector("#steps").innerHTML=labels.map((x,i)=>`<span class="step ${i===page?"active":""}">${x}</span>`).join("");document.querySelector("#content").innerHTML=pages[page]();document.querySelector(".step.active")?.scrollIntoView({behavior:"smooth",inline:"center",block:"nearest"});document.querySelector("#prev").disabled=page===0;document.querySelector("#next").disabled=page===4&&!openDates().length;document.querySelector("#next").textContent=page===pages.length-1?"送出預約申請":"下一步 Next"}
+document.querySelector("#prev").onclick=()=>{save();if(page>0){page--;render()}};document.querySelector("#next").onclick=async()=>{save();if(page===3&&!data.service){showNotice("請先選擇服務");return}if(page===4&&(!openDates().includes(data.date)||!openTimes(data.date).includes(data.time))){showNotice("請選擇日期與時間");return}if(page===5&&(!data.name.trim()||!/^09\d{8}$/.test(data.phone.trim()))){showNotice("請填寫姓名與有效的台灣手機號碼（09 開頭共 10 碼）");return}if(page<pages.length-1){page++;render();return}if(!openTimes(data.date).includes(data.time)){showNotice("此時段已過期，請重新選擇。");page=4;render();return}if(!document.querySelector("#consent")?.checked){showNotice("請先勾選資料儲存同意");return}const btn=document.querySelector("#next");btn.disabled=true;btn.textContent="正在送出…";try{data.request_id||=crypto.randomUUID();const r=await fetch(API,{method:"POST",headers:{...apiHeaders,"Content-Type":"application/json"},body:JSON.stringify({...data,line_id_token:lineToken,name:data.name.trim(),phone:data.phone.trim(),starts_at:data.date+"T"+data.time+":00+08:00",consent:true})});const value=await r.json();if(!r.ok||!value.id)throw Error(value.error||"送出失敗");document.querySelector("#content").innerHTML='<h2>已收到預約申請 🌿</h2><div class="card"><p>資料已儲存，等待鬆沐確認。收到店家回覆後，預約才成立。</p><p id="receipt"></p><a href="https://line.me/R/ti/p/%40227osyby" target="_blank" rel="noopener">聯絡鬆沐 LINE</a></div>';document.querySelector("#receipt").textContent="申請編號："+value.id;document.querySelector("#prev").disabled=true;document.querySelector("#prev").onclick=null;btn.textContent="已送出"}catch(e){showNotice(e.message||"送出失敗，請稍後再試");btn.disabled=false;btn.textContent="重新送出"}};
+fetch(API,{cache:"no-store",headers:apiHeaders}).then(r=>{if(!r.ok)throw Error("load");return r.json()}).then(value=>{availability=value;render()}).catch(()=>{availabilityError=true;render()});render();
+</script></body></html>
