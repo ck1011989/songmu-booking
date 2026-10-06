@@ -67,6 +67,114 @@ main a{color:var(--forest);text-underline-offset:3px}
 /* Keep navigation after the page content so it appears at the bottom. */
 .app{padding-bottom:0}
 .actions{position:static;left:auto;bottom:auto;transform:none;width:100%}
+
+/* Approved white layout with Songmu LINE menu frames. */
+:root{color-scheme:only light;--bg:#fff;--brand:#1c4431;--brand2:#1c4431;--ink:#343b37;--muted:#68716b;--line:#a4b7a6;--soft:#fff;--forest-soft:#fff}
+body{background:#fff}
+.app{color-scheme:only light;background:#fff;color:#343b37;min-height:0;max-width:760px;padding:0;margin:0 auto;border:1px solid #e1e7e2;border-radius:18px;overflow:hidden}
+header{position:static;background:#fff;color:#1c4431;border-bottom:1px solid #e5eae6;padding:20px}
+header::after{display:none}
+header h1{font-size:22px}
+header small{color:#68716b}
+.steps{padding:16px 20px;gap:16px;flex-wrap:wrap;overflow:visible}
+.step{font-size:13px;color:#767f79}
+.step.active{color:#1c4431}
+main{background:#fff;padding:0 20px 20px}
+h2{font-size:23px;color:#1c4431}
+.card,.card.choice.selected,.plan-card,.savings{background:#fff!important;border-color:#dce4dd}
+.card{padding:18px;font-size:16px}
+.card.choice.selected{border-color:#1c4431}
+.card h3{font-size:18px}
+.note{font-size:15px}
+.price,.section-title{color:#1c4431}
+input,select,textarea{background:#fff;color:#343b37;font-size:16px;border-color:#dce4dd}
+.badge{background:#fff;color:#1c4431;border:1px solid #dce4dd}
+.actions{position:static;transform:none;width:100%;background:#fff;color:#1c4431;padding:0 20px 20px;border:0}
+.actions button{background:#fff;color:#1c4431;border:1px solid #1c4431;min-width:0}
+.actions button.primary{background:#1c4431;color:#fff}
+.footer-selection{background:#fff;color:#343b37;border:1px solid #dce4dd;border-radius:12px;padding:16px;margin:20px 0 0}
+.footer-label,.footer-detail{color:#68716b}
+.footer-amount{color:#1c4431;font-size:23px}
+main a{color:#1c4431}
+.demo-icon{width:26px;height:26px;flex:none;color:#1c4431}
+.page-tabs{margin-bottom:16px}
+.preview-wrap{padding:12px 8px}
+
+
+.app {
+  --songmu-forest: #1c4431;
+  --songmu-frame: #a4b7a6;
+  --songmu-tan: #b29b80;
+  border: 1px solid var(--songmu-frame);
+  border-radius: 24px;
+  background: #fff;
+}
+header {
+  border-top: 5px solid var(--songmu-forest);
+  border-bottom: 1px solid #dce4dd;
+  padding: 22px 20px 18px;
+}
+header h1 {letter-spacing: .02em;}
+h2 {
+  justify-content: flex-start;
+  padding: 16px 0;
+  margin: 8px 0 22px;
+  border-bottom: 2px solid var(--songmu-tan);
+  text-align: left;
+}
+.card {
+  border: 1px solid var(--songmu-frame);
+  border-radius: 22px;
+  padding: 22px;
+  background: #fff !important;
+}
+.card.choice {border: 1px solid var(--songmu-frame);}
+.card.choice.selected {
+  border: 2px solid var(--songmu-forest);
+  padding: 21px;
+}
+.card h3 {color: var(--songmu-forest);gap: 14px;}
+.line-icon {width: 30px;height: 30px;color:var(--songmu-forest);}
+.plan-card {border: 2px solid var(--songmu-forest);}
+.plan-card .card {border-color: var(--songmu-tan);}
+.savings {
+  background: #fff;
+  border-left: 3px solid var(--songmu-tan);
+  border-radius: 0;
+}
+.footer-selection {
+  border: 1px solid var(--songmu-forest);
+  border-radius: 20px;
+  background: #fff;
+  padding: 20px;
+}
+.actions {padding-top: 4px;}
+.actions button {
+  border-radius: 16px;
+  border-color: var(--songmu-forest);
+  min-height: 50px;
+}
+.actions button.primary {
+  background: var(--songmu-forest);
+  color: #fff;
+}
+.summary > div {border-bottom: 1px solid #e5ebe6;}
+input,select,textarea {
+  border-radius: 12px;
+  border-color: var(--songmu-frame);
+}
+@media (max-width: 360px) {
+  .card {padding: 18px;}
+  .card.choice.selected {padding: 17px;}
+  header h1 {font-size: 20px;}
+  h2 {font-size: 21px;}
+  .footer-selection {padding: 16px;}
+}
+
+.actions,.footer-selection{background-image:none!important;background-color:#fff!important}
+.notice-box,.badge{background:#fff}
+.notice-box button{background:#1c4431;color:#fff}
+.header-icon{color:#1c4431}
 </style>
 </head><body>
 <div class="app"><header><h1>鬆沐整復｜線上預約</h1><small>鬆一點・舒服一點・讓身體慢慢回到自在</small></header><div class="steps" id="steps"></div><main><div id="content"></div><div class="footer-selection" id="selection-summary" aria-live="polite" hidden></div></main><div class="actions"><div class="action-buttons"><button id="prev">上一步</button><button class="primary" id="next">下一步 →</button></div></div></div>
