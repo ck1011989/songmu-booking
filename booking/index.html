@@ -27,16 +27,39 @@
 .footer-amount{font-size:25px;font-weight:800;white-space:nowrap;font-variant-numeric:tabular-nums;color:#fffdf9}
 @media(max-width:360px){.actions{padding-left:16px;padding-right:16px}.footer-amount{font-size:22px}.footer-name{font-size:16px}.action-buttons{gap:10px}.actions button{padding:10px}}
 
-
-/* LINE-inspired outline icons, preserving the approved milk-tea palette. */
+/* Match Songmu's LINE menu: forest green, ivory, warm brown and outline icons. */
+:root{--brand:#8a725f;--brand2:#6f5949;--ink:#243c2f;--muted:#766f62;--line:#dbd0bb;--bg:#faf5e9;--soft:#eee6d6;--forest:#1c4431;--forest-soft:#e7ecdf}
+body{background:#77816b}
+header{background:#1c4431;color:#fffdf9;border-bottom:0;overflow:hidden}
+header h1{position:relative;z-index:1;display:flex;align-items:center;gap:10px;letter-spacing:.04em}
+header small{position:relative;z-index:1;color:#eee7d6}
+header::after{content:"";position:absolute;right:-22px;top:-22px;width:135px;height:135px;border-radius:80% 0 80% 0;background:#718460;opacity:.22;transform:rotate(-25deg);pointer-events:none}
 .line-icon{width:30px;height:30px;flex:none;vertical-align:middle;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-header h1{display:flex;align-items:center;gap:10px}
-.header-icon{width:32px;height:32px;color:var(--brand)}
-h2{display:flex;align-items:center;justify-content:center;gap:10px}
-h2 .line-icon{width:34px;height:34px;color:var(--brand)}
+.header-icon{width:32px;height:32px;color:#f3ead7}
+.steps{gap:20px}
+.step{color:#807c6e}
+.step.active{color:var(--forest);font-weight:800}
+h2{color:var(--forest);display:flex;align-items:center;justify-content:center;gap:10px}
+h2 .line-icon{width:34px;height:34px}
+.card{border:1px solid var(--line);border-radius:18px;background:#fffaf0}
+.card.choice.selected{border:2px solid var(--forest);background:var(--forest-soft)}
 .card.choice h3{display:flex;align-items:center;gap:12px}
-.service-icon{width:34px;height:34px;color:var(--brand)}
-@media(max-width:520px){.header-icon{width:28px;height:28px}.card.choice h3{font-size:19px}}
+.service-icon{color:var(--forest);width:34px;height:34px}
+.price,.section-title{color:var(--forest)}
+.badge{background:var(--forest-soft);color:var(--forest)}
+.plan-card{background:#eceedd;border-color:#87916e}
+.savings{background:#fffaf0}
+.check-choice input{accent-color:var(--forest)}
+input,select,textarea{background:#fffdf7;border-color:var(--line);color:var(--ink)}
+main a{color:var(--forest);text-underline-offset:3px}
+.notice-box{background:var(--bg)}
+@media(max-width:520px){header h1{font-size:21px}.header-icon{width:28px;height:28px}h2{font-size:23px}.card.choice h3{font-size:19px}}
+
+/* Extend the LINE menu's forest-green palette to the booking footer. */
+.actions{background:#1c4431;color:#fffaf0}
+.actions button{border-color:#fffaf0;color:#fffaf0}
+.actions button.primary{background:#fffaf0;color:#1c4431}
+.footer-label,.footer-detail,.footer-amount{color:#fffaf0}
 </style>
 </head><body>
 <div class="app"><header><h1>鬆沐整復｜線上預約</h1><small>鬆一點・舒服一點・讓身體慢慢回到自在</small></header><div class="steps" id="steps"></div><main id="content"></main><div class="actions"><div class="footer-selection" id="selection-summary" aria-live="polite" hidden></div><div class="action-buttons"><button id="prev">上一步</button><button class="primary" id="next">下一步 →</button></div></div></div>
