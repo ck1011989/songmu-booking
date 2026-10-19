@@ -72,11 +72,30 @@ function isArchived(r){return r.status==='completed'||r.status==='cancelled'}
 function recordOutcome(r){return r.outcome==='cancelled_during_service'?'cancelled_during_service':r.status==='cancelled'||r.outcome==='cancelled_before_service'?'cancelled_before_service':'normal'}
 
 const SESSION_KEY='songmu-admin-session';
-let adminSession=null,sessionRefresh=null;
-function clearAdminSession(){adminSession=null;token=null;try{sessionStorage.removeItem(SESSION_KEY)}catch{}}
-function storeAdminSession(v){if(!v.user?.email_confirmed_at||v.user.email?.toLowerCase()!=='guts1989921@gmail.com')throw Error('請使用已驗證的管理員帳號登入');adminSession={access_token:v.access_token,refresh_token:v.refresh_token,expires_at:v.expires_at||Math.floor(Date.now()/1000)+v.expires_in};token=v.access_token;try{sessionStorage.setItem(SESSION_KEY,JSON.stringify(adminSession))}catch{msg('瀏覽器無法保留登入狀態，重新整理後需再次登入。')}}
-async function refreshAdminSession(){if(sessionRefresh)return sessionRefresh;sessionRefresh=(async()=>{const r=await fetch(SB+'/auth/v1/token?grant_type=refresh_token',{method:'POST',headers:{apikey:KEY,'Content-Type':'application/json'},body:JSON.stringify({refresh_token:adminSession.refresh_token})});if(!r.ok){if(r.status===400||r.status===401)clearAdminSession();throw Error('登入狀態無法更新，請重新登入或稍後再試。')}storeAdminSession(await r.json())})().finally(()=>{sessionRefresh=null});return sessionRefresh}
-async function restoreAdminSession(){try{const saved=sessionStorage.getItem(SESSION_KEY);if(!saved)return;adminSession=JSON.parse(saved);if(!adminSession.access_token||!adminSession.refresh_token||!Number.isFinite(adminSession.expires_at)){clearAdminSession();return}token=adminSession.access_token;const user=await api('/auth/v1/user');if(!user.email_confirmed_at||user.email?.toLowerCase()!=='guts1989921@gmail.com'){clearAdminSession();throw Error('請使用管理員帳號登入')}$('login').hidden=true;rememberAdmin();setPage(pageView,false);await refresh()}catch(e){token=null;msg(friendlyError(e.message))}}
+let adminSession=null,sessionRefresh=null,sessionGeneration=0;
+function validAdminSession(v){return v&&typeof v.access_token==='string'&&!!v.access_token&&typeof v.refresh_token==='string'&&!!v.refresh_token&&Number.isFinite(v.expires_at)}
+function readStoredAdminSession(){let saved;try{saved=localStorage.getItem(SESSION_KEY)}catch{}if(!saved)try{saved=sessionStorage.getItem(SESSION_KEY)}catch{}if(!saved)return null;try{const v=JSON.parse(saved);return validAdminSession(v)?v:null}catch{return null}}
+function clearAdminSession(){sessionGeneration++;adminSession=null;token=null;try{localStorage.removeItem(SESSION_KEY)}catch{}try{sessionStorage.removeItem(SESSION_KEY)}catch{}}
+function persistAdminSession(){try{localStorage.setItem(SESSION_KEY,JSON.stringify(adminSession));try{sessionStorage.removeItem(SESSION_KEY)}catch{}}catch{try{sessionStorage.setItem(SESSION_KEY,JSON.stringify(adminSession))}catch{}msg('瀏覽器未允許保存登入，關閉後可能需要重新登入。')}}
+function storeAdminSession(v){if(!v.user?.email_confirmed_at||v.user.email?.toLowerCase()!=='guts1989921@gmail.com')throw Error('請使用已驗證的管理員帳號登入');const next={access_token:v.access_token,refresh_token:v.refresh_token,expires_at:v.expires_at||Math.floor(Date.now()/1000)+v.expires_in};if(!validAdminSession(next))throw Error('登入資料不完整，請重新登入');adminSession=next;token=v.access_token;persistAdminSession()}
+function showSignedOut(message='已登出'){records=[];for(const id of ['cards','historyCards','customerSearchCards','incomeSummary','openingList','previewSlots'])$(id).replaceChildren();$('historyPage').hidden=true;$('dashboard').hidden=true;$('adminTopActions').hidden=true;$('login').hidden=false;msg(message)}
+async function refreshAdminSession(){
+if(sessionRefresh)return sessionRefresh;const generation=sessionGeneration;
+const run=async()=>{if(generation!==sessionGeneration)throw Error('登入狀態已變更');const stored=readStoredAdminSession();if(stored){adminSession=stored;token=stored.access_token}if(!adminSession)throw Error('請重新登入');
+if(adminSession.expires_at*1000>Date.now()+60000)return;
+const r=await fetch(SB+'/auth/v1/token?grant_type=refresh_token',{method:'POST',headers:{apikey:KEY,'Content-Type':'application/json'},body:JSON.stringify({refresh_token:adminSession.refresh_token})});
+if(generation!==sessionGeneration)throw Error('登入狀態已變更');
+if(!r.ok){if(r.status===400||r.status===401){clearAdminSession();showSignedOut('登入憑證已失效，請重新登入。')}throw Error('登入狀態暫時無法更新，恢復連線後會自動重試。')}
+const value=await r.json();if(generation!==sessionGeneration)throw Error('登入狀態已變更');storeAdminSession(value)};
+sessionRefresh=(navigator.locks?.request?navigator.locks.request('songmu-admin-refresh',{mode:'exclusive'},run):run()).finally(()=>{sessionRefresh=null});return sessionRefresh
+}
+async function restoreAdminSession(){try{const saved=readStoredAdminSession();if(!saved)return;adminSession=saved;token=saved.access_token;const generation=sessionGeneration;const user=await api('/auth/v1/user');if(generation!==sessionGeneration)return;if(!user.email_confirmed_at||user.email?.toLowerCase()!=='guts1989921@gmail.com'){clearAdminSession();throw Error('請使用管理員帳號登入')}persistAdminSession();$('login').hidden=true;rememberAdmin();setPage(pageView,false);await refresh()}catch(e){if(!adminSession)token=null;msg(friendlyError(e.message))}}
+async function keepAdminSession(){if(!adminSession||document.visibilityState==='hidden')return;try{if($('login').hidden)await refreshAdminSession();else await restoreAdminSession()}catch{/* Preserve the session through a temporary connection failure. */}}
+setInterval(keepAdminSession,30000);
+window.addEventListener('focus',keepAdminSession);
+window.addEventListener('online',keepAdminSession);
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')keepAdminSession()});
+window.addEventListener('storage',event=>{if(event.key!==SESSION_KEY&&event.key!==null)return;if(event.newValue===null){clearAdminSession();showSignedOut();return}const saved=readStoredAdminSession();if(saved){adminSession=saved;token=saved.access_token;if(!$('reset').hidden)return;if(!$('login').hidden)restoreAdminSession()}});
 
 function rememberAdmin(){try{localStorage.setItem('songmu-admin-created','yes')}catch{}$('signup').hidden=true}
 $('signup').hidden=true;
@@ -145,7 +164,7 @@ if(access&&type==='recovery'){
  }catch(e){token=null;msg(friendlyError(e.message))}
 }}
 $('savePassword').onclick=async()=>{const p=$('newPassword').value,p2=$('newPassword2').value;if(p.length<12){msg('新密碼至少需要 12 碼');return}if(p!==p2){msg('兩次輸入的密碼不一致');return}try{await api('/auth/v1/user',{method:'PUT',body:JSON.stringify({password:p})});$('newPassword').value=$('newPassword2').value='';$('reset').hidden=true;$('login').hidden=false;token=null;history.replaceState(null,'',location.pathname);msg('密碼已更新，請使用新密碼登入。')}catch(e){msg(friendlyError(e.message))}};$('cancelReset').onclick=()=>{token=null;$('reset').hidden=true;$('login').hidden=false;history.replaceState(null,'',location.pathname);msg('已取消密碼重設')};
-$('logout').onclick=async()=>{try{await api('/auth/v1/logout',{method:'POST'})}catch{}clearAdminSession();records=[];$('cards').replaceChildren();$('historyCards').replaceChildren();$('customerSearchCards').replaceChildren();$('historyPage').hidden=true;$('dashboard').hidden=true;$('adminTopActions').hidden=true;$('login').hidden=false;msg('已登出')};$('reload').onclick=refresh;$('search').oninput=showCustomerSearch;
+$('logout').onclick=async()=>{const logoutToken=token;clearAdminSession();showSignedOut();if(logoutToken)try{await fetch(SB+'/auth/v1/logout',{method:'POST',headers:{apikey:KEY,Authorization:'Bearer '+logoutToken,'Content-Type':'application/json'}})}catch{}};$('reload').onclick=refresh;$('search').oninput=showCustomerSearch;
 $('export').onclick=()=>{try{downloadXlsx(revenueWorkbookSheets(records),'鬆沐預約資料-'+taiwanDay(new Date())+'.xlsx');msg('已產生服務分類與收入統計 Excel。')}catch(e){msg(e.message)}};
 $('historyFilter').value=new URLSearchParams(location.search).get('type')||'normal';if(!['normal','cancelled_before_service','cancelled_during_service','all'].includes($('historyFilter').value))$('historyFilter').value='normal';
 function openInlineHistory(type){historyExpanded=true;$('historyFilter').value=type;setPage('bookings',false);$('historyPage').scrollIntoView({behavior:'smooth',block:'start'})}
