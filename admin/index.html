@@ -127,6 +127,20 @@ button:disabled{opacity:.55;cursor:not-allowed}
 #historySearch{width:100%;min-height:48px;margin:0 0 20px}
 #historyTitle{margin:0 0 8px;font-size:19px}
 @media(max-width:650px){.admin-tabs{grid-template-columns:repeat(2,minmax(0,1fr))}.admin-tabs button:first-child{grid-column:1/-1}.history-categories{grid-template-columns:repeat(2,minmax(0,1fr))}.history-header h2{font-size:23px}}
+
+.booking-status-badge{display:inline-block;padding:6px 14px;border-radius:30px;font-weight:700;background:#eee4d7;color:#705943}
+.booking-status-badge.confirmed{background:#e6efe7;color:#42644e}
+.booking-action-row{display:flex;margin:12px 0;gap:8px}
+.booking-action-row:empty{display:none}
+.booking-action-row button{margin:0;min-width:160px}
+.booking-edit-panel{border:1px solid #e4d9ce;border-radius:12px;margin:10px 0;padding:0 12px;background:#fff}
+.booking-edit-panel>summary{cursor:pointer;padding:13px 0;font-weight:650;color:#705943;min-height:48px}
+.booking-edit-panel label{display:block;margin:10px 0;font-size:14px;font-weight:600}
+.booking-edit-panel input,.booking-edit-panel textarea{display:block;width:100%;margin:8px 0;min-width:0}
+.booking-edit-panel textarea{min-height:90px}
+.booking-edit-panel button{margin:4px 0 14px}
+.booking-edit-panel:has(.danger)>summary{color:#8a4f45}
+@media(max-width:600px){.booking-action-row button{width:100%}.booking-edit-panel input{font-size:16px}}
 </style>
 <header class="admin-page-header"><div class="admin-header-summary"><h1>🌿 鬆沐｜預約管理</h1><section id="bookingCountSummary" class="booking-count-banner" hidden aria-labelledby="currentBookingsTitle"><h2 id="currentBookingsTitle" role="status" aria-live="polite" aria-atomic="true"><span>目前預約</span><span class="booking-count-value" id="count">…</span><span>筆預約</span></h2></section></div><div id="adminTopActions" class="admin-top-actions" hidden aria-label="管理操作"><button id="export" class="toolbar-export" type="button">↓ <span>匯出 Excel 報表</span></button><button id="logout" class="toolbar-logout" type="button">登出</button></div></header><button id="installApp" hidden>安裝鬆沐管理</button><p id="installStatus" class="muted" role="status"></p><p id="status" role="status"></p>
 <section id="login" class="card"><form id="loginForm"><p>管理員：guts1989921@gmail.com</p><label>密碼 <input id="password" required type="password" autocomplete="current-password" minlength="12"></label><div><button id="signin" type="submit">登入</button><button id="signup" type="button" hidden>首次建立後臺登入</button><button id="forgot" class="linkbtn" type="button">忘記密碼？</button></div><p class="muted">忘記密碼時會寄重設信到管理員信箱。請勿把密碼傳給任何人。</p></form></section>
@@ -190,68 +204,106 @@ document.querySelectorAll('[data-admin-view]').forEach(button=>button.onclick=()
 function showCustomerSearch(){
 const target=$('customerSearchCards'),q=$('search').value.trim().toLowerCase();target.replaceChildren();
 if(!q){$('customerSearchCount').textContent='請輸入姓名、手機、症狀或備註開始搜尋。';return}
-const selected=records.filter(r=>[r.submitted_name,r.submitted_phone,r.symptoms,r.notes,r.outcome_note,r.customers?.name,r.customers?.phone].join(' ').toLowerCase().includes(q)).sort((a,b)=>Date.parse(b.starts_at)-Date.parse(a.starts_at));
+const selected=records.filter(r=>[r.submitted_name,r.submitted_phone,r.symptoms,r.notes,r.admin_notes,r.outcome_note,r.customers?.name,r.customers?.phone].join(' ').toLowerCase().includes(q)).sort((a,b)=>Date.parse(b.starts_at)-Date.parse(a.starts_at));
 $('customerSearchCount').textContent='找到 '+selected.length+' 筆紀錄（依預約時間由新到舊）';
-for(const r of selected){const card=document.createElement('article');card.className='card';const heading=document.createElement('h3');heading.textContent=r.submitted_name||r.customers?.name||'未填姓名';card.append(heading);field(card,'預約時間',new Date(r.starts_at).toLocaleString('zh-TW',{timeZone:'Asia/Taipei'}));field(card,'手機',r.submitted_phone||r.customers?.phone);field(card,'服務',r.service_name);field(card,'金額',r.price_ntd==null?'—':'NT$ '+r.price_ntd);field(card,'預約狀態',labels[r.status]||r.status);field(card,'處理結果',isArchived(r)?outcomes[recordOutcome(r)]:'尚未處理');field(card,'症狀',r.symptoms);field(card,'客人備註',r.notes);field(card,'處理備註',r.outcome_note);target.append(card)}
+for(const r of selected){const card=document.createElement('article');card.className='card';const heading=document.createElement('h3');heading.textContent=r.submitted_name||r.customers?.name||'未填姓名';card.append(heading);field(card,'預約時間',new Date(r.starts_at).toLocaleString('zh-TW',{timeZone:'Asia/Taipei'}));field(card,'手機',r.submitted_phone||r.customers?.phone);field(card,'服務',r.service_name);field(card,'金額',r.price_ntd==null?'—':'NT$ '+r.price_ntd);field(card,'預約狀態',labels[r.status]||r.status);field(card,'處理結果',isArchived(r)?outcomes[recordOutcome(r)]:'尚未處理');field(card,'症狀',r.symptoms);field(card,'客人備註',r.notes);if(r.admin_notes)field(card,'店家備註（僅後台）',r.admin_notes);field(card,'處理備註',r.outcome_note);target.append(card)}
 if(!selected.length){const empty=document.createElement('p');empty.textContent='沒有符合條件的客人紀錄。';target.append(empty)}
 }
 function showHistory(){
 $('historyTitle').textContent=({'normal':'正常完成紀錄','cancelled_before_service':'服務前取消紀錄','cancelled_during_service':'服務中取消紀錄'})[historyType]||'全部會員紀錄';
 const q=$('historySearch').value.trim().toLowerCase(),filter=historyType;
-const selected=records.filter(r=>isArchived(r)&&(filter==='all'||recordOutcome(r)===filter)&&[r.submitted_name,r.submitted_phone,r.symptoms,r.notes,r.outcome_note,r.customers?.name,r.customers?.phone].join(' ').toLowerCase().includes(q));
+const selected=records.filter(r=>isArchived(r)&&(filter==='all'||recordOutcome(r)===filter)&&[r.submitted_name,r.submitted_phone,r.symptoms,r.notes,r.admin_notes,r.outcome_note,r.customers?.name,r.customers?.phone].join(' ').toLowerCase().includes(q));
 const groups=new Map();for(const r of selected){const key=r.line_member_id||r.customer_id||r.submitted_phone||r.id;if(!groups.has(key))groups.set(key,[]);groups.get(key).push(r)}
 $('historyCards').replaceChildren();
 for(const group of [...groups.values()].sort((a,b)=>Math.max(...b.map(r=>Date.parse(r.starts_at)))-Math.max(...a.map(r=>Date.parse(r.starts_at))))){
 group.sort((a,b)=>Date.parse(a.starts_at)-Date.parse(b.starts_at)||String(a.id).localeCompare(String(b.id)));
 const member=document.createElement('article');member.className='card';const latest=group[group.length-1],heading=document.createElement('h3');heading.textContent=latest.submitted_name||latest.customers?.name||'未填姓名';member.append(heading);field(member,'手機',latest.submitted_phone||latest.customers?.phone);
-for(const r of group){const entry=document.createElement('section');entry.className='card';const h=document.createElement('h4');h.textContent=new Date(r.starts_at).toLocaleString('zh-TW',{timeZone:'Asia/Taipei'})+'｜'+outcomes[recordOutcome(r)];entry.append(h);field(entry,'服務',r.service_name);field(entry,'金額',r.price_ntd==null?'—':'NT$ '+r.price_ntd);field(entry,'症狀',r.symptoms);field(entry,'客人備註',r.notes);field(entry,'處理備註',r.outcome_note);field(entry,'處理時間',r.outcome_at?new Date(r.outcome_at).toLocaleString('zh-TW',{timeZone:'Asia/Taipei'}):'—');field(entry,'LINE 通知',({accepted:'LINE 已接受通知',pending:'等待發送',failed:'未成功，可重試',skipped:'未綁定 LINE',not_requested:'舊紀錄，未發送'})[r.line_notification_status]||'未發送');if(['pending','failed'].includes(r.line_notification_status)){const retry=document.createElement('button');retry.textContent='重試 LINE 通知';retry.onclick=async()=>{retry.disabled=true;await notifyOutcome(r.id);retry.disabled=false};entry.append(retry)}member.append(entry)}
+for(const r of group){const entry=document.createElement('section');entry.className='card';const h=document.createElement('h4');h.textContent=new Date(r.starts_at).toLocaleString('zh-TW',{timeZone:'Asia/Taipei'})+'｜'+outcomes[recordOutcome(r)];entry.append(h);field(entry,'服務',r.service_name);field(entry,'金額',r.price_ntd==null?'—':'NT$ '+r.price_ntd);field(entry,'症狀',r.symptoms);field(entry,'客人備註',r.notes);if(r.admin_notes)field(entry,'店家備註（僅後台）',r.admin_notes);field(entry,'處理備註',r.outcome_note);field(entry,'處理時間',r.outcome_at?new Date(r.outcome_at).toLocaleString('zh-TW',{timeZone:'Asia/Taipei'}):'—');field(entry,'LINE 通知',({accepted:'LINE 已接受通知',pending:'等待發送',failed:'未成功，可重試',skipped:'未綁定 LINE',not_requested:'舊紀錄，未發送'})[r.line_notification_status]||'未發送');if(['pending','failed'].includes(r.line_notification_status)){const retry=document.createElement('button');retry.textContent='重試 LINE 通知';retry.onclick=async()=>{retry.disabled=true;await notifyOutcome(r.id);retry.disabled=false};entry.append(retry)}member.append(entry)}
 $('historyCards').append(member)}
 $('historyCount').textContent=groups.size+' 位會員，共 '+selected.length+' 筆紀錄';if(!selected.length){const p=document.createElement('p');p.textContent='目前沒有符合條件的完成或取消紀錄。';$('historyCards').append(p)}
 }
 async function notifyOutcome(id){try{const result=await api('/functions/v1/notify-outcome',{method:'POST',body:JSON.stringify({appointment_id:id})});const record=records.find(r=>r.id===id);if(record)record.line_notification_status=result.status;msg(result.message||'通知處理完成');if(pageView==='history')showHistory()}catch{msg('預約已存檔，但通知尚未成功，可在客人紀錄中重試。')}}
 async function saveOutcome(r,type,note){
-if(r.status!=='confirmed'){msg('請先將預約狀態改為「已確認」，才能處理完成或取消。');return}
-if(type!=='normal'&&!note.trim()){msg('取消紀錄必須填寫備註');return}
+if(!['pending','confirmed'].includes(r.status)||(r.status==='pending'&&type!=='cancelled_before_service'))throw Error('請先確認預約，才能標記服務完成或服務中取消。');
+if(type!=='normal'&&!note.trim())throw Error('請先填寫取消原因。');
 const status=type==='cancelled_before_service'?'cancelled':'completed';
-const original=records.find(item=>item.id===r.id);records=records.filter(item=>item.id!==r.id);show();msg('正在存入'+outcomes[type]+'紀錄…');
-let saved;try{saved=await api('/rest/v1/appointments?id=eq.'+r.id+'&status=eq.confirmed',{method:'PATCH',headers:{Prefer:'return=representation'},body:JSON.stringify({outcome:type,outcome_note:type==='normal'?null:note.trim(),outcome_at:new Date().toISOString(),status})});
-if(!saved?.length)throw Error('這筆預約已被處理，請重新整理確認紀錄。');
-records.push({...r,...saved[0]});
-}catch(error){if(original&&!records.some(item=>item.id===r.id))records.push(original);show();throw error}
-show();msg('已存入客人紀錄：'+outcomes[type]+'，正在通知客人…');await notifyOutcome(r.id)
+const saved=await api('/rest/v1/appointments?id=eq.'+r.id+'&status=eq.'+r.status+'&starts_at=eq.'+encodeURIComponent(r.starts_at),{method:'PATCH',headers:{Prefer:'return=representation'},body:JSON.stringify({outcome:type,outcome_note:type==='normal'?null:note.trim(),outcome_at:new Date().toISOString(),status})});
+if(!saved?.length||saved[0].status!==status)throw Error('這筆預約已變更，請更新資料後重試。');
+Object.assign(r,saved[0]);show();msg('已存入服務紀錄：'+outcomes[type]+'，正在處理客人通知…');await notifyOutcome(r.id);
 }
 function showIncome(){const report=revenueReport(records);const g=$('incomeSummary');g.replaceChildren();for(const [label,amount] of [['正常服務總費用',report.total],['今日收入',report.todayTotal],['本週收入',report.weekTotal],['本月收入',report.monthTotal]])field(g,label,'NT$ '+amount.toLocaleString('zh-TW'))}
 
 let bookingFilter='all';
 const bookingStatusResults=new Map();
 document.querySelectorAll('[data-booking-filter]').forEach(button=>button.onclick=()=>{bookingFilter=button.dataset.bookingFilter;show()});
+
+const bookingBusy=new Set();
+function bookingActionError(e){
+ const text=String(e.message||e);
+ if(text.includes('reschedule_conflict'))return '這個時段已有其他預約（含10分鐘整理時間），請選擇其他時間。';
+ if(text.includes('outside_opening_hours'))return '這個時間未開放預約，請先到「開放預約時間」設定。';
+ if(text.includes('invalid_reschedule_time'))return '請選擇未來的整點或半點時間。';
+ if(text.includes('booking_changed_refresh'))return '這筆預約已變更，請更新資料後再操作。';
+ return text;
+}
 function bookingStatusButtons(r){
- const group=document.createElement('div');group.className='booking-status-control';
- const title=document.createElement('span');title.className='booking-status-label';title.textContent='預約狀態';
- const feedback=document.createElement('p');feedback.className='booking-status-feedback';feedback.setAttribute('role','status');feedback.setAttribute('aria-live','polite');feedback.textContent=bookingStatusResults.get(r.id)||(r.status==='pending'?'等待你確認這筆預約。':'你已確認這筆預約。');
- const buttons=document.createElement('div');buttons.className='booking-status-buttons';buttons.setAttribute('role','group');buttons.setAttribute('aria-label','預約狀態');
- for(const [value,label] of Object.entries({pending:'待確認',confirmed:'已確認'})){
-  const button=document.createElement('button');button.type='button';button.className='booking-status-button';button.dataset.status=value;button.textContent=label;button.setAttribute('aria-pressed',String(r.status===value));
-  button.onclick=async()=>{
-   if(buttons.getAttribute('aria-busy')==='true'||r.status===value)return;
-   const name=r.submitted_name||r.customers?.name||'未填姓名',time=new Date(r.starts_at).toLocaleString('zh-TW',{timeZone:'Asia/Taipei'});
-   if(!confirm('客人：'+name+'\n預約時間：'+time+'\n服務：'+(r.service_name||'—')+'\n\n'+(value==='confirmed'?'確認接受這筆預約，並改為「已確認」？':'確認將這筆預約改回「待確認」？')))return;
-   buttons.setAttribute('aria-busy','true');for(const b of buttons.children)b.disabled=true;
-   button.textContent='儲存中…';feedback.textContent='正在儲存，請稍候…';
-   try{
-    const saved=await api('/rest/v1/appointments?id=eq.'+r.id+'&status=in.(pending,confirmed)',{method:'PATCH',headers:{Prefer:'return=representation'},body:JSON.stringify({status:value})});
-    if(!saved?.length)throw Error('這筆預約狀態已變更，請重新整理後再試。');
-    if(saved[0].status!==value)throw Error('儲存結果與預期不同，請更新資料後再確認。');
-    Object.assign(r,saved[0]);const result='已儲存：'+(r.submitted_name||r.customers?.name||'這位客人')+'的預約已改為「'+label+'」。';bookingStatusResults.set(r.id,result);show();msg(result);
-   }catch(e){feedback.textContent='未能確認儲存成功；畫面保留原狀態「'+(labels[r.status]||r.status)+'」。請更新資料後重試。'+e.message;msg(feedback.textContent)}
-   finally{button.textContent=label;buttons.removeAttribute('aria-busy');for(const b of buttons.children)b.disabled=false}
-  };
-  buttons.append(button);
+ const group=document.createElement('section');group.className='booking-status-control';
+ const badge=document.createElement('span');badge.className='booking-status-badge '+r.status;badge.textContent=labels[r.status]||r.status;
+ const feedback=document.createElement('p');feedback.className='booking-status-feedback';feedback.setAttribute('role','status');feedback.textContent=bookingStatusResults.get(r.id)||(r.status==='pending'?'等待你確認這筆預約。':'這筆預約已確認。');
+ const actions=document.createElement('div');actions.className='booking-action-row';
+ const button=(label,cls='')=>{const b=document.createElement('button');b.type='button';b.textContent=label;b.className=cls;return b};
+ const panel=(title)=>{const d=document.createElement('details');d.className='booking-edit-panel';const summary=document.createElement('summary');summary.textContent=title;d.append(summary);return d};
+ const context=()=> '客人：'+(r.submitted_name||r.customers?.name||'未填姓名')+'\n原時間：'+new Date(r.starts_at).toLocaleString('zh-TW',{timeZone:'Asia/Taipei'});
+ const run=async(task)=>{
+  if(bookingBusy.has(r.id))return;bookingBusy.add(r.id);group.setAttribute('aria-busy','true');
+  const controls=[...group.querySelectorAll('button,input,textarea')];controls.forEach(b=>b.disabled=true);feedback.textContent='正在儲存，請稍候…';
+  try{await task()}catch(e){feedback.textContent='未能確認儲存成功，請更新資料後重試。'+bookingActionError(e);msg(feedback.textContent)}
+  finally{bookingBusy.delete(r.id);group.removeAttribute('aria-busy');controls.forEach(b=>b.disabled=false)}
+ };
+ const savedResult=text=>{bookingStatusResults.set(r.id,text);show();msg(text)};
+ const changeStatus=async value=>{
+  const saved=await api('/rest/v1/appointments?id=eq.'+r.id+'&status=eq.'+r.status+'&starts_at=eq.'+encodeURIComponent(r.starts_at),{method:'PATCH',headers:{Prefer:'return=representation'},body:JSON.stringify({status:value})});
+  if(!saved?.length||saved[0].status!==value)throw Error('這筆預約已變更，請更新資料後再試。');
+  Object.assign(r,saved[0]);savedResult('已儲存：預約狀態為「'+labels[value]+'」。');
+ };
+ if(r.status==='pending'){
+  const accept=button('確認預約','booking-primary');accept.onclick=()=>{if(confirm(context()+'\n服務：'+(r.service_name||'—')+'\n\n確認接受這筆預約？'))return run(()=>changeStatus('confirmed'))};actions.append(accept);
  }
- group.append(title,buttons,feedback);return group;
+ const editTime=panel('更改時間'),dateLabel=document.createElement('label');dateLabel.textContent='新預約時間（台灣時間）';
+ const input=document.createElement('input');input.type='datetime-local';input.step='1800';
+ input.value=new Date(Date.parse(r.starts_at)+8*3600000).toISOString().slice(0,16);
+ input.min=new Date(Date.now()+8*3600000).toISOString().slice(0,16);dateLabel.append(input);
+ const timeHint=document.createElement('p');timeHint.className='muted';timeHint.textContent='先與客人協調，選擇已開放的整點或半點；改期後保留目前預約狀態。';
+ const saveTime=button('確認更改時間');
+ saveTime.onclick=()=>{
+  const start=new Date(input.value+':00+08:00');
+  if(!input.value||!Number.isFinite(start.getTime())||start.getTime()<=Date.now()||start.getUTCMinutes()%30!==0){feedback.textContent='請選擇未來的整點或半點時間。';return}
+  if(start.getTime()===Date.parse(r.starts_at)){feedback.textContent='新時間與目前相同。';return}
+  if(!confirm(context()+'\n新時間：'+start.toLocaleString('zh-TW',{timeZone:'Asia/Taipei'})+'\n\n確認已與客人協調並更改時間？'))return;
+  return run(async()=>{const saved=await api('/rest/v1/rpc/admin_reschedule_appointment',{method:'POST',body:JSON.stringify({p_id:r.id,p_expected_start:r.starts_at,p_expected_status:r.status,p_start:start.toISOString()})});if(!saved?.length||Date.parse(saved[0].starts_at)!==start.getTime())throw Error('未收到改期成功結果。');Object.assign(r,saved[0]);savedResult('已儲存新預約時間；預約狀態維持「'+labels[r.status]+'」。')});
+ };
+ editTime.append(dateLabel,timeHint,saveTime);
+ const cancelPanel=panel(r.status==='pending'?'取消／不接受預約':'取消預約'),cancelLabel=document.createElement('label');cancelLabel.textContent='取消原因（必填）';
+ const reason=document.createElement('textarea');reason.maxLength=4000;reason.placeholder='例如：時間無法配合，已與客人說明';cancelLabel.append(reason);
+ const cancelButton=button('確認取消預約','danger');cancelButton.onclick=()=>{
+  if(!reason.value.trim()){feedback.textContent='請先填寫取消原因。';cancelPanel.open=true;reason.focus();return}
+  if(!confirm(context()+'\n原因：'+reason.value.trim()+'\n\n確定取消？儲存後會移至「服務前取消」紀錄，並嘗試發送 LINE 通知。'))return;
+  return run(()=>saveOutcome(r,'cancelled_before_service',reason.value));
+ };
+ cancelPanel.append(cancelLabel,cancelButton);
+ const notesPanel=panel('店家備註（僅後台可見）'),notesLabel=document.createElement('label');notesLabel.textContent='內部聯繫與服務提醒';
+ const notes=document.createElement('textarea');notes.maxLength=4000;notes.value=r.admin_notes||'';notes.placeholder='例如：已電話聯絡、等待客人回覆';notesLabel.append(notes);
+ const saveNotes=button('儲存店家備註');saveNotes.onclick=()=>{
+  if(!confirm(context()+'\n\n確認儲存這筆店家備註？'))return;
+  return run(async()=>{const value=notes.value.trim();const saved=await api('/rest/v1/appointments?id=eq.'+r.id+'&status=eq.'+r.status,{method:'PATCH',headers:{Prefer:'return=representation'},body:JSON.stringify({admin_notes:value||null})});if(!saved?.length||(saved[0].admin_notes||'')!==value)throw Error('未收到備註儲存成功結果。');Object.assign(r,saved[0]);savedResult('店家備註已儲存，僅後台可見。')});
+ };
+ notesPanel.append(notesLabel,saveNotes);
+ group.append(badge,actions,editTime,cancelPanel,notesPanel);
+ if(r.status==='confirmed'){const more=panel('更多操作');const revert=button('改回待確認');revert.onclick=()=>{if(confirm(context()+'\n\n確認改回「待確認」？'))return run(()=>changeStatus('pending'))};more.append(revert);group.append(more)}
+ group.append(feedback);return group;
 }
 
-function show(){$('count').textContent=records.filter(r=>!isArchived(r)).length.toLocaleString('zh-TW');showIncome();if(pageView==='history')showHistory();if(pageView==='search'){showCustomerSearch();return}if(pageView!=='bookings')return;const active=records.filter(r=>!isArchived(r));for(const button of document.querySelectorAll('[data-booking-filter]')){const filter=button.dataset.bookingFilter;button.setAttribute('aria-pressed',String(bookingFilter===filter));button.textContent=(filter==='all'?'全部':labels[filter])+' '+active.filter(r=>filter==='all'||r.status===filter).length+' 筆'}const selected=active.filter(r=>bookingFilter==='all'||r.status===bookingFilter).sort((a,b)=>(a.status==='pending'?0:1)-(b.status==='pending'?0:1)||Date.parse(a.starts_at)-Date.parse(b.starts_at));$('bookingListCount').textContent='顯示 '+selected.length+' 筆｜待確認 '+active.filter(r=>r.status==='pending').length+' 筆・已確認 '+active.filter(r=>r.status==='confirmed').length+' 筆';$('cards').replaceChildren();if(!selected.length){const empty=document.createElement('p');empty.className='card muted';empty.textContent=bookingFilter==='all'?'目前沒有預約申請。':'目前沒有「'+labels[bookingFilter]+'」預約。';$('cards').append(empty)}for(const r of selected){const c=document.createElement('article');c.className='card booking-overview-card';const h=document.createElement('h3');h.textContent=(r.submitted_name||r.customers?.name||'未填姓名')+'｜'+new Date(r.starts_at).toLocaleString('zh-TW',{timeZone:'Asia/Taipei'});c.append(h);const g=document.createElement('div');g.className='grid';field(g,'手機',r.submitted_phone||r.customers?.phone);field(g,'服務',r.service_name);field(g,'金額',r.price_ntd?'NT$ '+r.price_ntd:'');field(g,'預約狀態',labels[r.status]||r.status);c.append(g);field(c,'症狀',r.symptoms);field(c,'客人備註',r.notes);if(r.outcome_note)field(c,'取消／服務紀錄備註',r.outcome_note);c.append(bookingStatusButtons(r));if(r.status==='confirmed'){const note=document.createElement('textarea');note.placeholder='取消原因／服務中止原因（取消時必填）';note.value=r.outcome_note||'';c.append(note);const a=document.createElement('div');a.className='actions';for(const [text,cls,type,confirmText] of [['正常完成','', 'normal','確認正常完成本次服務？存檔後將發送 LINE 通知給這位客人。'],['服務前取消','danger','cancelled_before_service','確認客人在服務開始前取消？此時段將重新釋放，並發送 LINE 通知給這位客人。'],['服務中取消','warn','cancelled_during_service','確認服務進行到一半中止？將保留為服務紀錄，並發送 LINE 通知給這位客人。']]){const b=document.createElement('button');b.textContent=text;b.className=cls;b.onclick=async()=>{if(type==='normal'&&Date.now()<Date.parse(r.ends_at||new Date(Date.parse(r.starts_at)+r.duration_minutes*60000).toISOString())){const notice='這筆預約尚未到服務結束時間（'+new Date(r.ends_at||Date.parse(r.starts_at)+r.duration_minutes*60000).toLocaleString('zh-TW',{timeZone:'Asia/Taipei'})+'），暫時不能標記完成。若只是測試預約，可填寫原因後按「服務前取消」。';msg(notice);alert(notice);return}if(type!=='normal'&&!note.value.trim()){msg('請先填寫取消原因，再按「'+text+'」。');alert('請先填寫取消原因，再按「'+text+'」。');note.focus();return}if(!confirm(confirmText))return;b.disabled=true;try{await saveOutcome(r,type,note.value)}catch(e){msg(e.message)}finally{b.disabled=false}};a.append(b)}c.append(a)}$('cards').append(c)}}
+function show(){$('count').textContent=records.filter(r=>!isArchived(r)).length.toLocaleString('zh-TW');showIncome();if(pageView==='history')showHistory();if(pageView==='search'){showCustomerSearch();return}if(pageView!=='bookings')return;const active=records.filter(r=>!isArchived(r));for(const button of document.querySelectorAll('[data-booking-filter]')){const filter=button.dataset.bookingFilter;button.setAttribute('aria-pressed',String(bookingFilter===filter));button.textContent=(filter==='all'?'全部':labels[filter])+' '+active.filter(r=>filter==='all'||r.status===filter).length+' 筆'}const selected=active.filter(r=>bookingFilter==='all'||r.status===bookingFilter).sort((a,b)=>(a.status==='pending'?0:1)-(b.status==='pending'?0:1)||Date.parse(a.starts_at)-Date.parse(b.starts_at));$('bookingListCount').textContent='顯示 '+selected.length+' 筆｜待確認 '+active.filter(r=>r.status==='pending').length+' 筆・已確認 '+active.filter(r=>r.status==='confirmed').length+' 筆';$('cards').replaceChildren();if(!selected.length){const empty=document.createElement('p');empty.className='card muted';empty.textContent=bookingFilter==='all'?'目前沒有預約申請。':'目前沒有「'+labels[bookingFilter]+'」預約。';$('cards').append(empty)}for(const r of selected){const c=document.createElement('article');c.className='card booking-overview-card';const h=document.createElement('h3');h.textContent=(r.submitted_name||r.customers?.name||'未填姓名')+'｜'+new Date(r.starts_at).toLocaleString('zh-TW',{timeZone:'Asia/Taipei'});c.append(h);const g=document.createElement('div');g.className='grid';field(g,'手機',r.submitted_phone||r.customers?.phone);field(g,'服務',r.service_name);field(g,'金額',r.price_ntd?'NT$ '+r.price_ntd:'');field(g,'預約狀態',labels[r.status]||r.status);c.append(g);field(c,'症狀',r.symptoms);field(c,'客人備註',r.notes);if(r.admin_notes)field(c,'店家備註（僅後台）',r.admin_notes);if(r.outcome_note)field(c,'取消／服務紀錄備註',r.outcome_note);c.append(bookingStatusButtons(r));if(r.status==='confirmed'){const note=document.createElement('textarea');note.placeholder='服務中止原因（服務中取消時必填）';note.value=r.outcome_note||'';c.append(note);const a=document.createElement('div');a.className='actions';for(const [text,cls,type,confirmText] of [['正常完成','', 'normal','確認正常完成本次服務？存檔後將發送 LINE 通知給這位客人。'],['服務中取消','warn','cancelled_during_service','確認服務進行到一半中止？將保留為服務紀錄，並發送 LINE 通知給這位客人。']]){const b=document.createElement('button');b.textContent=text;b.className=cls;b.onclick=async()=>{if(type==='normal'&&Date.now()<Date.parse(r.ends_at||new Date(Date.parse(r.starts_at)+r.duration_minutes*60000).toISOString())){const notice='這筆預約尚未到服務結束時間（'+new Date(r.ends_at||Date.parse(r.starts_at)+r.duration_minutes*60000).toLocaleString('zh-TW',{timeZone:'Asia/Taipei'})+'），暫時不能標記完成。若只是測試預約，可填寫原因後按「服務前取消」。';msg(notice);alert(notice);return}if(type!=='normal'&&!note.value.trim()){msg('請先填寫取消原因，再按「'+text+'」。');alert('請先填寫取消原因，再按「'+text+'」。');note.focus();return}if(bookingBusy.has(r.id)||!confirm(confirmText))return;bookingBusy.add(r.id);b.disabled=true;try{await saveOutcome(r,type,note.value)}catch(e){msg(e.message)}finally{bookingBusy.delete(r.id);b.disabled=false}};a.append(b)}c.append(a)}$('cards').append(c)}}
 async function refresh(){try{records=[];for(let offset=0;;offset+=500){const rows=await api('/rest/v1/appointments?select=*,customers(name,phone,line_id)&order=starts_at.desc&limit=500&offset='+offset);records.push(...rows);if(rows.length<500)break}show();await loadOpeningDays();msg('')}catch(e){msg(e.message)}}
 $('loginForm').onsubmit=async event=>{event.preventDefault();if($('signin').disabled)return;$('signin').disabled=true;try{const v=await api('/auth/v1/token?grant_type=password',{method:'POST',body:JSON.stringify({email:'guts1989921@gmail.com',password:$('password').value})});storeAdminSession(v);$('password').value='';$('login').hidden=true;rememberAdmin();setPage(pageView,false);await refresh()}catch(e){clearAdminSession();msg(friendlyError(e.message))}finally{$('signin').disabled=false}};
 $('signup').onclick=async()=>{if($('password').value.length<12){msg('請設定至少 12 碼密碼');return}try{await api('/auth/v1/signup?redirect_to='+encodeURIComponent(ADMIN_URL),{method:'POST',body:JSON.stringify({email:'guts1989921@gmail.com',password:$('password').value})});$('password').value='';msg('請到管理員信箱完成驗證後回來登入。')}catch(e){msg(friendlyError(e.message))}};
