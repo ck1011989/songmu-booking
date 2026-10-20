@@ -141,6 +141,15 @@ button:disabled{opacity:.55;cursor:not-allowed}
 .booking-edit-panel button{margin:4px 0 14px}
 .booking-edit-panel:has(.danger)>summary{color:#8a4f45}
 @media(max-width:600px){.booking-action-row button{width:100%}.booking-edit-panel input{font-size:16px}}
+
+.booking-edit-panel select{display:block;width:100%;min-height:48px;margin:8px 0;font-size:16px}
+.reschedule-slot-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:12px 0}
+.reschedule-slot-grid .reschedule-slot{margin:0;padding:11px 5px;background:#fff;color:#705943;font-size:14px;min-height:46px}
+.reschedule-slot-grid .reschedule-slot[aria-pressed="true"]{background:#705943;color:#fff;border-color:#705943}
+.reschedule-slot:focus-visible{outline:3px solid #b29b80;outline-offset:3px}
+.booking-edit-panel .booking-slots-reload{font-size:14px;background:#f5f0e9;color:#705943}
+.booking-edit-panel button:disabled{opacity:.5;cursor:default}
+@media(max-width:390px){.reschedule-slot-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 </style>
 <header class="admin-page-header"><div class="admin-header-summary"><h1>🌿 鬆沐｜預約管理</h1><section id="bookingCountSummary" class="booking-count-banner" hidden aria-labelledby="currentBookingsTitle"><h2 id="currentBookingsTitle" role="status" aria-live="polite" aria-atomic="true"><span>目前預約</span><span class="booking-count-value" id="count">…</span><span>筆預約</span></h2></section></div><div id="adminTopActions" class="admin-top-actions" hidden aria-label="管理操作"><button id="export" class="toolbar-export" type="button">↓ <span>匯出 Excel 報表</span></button><button id="logout" class="toolbar-logout" type="button">登出</button></div></header><button id="installApp" hidden>安裝鬆沐管理</button><p id="installStatus" class="muted" role="status"></p><p id="status" role="status"></p>
 <section id="login" class="card"><form id="loginForm"><p>管理員：guts1989921@gmail.com</p><label>密碼 <input id="password" required type="password" autocomplete="current-password" minlength="12"></label><div><button id="signin" type="submit">登入</button><button id="signup" type="button" hidden>首次建立後臺登入</button><button id="forgot" class="linkbtn" type="button">忘記密碼？</button></div><p class="muted">忘記密碼時會寄重設信到管理員信箱。請勿把密碼傳給任何人。</p></form></section>
@@ -256,7 +265,7 @@ function bookingStatusButtons(r){
  const context=()=> '客人：'+(r.submitted_name||r.customers?.name||'未填姓名')+'\n原時間：'+new Date(r.starts_at).toLocaleString('zh-TW',{timeZone:'Asia/Taipei'});
  const run=async(task)=>{
   if(bookingBusy.has(r.id))return;bookingBusy.add(r.id);group.setAttribute('aria-busy','true');
-  const controls=[...group.querySelectorAll('button,input,textarea')];controls.forEach(b=>b.disabled=true);feedback.textContent='正在儲存，請稍候…';
+  const controls=[...group.querySelectorAll('button,input,select,textarea')];controls.forEach(b=>b.disabled=true);feedback.textContent='正在儲存，請稍候…';
   try{await task()}catch(e){feedback.textContent='未能確認儲存成功，請更新資料後重試。'+bookingActionError(e);msg(feedback.textContent)}
   finally{bookingBusy.delete(r.id);group.removeAttribute('aria-busy');controls.forEach(b=>b.disabled=false)}
  };
@@ -269,20 +278,61 @@ function bookingStatusButtons(r){
  if(r.status==='pending'){
   const accept=button('確認預約','booking-primary');accept.onclick=()=>{if(confirm(context()+'\n服務：'+(r.service_name||'—')+'\n\n確認接受這筆預約？'))return run(()=>changeStatus('confirmed'))};actions.append(accept);
  }
- const editTime=panel('更改時間'),dateLabel=document.createElement('label');dateLabel.textContent='新預約時間（台灣時間）';
- const input=document.createElement('input');input.type='datetime-local';input.step='1800';
- input.value=new Date(Date.parse(r.starts_at)+8*3600000).toISOString().slice(0,16);
- input.min=new Date(Date.now()+8*3600000).toISOString().slice(0,16);dateLabel.append(input);
- const timeHint=document.createElement('p');timeHint.className='muted';timeHint.textContent='先與客人協調，選擇已開放的整點或半點；改期後保留目前預約狀態。';
- const saveTime=button('確認更改時間');
+ 
+ const editTime=panel('更改時間'),dateLabel=document.createElement('label');dateLabel.textContent='選擇已開放日期（台灣時間）';
+ const dateSelect=document.createElement('select');dateSelect.setAttribute('aria-label','選擇已開放日期');dateLabel.append(dateSelect);
+ const timeHint=document.createElement('p');timeHint.className='muted';timeHint.textContent='展開後讀取可用時段；服務 '+r.duration_minutes+' 分鐘，含10分鐘整理間隔。';
+ timeHint.setAttribute('role','status');
+ const slotList=document.createElement('div');slotList.className='reschedule-slot-grid';slotList.setAttribute('role','group');slotList.setAttribute('aria-label','選擇新預約時間');
+ const selectedText=document.createElement('p');selectedText.className='muted';selectedText.setAttribute('role','status');
+ const reloadSlots=button('更新可用時段','booking-slots-reload');
+ const saveTime=button('確認更改時間');saveTime.disabled=true;
+ let slotRows=[],selectedStart='',slotRequest=0,daysRequest=0,daysLoaded=false;
+ const clearSelection=()=>{selectedStart='';selectedText.textContent='請點選一個新時段。';saveTime.disabled=true};
+ async function loadSlots(){
+  const request=++slotRequest;slotRows=[];clearSelection();slotList.replaceChildren();
+  if(!dateSelect.value){timeHint.textContent='目前沒有已開放日期，請先到「開放預約時間」設定。';return}
+  timeHint.textContent='正在讀取當天可用時段…';
+  try{
+   const rows=await api('/rest/v1/rpc/admin_reschedule_slots',{method:'POST',body:JSON.stringify({p_id:r.id,p_day:dateSelect.value})});
+   if(request!==slotRequest||!group.isConnected)return;
+   slotRows=rows||[];
+   timeHint.textContent=slotRows.length?'服務 '+r.duration_minutes+' 分鐘，已排除其他預約及10分鐘整理間隔。':'這一天沒有可用時段，請選擇其他日期。';
+   for(const row of slotRows){
+    const current=Date.parse(row.starts_at)===Date.parse(r.starts_at);
+    const time=button(new Date(row.starts_at).toLocaleTimeString('zh-TW',{timeZone:'Asia/Taipei',hour:'2-digit',minute:'2-digit',hour12:false})+(current?'（原時段）':''),'reschedule-slot');
+    time.setAttribute('aria-pressed','false');time.onclick=()=>{
+     if(bookingBusy.has(r.id))return;
+     selectedStart=row.starts_at;for(const item of slotList.children)item.setAttribute('aria-pressed',String(item===time));
+     selectedText.textContent=(current?'目前原時段：':'已選新時間：')+new Date(row.starts_at).toLocaleString('zh-TW',{timeZone:'Asia/Taipei'});
+     saveTime.disabled=current;
+    };slotList.append(time);
+   }
+  }catch(e){if(request!==slotRequest||!group.isConnected)return;timeHint.textContent='無法讀取可用時段：'+bookingActionError(e)+' 請按「更新可用時段」重試。'}
+ }
+ async function loadDates(){
+  const request=++daysRequest;slotRequest++;clearSelection();slotList.replaceChildren();dateSelect.disabled=true;reloadSlots.disabled=true;timeHint.textContent='正在讀取已開放日期…';
+  const previous=dateSelect.value||new Date(Date.parse(r.starts_at)+8*3600000).toISOString().slice(0,10);
+  try{
+   const days=await api('/rest/v1/rpc/admin_get_opening_days',{method:'POST',body:'{}'});
+   if(request!==daysRequest||!group.isConnected)return;
+   dateSelect.replaceChildren();
+   for(const d of days||[]){const option=document.createElement('option');option.value=d.day;option.textContent=d.day;dateSelect.append(option)}
+   dateSelect.value=(days||[]).some(d=>d.day===previous)?previous:((days||[])[0]?.day||'');
+   daysLoaded=true;await loadSlots();
+  }catch(e){if(request!==daysRequest||!group.isConnected)return;dateSelect.replaceChildren();timeHint.textContent='無法讀取已開放日期：'+bookingActionError(e)+' 請按「更新可用時段」重試。'}
+  finally{if(request===daysRequest){dateSelect.disabled=bookingBusy.has(r.id)||!dateSelect.children.length;reloadSlots.disabled=bookingBusy.has(r.id)}}
+ }
+ dateSelect.onchange=loadSlots;reloadSlots.onclick=loadDates;
+ editTime.ontoggle=()=>{if(editTime.open&&!daysLoaded)return loadDates()};
  saveTime.onclick=()=>{
-  const start=new Date(input.value+':00+08:00');
-  if(!input.value||!Number.isFinite(start.getTime())||start.getTime()<=Date.now()||start.getUTCMinutes()%30!==0){feedback.textContent='請選擇未來的整點或半點時間。';return}
-  if(start.getTime()===Date.parse(r.starts_at)){feedback.textContent='新時間與目前相同。';return}
+  const row=slotRows.find(slot=>slot.starts_at===selectedStart),start=new Date(selectedStart);
+  if(!row||!Number.isFinite(start.getTime())||start.getTime()<=Date.now()){feedback.textContent='請先選擇有效的新時段，必要時更新可用時段。';saveTime.disabled=true;return}
+  if(start.getTime()===Date.parse(r.starts_at)){feedback.textContent='新時間與目前相同，請選擇其他時段。';return}
   if(!confirm(context()+'\n新時間：'+start.toLocaleString('zh-TW',{timeZone:'Asia/Taipei'})+'\n\n確認已與客人協調並更改時間？'))return;
   return run(async()=>{const saved=await api('/rest/v1/rpc/admin_reschedule_appointment',{method:'POST',body:JSON.stringify({p_id:r.id,p_expected_start:r.starts_at,p_expected_status:r.status,p_start:start.toISOString()})});if(!saved?.length||Date.parse(saved[0].starts_at)!==start.getTime())throw Error('未收到改期成功結果。');Object.assign(r,saved[0]);savedResult('已儲存新預約時間；預約狀態維持「'+labels[r.status]+'」。')});
  };
- editTime.append(dateLabel,timeHint,saveTime);
+ editTime.append(dateLabel,reloadSlots,timeHint,slotList,selectedText,saveTime);
  const cancelPanel=panel(r.status==='pending'?'取消／不接受預約':'取消預約'),cancelLabel=document.createElement('label');cancelLabel.textContent='取消原因（必填）';
  const reason=document.createElement('textarea');reason.maxLength=4000;reason.placeholder='例如：時間無法配合，已與客人說明';cancelLabel.append(reason);
  const cancelButton=button('確認取消預約','danger');cancelButton.onclick=()=>{
