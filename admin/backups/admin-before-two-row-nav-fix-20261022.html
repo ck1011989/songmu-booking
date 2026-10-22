@@ -1,0 +1,743 @@
+<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#214c39"><meta name="color-scheme" content="light"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name="apple-mobile-web-app-title" content="鬆沐管理"><link rel="manifest" href="/songmu-booking/admin/manifest.webmanifest?v=20261006-2"><link rel="apple-touch-icon" href="/songmu-booking/admin/icon-192-v2.png"><link rel="icon" href="./icon.svg"><title>鬆沐｜預約管理</title><style id="booking-calendar-styles">.booking-calendar{margin:14px 0 22px}.booking-calendar-head{display:flex;justify-content:space-between;gap:14px;align-items:start;flex-wrap:wrap}.booking-calendar-head h2{margin:0 0 4px}.booking-calendar-nav{display:flex;align-items:center;gap:6px;flex-wrap:wrap}.booking-calendar-nav button{margin:0;min-height:38px;padding:6px 11px}.booking-calendar-nav strong{min-width:112px;text-align:center}.booking-calendar-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px;margin:16px 0}.booking-calendar-weekday{text-align:center;color:#786e65;font-size:12px;padding:5px 0}.booking-calendar-day{min-width:0;min-height:64px;margin:0;padding:7px 2px;background:#faf8f5;color:#274835;border:1px solid #e7e0d6;border-radius:10px;display:flex;flex-direction:column;align-items:center;gap:4px}.booking-calendar-day[aria-pressed=true]{background:#204734;color:white;border-color:#204734}.booking-calendar-day.today{border-color:#5a8065;border-width:2px}.booking-calendar-day:focus-visible{outline:3px solid #c69b72;outline-offset:2px}.booking-calendar-day.empty{visibility:hidden}.booking-calendar-dots{display:flex;gap:3px;justify-content:center;flex-wrap:wrap}.booking-calendar-dot{width:7px;height:7px;border-radius:50%;background:#bd9874}.booking-calendar-dot.pending{background:#cf8474}.booking-calendar-dot.confirmed{background:#3b8c6e}.booking-calendar-dot.completed{background:#729eaa}.booking-calendar-day[aria-pressed=true] .booking-calendar-dot{outline:1px solid white}.booking-calendar-footer{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}.booking-calendar-legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:#74695e}.booking-calendar-legend span:nth-child(1){color:#c37d6d}.booking-calendar-legend span:nth-child(2){color:#338263}.booking-calendar-legend span:nth-child(3){color:#638f9b}@media(max-width:600px){.booking-calendar-grid{gap:3px}.booking-calendar-day{min-height:52px;font-size:13px;padding:5px 1px}.booking-calendar-head{display:block}.booking-calendar-nav{margin-top:10px}.booking-calendar-nav strong{min-width:95px}.booking-calendar-dot{width:6px;height:6px}}</style><style id="songmu-blush-refinement-20261022">
+:root{--forest:#9d6370;--forest-deep:#7c4858;--cream:#fffaf8;--sand:#eedbd8;--ink:#392e31;--muted:#8d7578}
+body{background:linear-gradient(135deg,#faf1ee 0%,#f6efea 52%,#fff9f5 100%);color:#392e31}
+.admin-page-header{background:#fff8f5;border:1px solid #f0dfdc;border-radius:22px;padding:18px 24px;box-shadow:0 6px 24px #a77d8510}
+.admin-page-header h1{color:#7c4858}
+#dashboard{gap:20px}
+.admin-tabs{background:linear-gradient(175deg,#9e6876,#835262);box-shadow:0 12px 30px #8b526b24;border-radius:22px}
+.sidebar-brand{color:#fff4f0}.sidebar-brand strong{letter-spacing:.09em}
+.admin-tabs button{border-radius:11px;transition:background .15s,color .15s}
+.admin-tabs button[aria-current="page"]{background:#fff7f2!important;color:#804e5b!important;font-weight:700}
+.card,#bookingsPanel>.admin-toolbar,.booking-calendar,#cards .booking-overview-card{background:#fffcfa;border:1px solid #f0e0dd;border-radius:20px;box-shadow:0 8px 28px #986f7b10}
+h2,h3,.toolbar-title{color:#52343c}
+button{background:#9d6370;border-color:#9d6370;border-radius:10px}
+button:hover:not(:disabled){filter:brightness(.97)}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid #e8b9c1;outline-offset:2px}
+input,select,textarea{background:#fff;border-color:#e7d4d4}
+.booking-overview-filters button[aria-pressed="true"]{background:#985b6c;border-color:#985b6c}
+.booking-calendar-day{background:#fffdfb;border-color:#f0e3df;border-radius:9px}
+.booking-calendar-day[aria-pressed="true"]{background:#a36675;color:#fff;border-color:#a36675}
+.booking-calendar-day.today{border-color:#be8b94}
+.calendar-event{border-radius:5px;background:#f6e8e7;color:#694e53}
+.calendar-event.pending{background:#fff0df;border-color:#d89b57;color:#77512b}
+.calendar-event.confirmed{background:#e3f3ea;border-color:#5ba584;color:#315e48}
+.calendar-event.completed{background:#e9f1e6;border-color:#8aaf86;color:#486a47}
+.calendar-event.cancelled{background:#fae4e7;border-color:#c66d83;color:#8b4c5e}
+.booking-calendar-dot.pending{background:#e1a45b}.booking-calendar-dot.confirmed{background:#59a985}.booking-calendar-dot.completed{background:#87ae87}.booking-calendar-dot.cancelled{background:#c66d83}
+.member-card,.customer-details,#incomeSummary>div,.settings-grid section{background:#fff5f3;border-color:#efdeda;border-radius:15px}
+.member-stats strong,.customer-details summary{color:#93596a}
+.chart-bar{background:#cb8796}
+table.report-table th{background:#f9efec}table.report-table th,table.report-table td{border-color:#efdfdc}
+.feature-notice{background:#fff3e9;border-left-color:#c99583;color:#74544e}
+.toolbar-refresh,.opening-light{background:#fff8f6;color:#955e6d;border-color:#e9cfd1}
+#cards .booking-overview-card{padding:18px}
+@media(min-width:1101px){#dashboard{grid-template-columns:210px minmax(0,1fr)}.admin-tabs{top:18px}}
+@media(max-width:650px){
+body{padding:10px 10px 80px}
+.admin-page-header{padding:12px;border-radius:16px}
+.admin-tabs{background:#fff9f7;border:1px solid #edd9d7;box-shadow:0 4px 18px #986f7b10;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;padding:9px;border-radius:17px}
+.sidebar-brand{grid-column:1/-1;color:#91596a;padding:4px 5px 8px}
+.sidebar-brand strong{font-size:17px}
+.admin-tabs button,.admin-tabs button:last-child{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:51px;font-size:11px;padding:6px 2px;color:#765661;background:#f9eeec;border:0}
+.admin-tabs button[aria-current="page"]{background:#9d6370!important;color:white!important}
+.admin-tabs .nav-number{font-size:13px}
+.booking-calendar-day{min-height:70px}
+.calendar-event{font-size:9px;line-height:1.2}
+.booking-calendar-grid{gap:2px}
+.booking-calendar-head{gap:8px}
+.booking-calendar-nav{gap:4px}
+.booking-calendar-nav button{min-height:36px}
+#incomeSummary{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:390px){.booking-calendar-day{min-height:62px}.calendar-event{font-size:8px}.admin-tabs button{font-size:10px}}
+@media(prefers-reduced-motion:reduce){.admin-tabs button{transition:none}}
+</style>
+<style id="songmu-five-groups-20261022">
+.admin-tabs{display:flex!important;flex-direction:column!important;min-height:0!important;gap:12px!important}
+.admin-group-tabs{display:grid;grid-template-columns:1fr;gap:7px}
+.admin-group-tabs button{display:flex!important;align-items:center!important;gap:10px!important;width:100%;padding:12px!important;min-height:45px!important;border:0!important;background:transparent!important;color:#e0eee5!important;text-align:left!important;white-space:nowrap!important}
+.admin-group-tabs button[aria-pressed="true"]{background:#fff!important;color:#214c39!important;font-weight:700!important}
+.admin-subnav{border-top:1px solid #4b725d;padding-top:10px}
+.admin-subnav [data-subnav-group]{display:flex;flex-direction:column;gap:4px}
+.admin-subnav [data-subnav-group][hidden]{display:none!important}
+.admin-subnav button{width:100%!important;min-height:38px!important;padding:9px 12px!important;text-align:left!important;font-size:13px!important;color:#e0eee5!important;background:transparent!important;border:0!important}
+.admin-subnav button[aria-current="page"]{background:#dceee2!important;color:#214c39!important;font-weight:700!important}
+@media(max-width:760px){
+#dashboard>.admin-tabs{display:block!important;overflow:visible!important;max-height:none!important;height:auto!important;background:#214c39!important;padding:9px!important;margin-bottom:14px!important}
+.admin-group-tabs{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:6px!important}
+#dashboard>.admin-tabs .admin-group-tabs button{width:100%!important;min-width:0!important;height:auto!important;min-height:48px!important;white-space:normal!important;justify-content:center!important;text-align:center!important;padding:8px 3px!important;font-size:12px!important;line-height:1.35!important;gap:4px!important}
+.admin-group-tabs button span{display:block}
+.admin-subnav{margin-top:8px;padding-top:8px}
+.admin-subnav [data-subnav-group]:not([hidden]){display:flex!important;flex-direction:row!important;flex-wrap:wrap!important;gap:6px!important}
+#dashboard>.admin-tabs .admin-subnav button{width:auto!important;min-width:0!important;height:auto!important;min-height:38px!important;padding:8px 11px!important;font-size:12px!important;white-space:normal!important}
+}
+</style></head>
+<style>body{font:16px system-ui;background:#fbf9f6;color:#43352d;margin:20px auto;max-width:1200px;padding:14px}input,button,select,textarea{font:inherit;padding:9px;margin:4px;border:1px solid #bda995;border-radius:8px}button{cursor:pointer;background:#705943;color:#fff}.linkbtn{background:transparent;color:#705943;border:0;text-decoration:underline}.danger{background:#8a4f45}.warn{background:#9a7044}.card{background:#fff;border:1px solid #e5dcd3;border-radius:14px;padding:14px;margin:12px 0}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:8px}.muted{color:#7b6a5e;font-size:14px}[hidden]{display:none!important}#status{white-space:pre-wrap}textarea{width:calc(100% - 28px);min-height:70px}.actions{display:flex;flex-wrap:wrap;gap:6px}
+/* Mobile-first admin layout */
+*{box-sizing:border-box}body{width:100%;max-width:1200px;margin:0 auto;padding:20px 16px 42px;overflow-x:hidden;line-height:1.55}h1{font-size:clamp(25px,5vw,34px);line-height:1.3;margin:8px 0 20px}h2{font-size:clamp(21px,4vw,27px);margin:0 0 18px}button,input,select,textarea{max-width:100%}button{min-height:44px;line-height:1.35}input,select,textarea{background:#fff;color:#43352d}.card{padding:clamp(16px,4vw,26px);border-radius:18px;box-shadow:0 3px 14px rgba(67,53,45,.035)}#dashboard>.actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:16px 0 20px}#dashboard>.actions button{margin:0;padding:11px 8px;white-space:normal;min-width:0}#incomeSummary{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}#incomeSummary>*{min-width:0;overflow-wrap:anywhere}#dashboard>label,#historyPage>label{display:block;margin:18px 0 8px}#search,#historySearch,#historyFilter{display:block;width:100%;margin:8px 0 0;min-height:48px}#cards,#historyCards{min-width:0;overflow-wrap:anywhere}#cards .card,#historyCards .card{overflow-wrap:anywhere}#cards .actions,#historyCards .actions{gap:8px}#cards .actions button,#historyCards .actions button{flex:1 1 130px;margin:0}#login input,#reset input{display:block;width:100%;margin:8px 0 14px}#status{overflow-wrap:anywhere}
+@media(max-width:600px){body{padding:18px 14px 32px;font-size:16px}h1{margin:4px 0 20px}#dashboard>.actions{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}#dashboard>.actions button{font-size:15px;padding:11px 5px}#dashboard>.actions button:first-child,#dashboard>.actions button:nth-child(2){grid-column:auto}#incomeSummary{grid-template-columns:1fr;gap:4px}#incomeSummary>*{padding:4px 0}#dashboard>.card{margin:16px 0}#login,#reset{padding:20px 16px}#historyPage>.actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}#historyPage>.actions button{margin:0;padding:10px 6px}button{border-radius:11px}#count,#historyCount{font-size:14px}}
+@media(max-width:360px){#dashboard>.actions{grid-template-columns:1fr 1fr}#dashboard>.actions button{font-size:14px}}
+
+/* Dashboard navigation redesign */
+.admin-toolbar{margin:14px 0 24px;padding:20px;background:#f1ebe3;border:1px solid #e8ddd1;border-radius:22px}.toolbar-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}.toolbar-eyebrow{font-size:12px;letter-spacing:.15em;color:#8c7665;font-weight:700}.toolbar-title{font-size:24px;margin:4px 0 2px}.toolbar-subtitle{margin:0;color:#857568;font-size:13px}.toolbar-refresh{min-width:78px;border-radius:30px;padding:8px 12px;background:#fff;color:#705943;border:1px solid #dacbbd;margin:0;font-size:15px}.toolbar-section-label{font-size:13px;font-weight:700;color:#7c6959;margin:22px 0 10px}.toolbar-links{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.toolbar-tile{display:flex;align-items:center;text-align:left;gap:10px;min-width:0;margin:0;padding:16px 12px;border-radius:15px;background:#fff;color:#493b31;border:1px solid #e4d9ce;box-shadow:0 2px 5px rgba(60,42,27,.03)}.tile-icon{display:grid;place-items:center;flex:0 0 34px;height:34px;border-radius:11px;background:#f1e9df;color:#705943;font-size:22px}.tile-copy{display:flex;flex-direction:column;gap:2px;min-width:0}.tile-copy strong{font-size:15px;line-height:1.35}.tile-copy small{font-size:12px;color:#968779}.tile-arrow{margin-left:auto;font-size:24px;color:#b5a496}.toolbar-bottom{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:16px;padding-top:16px;border-top:1px solid #dfd2c5}.toolbar-export{margin:0;padding:11px 16px;border-radius:12px;background:#705943;color:#fff;font-size:14px}.toolbar-logout{margin:0;padding:9px 13px;background:transparent;border:1px solid #d2c1b1;color:#766456;font-size:13px;border-radius:12px}
+@media(max-width:650px){.admin-toolbar{padding:17px 14px;border-radius:19px}.toolbar-title{font-size:22px}.toolbar-links{grid-template-columns:1fr;gap:8px}.toolbar-tile{padding:12px 14px;min-height:62px}.tile-icon{flex-basis:36px;height:36px}.tile-copy strong{font-size:16px}.tile-copy small{font-size:12px}.toolbar-bottom{margin-top:14px}.toolbar-export{flex:1}.toolbar-logout{flex:0 0 auto}#dashboard>.admin-toolbar .toolbar-links button{font-size:inherit}}
+
+.opening-panel{border-color:#d6c4b2}.opening-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}.opening-head h2{margin:0 0 5px}.opening-head p{margin:0 0 16px}.opening-fields{display:grid;grid-template-columns:2fr 1fr 1fr;gap:12px}.opening-fields label{font-size:14px;font-weight:700;color:#705943}.opening-fields input{display:block;width:100%;margin:7px 0 0;min-height:46px}.opening-buttons{display:flex;flex-wrap:wrap;gap:10px;margin:15px 0}.opening-buttons button{margin:0;padding:10px 13px}.opening-light{background:#fff;color:#705943;border-color:#d7c8b8}.opening-list{display:grid;gap:8px;margin:12px 0}.opening-day{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:11px 13px;background:#f6f1eb;border-radius:12px}.opening-day button{font-size:13px;margin:0;padding:7px 12px;min-height:36px;background:#fff;color:#705943}.opening-day span{font-size:14px}.opening-day strong{display:block;color:#47372b}@media(max-width:650px){.opening-head{display:block}.opening-head .opening-light{margin:0 0 12px}.opening-fields{grid-template-columns:repeat(2,minmax(0,1fr))}.opening-fields label:first-child{grid-column:1/-1}.opening-buttons{display:grid;grid-template-columns:1fr}.opening-day span{font-size:13px}}
+ .opening-row-actions{display:flex;align-items:center;gap:7px;flex-shrink:0}.opening-row-actions .opening-delete{color:#984d42;border-color:#d7aaa2;background:#fff7f5}.opening-day{flex-wrap:wrap}.opening-day span{min-width:140px}.opening-row-actions button{min-width:56px}@media(max-width:390px){.opening-day{align-items:flex-start}.opening-row-actions{width:100%;justify-content:flex-end}}
+.opening-preview{margin-top:18px;border-top:1px solid #e8ddd1;padding-top:18px}.opening-preview h3{margin:0 0 6px}.opening-preview select{display:block;width:100%;margin:8px 0 12px}.preview-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(70px,1fr));gap:8px}.preview-grid span{padding:9px 4px;text-align:center;background:#f1e9df;color:#634c39;border-radius:9px;font-weight:650}.opening-preview button{margin:0 0 12px}
+/* Independent work areas with a persistent navigation bar. */
+.admin-tabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:18px 0 24px}
+.admin-tabs button{margin:0;background:#fff;color:#705943;border:1px solid #d8c9ba;min-height:52px;font-weight:700}
+.admin-tabs button[aria-current="page"]{background:#705943;color:#fff;border-color:#705943}
+.admin-tabs button:focus-visible{outline:3px solid #b29b80;outline-offset:3px}
+#searchPanel label{display:block;margin:18px 0 8px}
+#customerSearchCards{overflow-wrap:anywhere}
+#incomePanel>.card,#openingPanel>.card{margin-top:0}
+@media(max-width:650px){.admin-tabs{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.admin-tabs button{font-size:15px;padding:11px 7px}}
+
+.inline-history{border-color:#bda995;scroll-margin-top:18px}
+.toolbar-tile[aria-pressed="true"]{background:#e8ddcf;border-color:#705943;box-shadow:0 0 0 1px #705943}
+.active-bookings-title{margin:26px 0 8px;font-size:23px}
+
+/* Keep the current booking count visible before the management controls. */
+.booking-count-banner{margin:0 0 20px;padding:24px 26px;border:2px solid #705943;border-left:8px solid #705943;border-radius:20px;background:#f1e9df;box-shadow:0 4px 14px rgba(67,53,45,.06)}
+.booking-count-banner h2{margin:0 0 6px;font-size:20px;color:#594431}
+.booking-count-banner #count{margin:0;font-size:clamp(26px,5vw,36px);line-height:1.35;font-weight:800;color:#594431}
+@media(max-width:600px){.booking-count-banner{padding:20px 18px;margin-bottom:16px}.booking-count-banner #count{font-size:28px}}
+
+/* Global actions appear above the navigation on every authenticated admin view. */
+.admin-top-actions{display:flex;justify-content:flex-end;align-items:center;gap:10px;margin:0 0 18px;padding:14px 0 18px;border-bottom:1px solid #dfd2c5}
+.admin-top-actions .toolbar-export,.admin-top-actions .toolbar-logout{margin:0;min-height:46px}
+@media(max-width:650px){.admin-top-actions{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px}.admin-top-actions .toolbar-export,.admin-top-actions .toolbar-logout{width:100%}}
+
+/* Compact header: title and authenticated actions share the first row. */
+body{padding-top:8px}
+.admin-page-header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 10px;padding:0 0 10px;border-bottom:1px solid #dfd2c5}
+.admin-page-header h1{margin:0;font-size:clamp(24px,4vw,32px)}
+.admin-page-header .admin-top-actions{display:flex;align-items:center;flex:0 0 auto;gap:10px;margin:0;padding:0;border:0}
+.admin-page-header .admin-top-actions button{width:auto;min-height:42px;padding:9px 13px}
+#status:empty,#installStatus:empty{display:none}
+#status,#installStatus{margin:8px 0}
+.admin-tabs{margin:10px 0 16px}
+@media(max-width:650px){body{padding-top:8px}.admin-page-header{flex-wrap:wrap;gap:8px}.admin-page-header h1{font-size:24px}.admin-page-header .admin-top-actions{margin-left:auto;gap:8px}.admin-page-header .admin-top-actions button{font-size:14px;padding:8px 11px}.admin-tabs{margin-top:8px}}
+
+/* Accessible back-to-top shortcut for long booking and customer lists. */
+.page-up{position:fixed;right:max(18px,env(safe-area-inset-right));bottom:calc(18px + env(safe-area-inset-bottom));z-index:30;display:grid;place-items:center;width:50px;height:50px;min-height:50px;margin:0;padding:10px;border:1px solid #594431;border-radius:50%;background:#705943;color:#fffdf9;box-shadow:0 4px 16px #43352d30;cursor:pointer}
+.page-up svg{width:26px;height:26px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.page-up:hover{background:#594431}.page-up:focus-visible{outline:3px solid #b29b80;outline-offset:4px}
+body{padding-bottom:84px}
+@media print{.page-up{display:none!important}}
+
+/* Clear booking total and consistent touch-friendly management buttons. */
+.booking-count-banner h2{display:flex;align-items:baseline;flex-wrap:wrap;gap:8px;margin:0;font-size:20px;line-height:1.5}
+.booking-count-banner #count{display:inline-block;font-size:clamp(30px,6vw,40px);line-height:1.2;font-weight:800;font-variant-numeric:tabular-nums;color:#594431}
+.admin-tabs button,.toolbar-tile,.toolbar-refresh,.toolbar-export,.toolbar-logout,#cards .actions button,#historyPage .actions button{transition:background-color .15s,border-color .15s,box-shadow .15s}
+.admin-tabs button:not([aria-current="page"]):hover,.toolbar-tile:hover,.toolbar-refresh:hover{background:#f1e9df;border-color:#705943}
+button:focus-visible{outline:3px solid #b29b80;outline-offset:3px}
+button:disabled{opacity:.55;cursor:not-allowed}
+#cards .actions button,#historyPage .actions button{min-height:48px;padding:12px 16px}
+@media(max-width:600px){.booking-count-banner h2{font-size:18px;gap:7px}.booking-count-banner #count{font-size:32px}}
+@media(prefers-reduced-motion:reduce){button{transition:none!important}}
+
+/* Compact booking total at the top left, above the work-area navigation. */
+.admin-page-header{align-items:center;gap:20px;padding:12px 0 18px;margin-bottom:14px}
+.admin-header-summary{flex:1 1 auto;min-width:0}
+.admin-page-header h1{font-size:18px;font-weight:650;color:#7b6a5e;margin:0 0 8px}
+.admin-header-summary .booking-count-banner{display:inline-block;margin:0;padding:0;border:0;border-radius:0;background:transparent;box-shadow:none}
+.admin-header-summary .booking-count-banner h2{justify-content:flex-start;align-items:center;gap:8px;font-size:19px;color:#594431}
+.admin-header-summary .booking-count-banner #count{display:inline-flex;align-items:center;justify-content:center;min-width:48px;min-height:44px;padding:2px 10px;border-radius:12px;background:#eee4d8;color:#594431;font-size:30px;line-height:1.2}
+.admin-page-header .admin-top-actions{align-self:center;gap:8px}
+.admin-page-header .toolbar-export{border-color:#705943;box-shadow:0 2px 5px #43352d0d}
+.admin-page-header .toolbar-logout{background:#fff}
+.admin-tabs{padding:5px;background:#efe8df;border:1px solid #e4d9ce;border-radius:16px;gap:6px}
+.admin-tabs button{border-color:transparent;border-radius:11px;background:transparent;min-height:48px}
+.admin-tabs button[aria-current="page"]{box-shadow:0 2px 6px #43352d1a}
+@media(max-width:650px){.admin-page-header{display:grid;grid-template-columns:minmax(0,1fr);gap:14px;padding:8px 0 16px}.admin-page-header h1{font-size:17px;margin-bottom:7px}.admin-header-summary .booking-count-banner h2{font-size:18px;gap:7px}.admin-header-summary .booking-count-banner #count{font-size:28px;min-width:44px;min-height:42px}.admin-page-header .admin-top-actions{margin:0;justify-content:flex-start;display:flex;flex-wrap:wrap}.admin-page-header .admin-top-actions button{min-height:44px;padding:10px 14px}.admin-tabs{margin-top:0}}
+
+/* Direct booking status controls with a visible selected state. */
+.booking-status-control{margin-top:18px;padding-top:16px;border-top:1px solid #e8ddd1}
+.booking-status-label{display:block;font-size:14px;font-weight:700;color:#7b6a5e;margin-bottom:9px}
+.booking-status-buttons{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;max-width:380px}
+.booking-status-buttons .booking-status-button{margin:0;min-height:48px;padding:11px 16px;border-radius:12px;background:#fff;color:#705943;border:1px solid #cbb9a7;font-weight:700}
+.booking-status-button[aria-pressed="true"][data-status="pending"]{background:#705943;color:#fff;border-color:#705943;box-shadow:0 2px 6px rgba(67,53,45,.12)}
+.booking-status-button[aria-pressed="true"][data-status="confirmed"]{background:#42644e;color:#fff;border-color:#42644e;box-shadow:0 2px 6px rgba(40,70,49,.12)}
+.booking-status-button[aria-pressed="true"]::before{content:'✓';margin-right:7px}
+.booking-status-button:focus-visible{outline:3px solid #b29b80;outline-offset:3px}
+.booking-status-button:disabled{cursor:wait;opacity:.6}
+
+
+.booking-overview-filters{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:18px}
+.booking-overview-filters button{margin:0;padding:12px 6px;background:#fff;color:#705943;font-weight:700;border-color:#d8c9ba}
+.booking-overview-filters button[aria-pressed="true"]{background:#705943;color:#fff;border-color:#705943}
+.booking-overview-filters button:focus-visible{outline:3px solid #b29b80;outline-offset:3px}
+.booking-status-feedback{margin:10px 0 0;font-size:14px;color:#705943;overflow-wrap:anywhere}
+.booking-overview-card h3{font-size:20px;margin:0 0 16px}
+.booking-overview-card>.grid{gap:10px 18px;margin-bottom:12px}
+@media(max-width:600px){.booking-overview-card>.grid{grid-template-columns:1fr}.booking-overview-filters button{font-size:14px}}
+
+/* Compact workbench before bookings; archived service records stay below. */
+#bookingsPanel>.admin-toolbar{margin:0 0 20px;padding:16px 18px}
+#bookingsPanel>.admin-toolbar .toolbar-head{align-items:center}
+#bookingsPanel>.admin-toolbar .toolbar-title{font-size:21px;margin:0 0 3px}
+#bookingsPanel>.admin-toolbar .booking-overview-filters{margin-top:14px}
+#bookingsPanel>.active-bookings-title{margin:20px 0 8px}
+.service-records{margin:28px 0 0;border:1px solid #e4d9ce;border-radius:18px;background:#f1ebe3;overflow:hidden}
+.service-records>summary{cursor:pointer;min-height:64px;padding:18px;font-weight:700;color:#493b31}
+.service-records>summary small{display:block;margin:5px 0 0 18px;font-size:12px;font-weight:400;color:#857568}
+.service-records>summary:focus-visible{outline:3px solid #b29b80;outline-offset:-3px}
+.service-records-content{padding:0 16px 16px}
+.service-records .inline-history{margin-bottom:0}
+@media(max-width:650px){#bookingsPanel>.admin-toolbar{padding:14px}.service-records .toolbar-links{grid-template-columns:1fr}}
+
+.admin-tabs{grid-template-columns:repeat(5,minmax(0,1fr))}
+.history-header{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:18px}
+.history-header h2{margin:0 0 4px}.history-header p{margin:0}.history-header button{margin:0;flex-shrink:0}
+.history-categories{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:16px 0 20px}
+.history-categories button{margin:0;background:#fff;color:#705943;font-weight:700;padding:12px 7px}
+.history-categories button[aria-pressed="true"]{background:#705943;color:#fff;border-color:#705943}
+.history-categories button:focus-visible{outline:3px solid #b29b80;outline-offset:3px}
+.history-search-label{display:block;margin:0 0 8px;font-weight:700}
+#historySearch{width:100%;min-height:48px;margin:0 0 20px}
+#historyTitle{margin:0 0 8px;font-size:19px}
+@media(max-width:650px){.admin-tabs{grid-template-columns:repeat(2,minmax(0,1fr))}.admin-tabs button:first-child{grid-column:1/-1}.history-categories{grid-template-columns:repeat(2,minmax(0,1fr))}.history-header h2{font-size:23px}}
+
+.booking-status-badge{display:inline-block;padding:6px 14px;border-radius:30px;font-weight:700;background:#eee4d7;color:#705943}
+.booking-status-badge.confirmed{background:#e6efe7;color:#42644e}
+.booking-action-row{display:flex;margin:12px 0;gap:8px}
+.booking-action-row:empty{display:none}
+.booking-action-row button{margin:0;min-width:160px}
+.booking-edit-panel{border:1px solid #e4d9ce;border-radius:12px;margin:10px 0;padding:0 12px;background:#fff}
+.booking-edit-panel>summary{cursor:pointer;padding:13px 0;font-weight:650;color:#705943;min-height:48px}
+.booking-edit-panel label{display:block;margin:10px 0;font-size:14px;font-weight:600}
+.booking-edit-panel input,.booking-edit-panel textarea{display:block;width:100%;margin:8px 0;min-width:0}
+.booking-edit-panel textarea{min-height:90px}
+.booking-edit-panel button{margin:4px 0 14px}
+.booking-edit-panel:has(.danger)>summary{color:#8a4f45}
+@media(max-width:600px){.booking-action-row button{width:100%}.booking-edit-panel input{font-size:16px}}
+
+.booking-edit-panel select{display:block;width:100%;min-height:48px;margin:8px 0;font-size:16px}
+.reschedule-slot-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:12px 0}
+.reschedule-slot-grid .reschedule-slot{margin:0;padding:11px 5px;background:#fff;color:#705943;font-size:14px;min-height:46px}
+.reschedule-slot-grid .reschedule-slot[aria-pressed="true"]{background:#705943;color:#fff;border-color:#705943}
+.reschedule-slot:focus-visible{outline:3px solid #b29b80;outline-offset:3px}
+.booking-edit-panel .booking-slots-reload{font-size:14px;background:#f5f0e9;color:#705943}
+.booking-edit-panel button:disabled{opacity:.5;cursor:default}
+@media(max-width:390px){.reschedule-slot-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+.completion-hint{font-size:14px;line-height:1.6;color:#857568;margin:14px 0 10px}
+.actions .completion-button:disabled{background:#e5e0da;color:#938b82;border-color:#d9d2ca;cursor:default;box-shadow:none;opacity:1}
+.actions .completion-button:not(:disabled){background:#42644e;border-color:#42644e;color:#fff}
+
+/* Logout shares the title row; booking count occupies the row below. */
+.admin-page-header{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:10px 12px;padding:8px 0 16px}
+.admin-header-summary{display:contents}
+.admin-page-header h1{grid-column:1;grid-row:1;margin:0;font-size:clamp(17px,3.6vw,22px);line-height:1.4}
+.admin-page-header .admin-top-actions{grid-column:2;grid-row:1;margin:0;padding:0;border:0;display:flex;align-self:center;justify-content:flex-end}
+.admin-page-header .admin-top-actions .toolbar-logout{width:auto;min-height:44px;margin:0;padding:9px 14px;font-size:14px;white-space:nowrap;background:#fff;border:1px solid #d2c1b1}
+.admin-page-header #bookingCountSummary{grid-column:1/-1;grid-row:2;margin:0}
+.income-page-header{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:18px}
+.income-page-header h2{margin:0}
+.income-page-header .toolbar-export{margin:0;min-height:44px;padding:10px 14px;font-size:14px}
+
+.booking-last-updated{margin:10px 0 0;color:#857568;font-size:12px;line-height:1.5}
+.toolbar-refresh:disabled{opacity:.6;cursor:wait}
+@media(max-width:390px){#bookingsPanel>.admin-toolbar .toolbar-head{gap:8px}#reload{font-size:14px;padding:9px 10px}}
+</style>
+<style id="desktop-workbench-styles">
+/* Desktop workbench, 2026-10-22. Existing action handlers remain authoritative. */
+body{max-width:1600px;padding:24px 32px 84px;background:#f5f3ee}
+.admin-page-header{padding-bottom:20px;margin-bottom:24px}
+.admin-page-header h1{color:#365344;font-size:22px}
+#login,#reset{max-width:540px;margin:40px auto}
+#dashboard{display:grid;grid-template-columns:216px minmax(0,1fr);gap:28px;align-items:start}
+.admin-tabs{position:sticky;top:24px;display:flex;flex-direction:column;gap:8px;margin:0;padding:18px 12px;background:#ebece5;border:1px solid #dde1d5;border-radius:18px}
+.admin-tabs::before{content:'管理工作台';padding:8px 14px 16px;color:#647264;font-size:13px;letter-spacing:.12em}
+.admin-tabs button{width:100%;text-align:left;padding:14px 16px;color:#465b4c;background:transparent}
+.admin-tabs button[aria-current="page"]{background:#365744;border-color:#365744;color:#fff}
+[data-admin-panel]{min-width:0;margin-top:0}
+#bookingsPanel{display:grid;grid-template-columns:minmax(0,1fr);gap:20px}
+#bookingsPanel>.admin-toolbar{margin:0;background:#fff;border-color:#e0e3da;padding:20px 24px}
+#bookingsPanel .toolbar-title{font-size:26px;color:#365344}
+.booking-overview-filters{max-width:540px;margin-top:18px}
+.booking-calendar{margin:0;padding:24px;border-color:#e0e3da;align-self:start}
+.booking-calendar-head p{margin:6px 0 0}
+.booking-calendar-day{min-height:88px;align-items:flex-start;padding:10px 12px;gap:8px}
+.booking-calendar-dots{justify-content:flex-start}
+.calendar-day-count{font-size:11px;line-height:1.3;color:#68786a}
+.booking-calendar-day[aria-pressed=true] .calendar-day-count{color:#fff}
+.booking-list-section{min-width:0}
+.booking-list-section .active-bookings-title{margin:0;color:#365344}
+.booking-list-section>p{margin:8px 0}
+#cards{display:grid;gap:12px}
+#cards .booking-overview-card{margin:0;padding:20px 24px;border-color:#e0e3da}
+.booking-overview-card h3{font-size:18px;line-height:1.6;margin-bottom:12px}
+#cards .booking-overview-card>.grid{grid-template-columns:repeat(4,minmax(0,1fr));font-size:14px}
+.customer-details{margin:14px 0;border:1px solid #e4e7df;border-radius:12px;background:#f8f9f5}
+.customer-details>summary{padding:12px 14px;cursor:pointer;color:#365744;font-weight:650}
+.customer-details[open]>summary{border-bottom:1px solid #e4e7df}
+.customer-details-body{padding:14px;display:grid;gap:9px;font-size:14px;white-space:pre-wrap}
+.booking-status-control{margin-top:12px;padding-top:12px}
+.booking-status-control .booking-edit-panel{background:#faf9f6}
+#incomeSummary{gap:16px}
+#incomeSummary>div{padding:20px;background:#f5f6ef;border-radius:12px}
+@media(min-width:1350px){#bookingsPanel{grid-template-columns:minmax(400px,.92fr) minmax(460px,1.08fr)}#bookingsPanel>.admin-toolbar{grid-column:1/-1}.booking-calendar{position:sticky;top:24px}.booking-calendar-head{display:block}.booking-calendar-nav{margin-top:16px}.booking-calendar-day{min-height:76px}#cards .booking-overview-card>.grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:900px){body{padding:16px 18px 84px}#dashboard{grid-template-columns:170px minmax(0,1fr);gap:18px}.admin-tabs{padding:12px 8px}.admin-tabs button{padding:12px 10px;font-size:14px}.booking-calendar-day{min-height:65px;padding:7px 5px}#cards .booking-overview-card>.grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:650px){body{padding:12px 12px 80px}#dashboard{display:block}.admin-tabs{position:static;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));margin-bottom:18px;padding:8px}.admin-tabs::before{display:none}.admin-tabs button{text-align:center;min-height:46px}.admin-tabs button:last-child{grid-column:1/-1}#bookingsPanel{gap:16px}.booking-calendar,#cards .booking-overview-card{padding:16px}.booking-calendar-day{min-height:58px;padding:6px 3px;align-items:center;gap:4px}.calendar-day-count{font-size:10px}.booking-calendar-dots{justify-content:center}.booking-calendar-nav{margin-top:12px}#bookingsPanel>.admin-toolbar{padding:16px}.booking-calendar-head h2{font-size:22px}}
+@media print{.admin-tabs,.admin-top-actions,.page-up{display:none!important}#dashboard,#bookingsPanel{display:block}.booking-calendar{position:static}}
+</style>
+<style id="reference-design-20261022">:root{--forest:#365443;--forest-deep:#2d4638;--cream:#fcf9f4;--sand:#e9dccb;--ink:#343d35;--muted:#786f63}
+body{background:#efe8df;color:var(--ink);font-family:system-ui,"Noto Sans TC",sans-serif;max-width:1680px;padding:28px 32px 70px}
+h2,h3{color:var(--ink)}button{background:var(--forest);border-color:var(--forest);border-radius:9px}input,select,textarea{border-color:#dfd6c9;background:#fffdfa}a{color:var(--forest)}
+.card,#bookingsPanel>.admin-toolbar,.booking-calendar,#cards .booking-overview-card{background:var(--cream);border-color:#e5dbce;box-shadow:0 8px 25px #66513b08;border-radius:16px}
+.admin-page-header{border-color:#dcd1c2;margin-bottom:24px}.admin-page-header h1{color:var(--forest);letter-spacing:.05em}.admin-header-summary .booking-count-banner #count{background:#e1d3c1}
+#dashboard{grid-template-columns:196px minmax(0,1fr);gap:24px}.admin-tabs{background:var(--forest);border:0;border-radius:18px;padding:22px 12px;top:20px;min-height:720px;box-shadow:0 12px 25px #31403214}.admin-tabs::before{display:none}
+.sidebar-brand{display:flex;flex-direction:column;align-items:center;color:#f4e7d3;padding:4px 0 26px}.sidebar-brand strong{font-family:serif;font-size:23px;letter-spacing:.12em}.sidebar-brand small{letter-spacing:.24em;font-size:11px;margin-top:5px}.brand-leaf{font-size:42px;line-height:1.3}.sidebar-foot{font-size:10px;letter-spacing:.07em;text-align:center;color:#d6d5c3;margin:auto 0 0;padding-top:32px}
+.admin-tabs button{display:flex;align-items:center;gap:12px;font-size:14px;font-weight:500;color:#efeee5;border:0;border-radius:9px;min-height:48px;padding:12px}.admin-tabs button[aria-current="page"]{background:#b5a58c;color:#fff;border:0}.admin-tabs button:not([aria-current="page"]):hover{background:#476653;color:#fff}.nav-number{font-family:Georgia,serif;color:#d8d0bb;font-size:14px}.section-number{font-family:Georgia,serif;font-weight:400;font-size:1.25em;color:#8a6745;margin-right:8px}
+.booking-calendar-grid{gap:1px;background:#e5dfd5;border:1px solid #e5dfd5;border-radius:10px;overflow:hidden}.booking-calendar-weekday{background:#f7f2eb;padding:9px}.booking-calendar-day{border:0;border-radius:0;background:#fcfaf6;min-height:110px;width:100%;margin:0;align-items:flex-start;gap:4px;padding:8px;font-size:13px}.booking-calendar-day.empty{visibility:visible;background:#f5f1eb}.booking-calendar-day.today{box-shadow:inset 0 0 0 2px #71927b;border:0}.booking-calendar-day[aria-pressed=true]{background:#e4ede3;color:#243d2e;box-shadow:inset 0 0 0 2px var(--forest)}.booking-calendar-day[aria-pressed=true] .calendar-day-count{color:var(--forest)}
+.calendar-event{display:block;width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:left;font-size:10px;padding:5px 4px;border-radius:4px;background:#e7e5dd;color:#455b4a;border-left:3px solid #a7a693}.calendar-event.pending{background:#f9dedb;border-color:#dd8a83;color:#714641}.calendar-event.confirmed{background:#dceee1;border-color:#489574;color:#315b44}.calendar-event.completed{background:#e5eddf;border-color:#86ae90}.calendar-event.cancelled{background:#f3dce1;border-color:#bd7184;color:#805261}.booking-calendar-dot.cancelled{background:#bd7184}.booking-calendar-legend span:nth-child(4){color:#a0586d}
+.customer-details{background:#f3eee6;border-color:#e7ddcf}.customer-details summary{color:var(--forest)}.booking-overview-filters button[aria-pressed="true"]{background:var(--forest);border-color:var(--forest)}.booking-status-control .booking-edit-panel{background:#f5efe6}.toolbar-refresh,.opening-light{background:#fcf9f4;color:var(--forest);border-color:#d9cfbf}.booking-list-section .active-bookings-title{font-size:22px}
+.member-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px}.member-card{padding:20px;background:#f3eee6;border:1px solid #e4dacd;border-radius:12px}.member-card h3{margin:0 0 10px}.member-card p{margin:6px 0;font-size:13px;overflow-wrap:anywhere}.member-card .member-stats{display:flex;gap:14px;flex-wrap:wrap;margin:18px 0}.member-stats span{font-size:12px;color:var(--muted)}.member-stats strong{display:block;font-size:20px;color:var(--forest)}
+#incomeSummary{grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}#incomeSummary>div{background:#f3eee6;padding:18px;font-size:15px}#incomeSummary b{display:block;font-size:12px;color:var(--muted);margin-bottom:12px}.report-section{border-top:1px solid #e4daca;margin-top:26px;padding-top:18px}.report-heading{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}.report-heading h2,.report-heading h3{margin:0}.report-heading label{font-size:13px}.revenue-chart{display:flex;align-items:flex-end;gap:4px;height:210px;padding:15px 0 28px;border-bottom:1px solid #ded4c8;margin-bottom:30px}.chart-day{flex:1;height:100%;display:flex;align-items:flex-end;position:relative;min-width:0}.chart-bar{width:100%;min-height:2px;background:#739a80;border-radius:3px 3px 0 0}.chart-label{position:absolute;top:100%;left:0;font-size:10px;color:#817363}.table-scroll{overflow-x:auto}table.report-table{width:100%;border-collapse:collapse;font-size:13px;text-align:left}table.report-table th{background:#f0e9df;color:#706554}table.report-table th,table.report-table td{padding:12px;border-bottom:1px solid #e4dbce}table.report-table td:last-child{text-align:right}.feature-notice{background:#f1e9db;border-left:3px solid #b49b77;padding:14px 16px;font-size:14px;color:#6e5b40;border-radius:5px}.catalog-row{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center;border-bottom:1px solid #e6dccf;padding:20px 0}.catalog-row h3{font-size:16px;margin:0 0 6px}.catalog-row p{margin:0;color:#7c715f;font-size:14px}.catalog-row button{background:#ebe4d9;color:#766b59;border-color:#d5c7b5}.settings-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}.settings-grid section{background:#f4eee6;border-radius:12px;padding:20px;overflow-wrap:anywhere}.settings-grid h3{margin-top:0}
+body[data-view="details"] .booking-calendar,body[data-view="details"] #bookingsPanel>.admin-toolbar{display:none}body[data-view="details"] #bookingsPanel{grid-template-columns:1fr}
+@media(min-width:1350px){#bookingsPanel{grid-template-columns:minmax(400px,1.12fr) minmax(380px,1fr)}.booking-calendar{padding:20px}.booking-calendar-day{min-height:108px}.booking-calendar-head{display:block}}
+@media(max-width:1100px){#incomeSummary{grid-template-columns:repeat(2,minmax(0,1fr))}.settings-grid{grid-template-columns:1fr}.booking-calendar-day{min-height:94px}.admin-tabs{min-height:650px}}
+@media(max-width:650px){body{padding:16px 12px 70px}.admin-page-header{display:flex;align-items:center;gap:8px}.admin-page-header h1{font-size:16px}.admin-header-summary .booking-count-banner h2{font-size:14px}.admin-header-summary .booking-count-banner #count{font-size:22px;min-width:34px;min-height:32px}.admin-page-header .admin-top-actions{margin:0}.admin-tabs{position:static;min-height:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));padding:12px;gap:6px;margin-bottom:18px}.sidebar-brand{grid-column:1/-1;display:block;text-align:left;padding:0 8px 8px}.brand-leaf{font-size:25px;margin-right:10px}.sidebar-brand strong{font-size:18px}.sidebar-brand small{margin-left:10px;font-size:10px}.sidebar-foot{display:none}.admin-tabs button,.admin-tabs button:last-child{grid-column:auto;font-size:13px;gap:8px;min-height:44px;padding:10px}.booking-calendar-day{min-height:90px;padding:5px 2px;font-size:12px;align-items:center}.calendar-event{font-size:9px;padding:4px 1px;border-left-width:2px}.calendar-day-count{font-size:9px}.booking-calendar-weekday{font-size:11px}.booking-calendar{padding:12px}.booking-calendar-head h2{font-size:20px}.booking-calendar-legend{gap:8px;font-size:11px}.member-grid{grid-template-columns:1fr}#incomeSummary>div{padding:13px;font-size:14px}.report-heading input{margin-left:0}.revenue-chart{gap:2px;height:160px}.chart-label{font-size:8px}.settings-grid{gap:12px}.catalog-row{grid-template-columns:1fr}.catalog-row button{justify-self:start}}
+</style>
+<style id="songmu-swipe-nav-fix-20261022">
+/* Final cascade override: mobile five-group swipe strip with a second swipeable subnav. */
+@media(max-width:760px){
+ #dashboard>.admin-tabs{display:block!important;position:relative!important;width:100%!important;max-width:100%!important;min-height:0!important;max-height:none!important;height:auto!important;overflow:hidden!important;padding:10px!important;margin:0 0 14px!important;border-radius:15px!important;background:#214c39!important;box-sizing:border-box!important}
+ #dashboard>.admin-tabs .admin-group-tabs{display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;grid-template-columns:none!important;align-items:stretch!important;gap:7px!important;width:100%!important;max-width:100%!important;overflow-x:auto!important;overflow-y:hidden!important;scroll-snap-type:x proximity!important;-webkit-overflow-scrolling:touch!important;overscroll-behavior-x:contain!important;scrollbar-width:thin!important;padding:3px 2px 9px!important}
+ #dashboard>.admin-tabs .admin-group-tabs button{display:flex!important;flex:0 0 auto!important;min-width:112px!important;width:auto!important;max-width:150px!important;min-height:47px!important;height:auto!important;padding:10px 13px!important;margin:0!important;align-items:center!important;justify-content:center!important;gap:5px!important;white-space:nowrap!important;text-align:center!important;line-height:1.25!important;font-size:14px!important;scroll-snap-align:start!important;border-radius:12px!important}
+ #dashboard>.admin-tabs .admin-group-tabs button span{display:inline!important;white-space:nowrap!important}
+ #dashboard>.admin-tabs .admin-subnav{display:block!important;max-width:100%!important;overflow:hidden!important;margin-top:0!important;padding-top:8px!important;border-top:1px solid #527461!important}
+ #dashboard>.admin-tabs .admin-subnav [data-subnav-group]:not([hidden]){display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;gap:7px!important;overflow-x:auto!important;overflow-y:hidden!important;scroll-snap-type:x proximity!important;-webkit-overflow-scrolling:touch!important;scrollbar-width:thin!important;padding:2px 0 5px!important}
+ #dashboard>.admin-tabs .admin-subnav button{display:inline-flex!important;flex:0 0 auto!important;width:auto!important;min-width:max-content!important;min-height:38px!important;height:38px!important;white-space:nowrap!important;justify-content:center!important;align-items:center!important;margin:0!important;padding:8px 12px!important;border-radius:9px!important;font-size:13px!important;scroll-snap-align:start!important}
+ #dashboard>.admin-tabs .admin-group-tabs button[aria-pressed="true"]{background:#fff!important;color:#214c39!important}
+ #dashboard>.admin-tabs .admin-subnav button[aria-current="page"]{background:#e6f2e9!important;color:#214c39!important}
+}
+</style>
+<style id="songmu-forest-white-20261022">
+:root{--forest:#24533e!important;--forest-deep:#193f30!important;--cream:#ffffff!important;--sand:#dce9df!important;--ink:#233b2f!important;--muted:#6e8276!important}
+html{background:#fff!important}
+body{background:#fff!important;color:#233b2f!important;font-family:system-ui,-apple-system,"Noto Sans TC",sans-serif!important}
+.admin-page-header{background:#fff!important;border:0!important;border-bottom:1px solid #dfebe3!important;border-radius:0!important;box-shadow:none!important;padding:14px 12px 18px!important;margin-bottom:18px!important}
+.admin-page-header h1{color:#214c39!important;letter-spacing:.03em!important}
+.admin-tabs{background:#214c39!important;border:1px solid #214c39!important;box-shadow:0 8px 22px #214c391a!important;border-radius:17px!important}
+.sidebar-brand,.sidebar-brand strong{color:#fff!important}.sidebar-brand small,.sidebar-foot{color:#c6e0cf!important}
+.admin-tabs button{background:transparent!important;color:#e2efe6!important;border:1px solid transparent!important;border-radius:11px!important}
+.admin-tabs button:hover{background:#37654e!important;color:#fff!important}
+.admin-tabs button[aria-current="page"]{background:#fff!important;color:#214c39!important;border-color:#fff!important;font-weight:750!important}
+.admin-tabs button[aria-current="page"] .nav-number{color:#214c39!important}
+#dashboard{gap:17px!important}
+.card,#bookingsPanel>.admin-toolbar,.booking-calendar,#cards .booking-overview-card,.booking-overview-card{background:#fff!important;border:1px solid #e0eae2!important;border-radius:16px!important;box-shadow:0 4px 18px #214c390b!important}
+h2,h3,.toolbar-title{color:#214c39!important}
+.toolbar-subtitle,.muted{color:#708578!important}
+button{border-radius:10px}
+button:not(.booking-calendar-day):not(.calendar-event){transition:background-color .15s,border-color .15s}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid #9fcaac!important;outline-offset:2px!important}
+input,select,textarea{background:#fff!important;border:1px solid #cbded1!important;color:#254635!important;border-radius:9px!important}
+.booking-overview-filters button[aria-pressed="true"],.booking-calendar-day[aria-pressed="true"]{background:#24533e!important;border-color:#24533e!important;color:#fff!important}
+.booking-calendar-day{background:#f8fbf8!important;border:1px solid #dce8de!important;border-radius:9px!important}
+.booking-calendar-day[aria-pressed="true"]{background:#24533e!important;color:#fff!important}
+.booking-calendar-day.today{border:2px solid #578e6b!important}
+.calendar-event{background:#e9f3ec!important;color:#2d5a40!important;border-color:#c9e0cf!important}
+.calendar-event.pending{background:#fff4e7!important;color:#7c5b32!important;border-color:#eed2aa!important}
+.calendar-event.confirmed{background:#e0f1e7!important;color:#23543a!important;border-color:#acd2bb!important}
+#incomePanel .card,#searchPanel .card,#servicesPanel .card,#settingsPanel .card,#openingPanel .card,#historyPanel .card{background:#fff!important}
+@media(max-width:760px){
+body{padding:10px 12px 90px!important}
+.admin-page-header{padding:12px 2px 16px!important;margin-bottom:12px!important}
+.admin-page-header h1{font-size:22px!important}
+.admin-tabs{display:flex!important;flex-wrap:nowrap!important;overflow-x:auto!important;overscroll-behavior-x:contain!important;gap:7px!important;padding:9px!important;border-radius:13px!important;scrollbar-width:thin!important;-webkit-overflow-scrolling:touch}
+.admin-tabs .sidebar-brand,.admin-tabs .sidebar-foot{display:none!important}
+.admin-tabs button{flex:0 0 auto!important;min-width:max-content!important;padding:10px 12px!important;font-size:13px!important;white-space:nowrap!important;min-height:42px!important}
+.admin-tabs button .nav-number{display:none!important}
+#dashboard{display:block!important}
+#dashboard [data-admin-panel]{width:100%!important;max-width:100%!important;min-width:0!important}
+.booking-calendar-grid{gap:3px!important}
+.booking-calendar-day{min-height:53px!important;padding:5px 1px!important;font-size:12px!important}
+.admin-top-actions{gap:6px!important}
+.admin-top-actions button{font-size:12px!important;padding:7px 9px!important}
+.card{padding:13px!important}
+}
+</style>
+<style id="songmu-forest-mobile-fix-20261022">
+:root{color-scheme:light!important}
+html,body{background:#fff!important;color:#233b2f!important}
+.admin-page-header,.admin-page-header h1,.admin-header-summary{color:#214c39!important;background:#fff!important}
+.admin-header-summary .booking-count-banner #count{background:#e7f1e9!important;color:#214c39!important}
+.admin-tabs{background:#214c39!important;min-height:0!important}
+.admin-tabs button[aria-current="page"]{background:#fff!important;color:#214c39!important}
+#dashboard [data-admin-panel]{background:#fff!important;color:#233b2f!important}
+@media(max-width:760px){
+ #dashboard{display:block!important;grid-template-columns:minmax(0,1fr)!important}
+ #dashboard>.admin-tabs{display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;overflow-x:auto!important;overflow-y:hidden!important;position:static!important;width:100%!important;min-height:0!important;height:auto!important;max-height:72px!important;padding:8px!important;margin:0 0 14px!important;gap:6px!important;scrollbar-width:thin!important}
+ #dashboard>.admin-tabs button{display:inline-flex!important;flex:0 0 auto!important;width:auto!important;min-width:max-content!important;min-height:42px!important;height:42px!important;margin:0!important;padding:9px 13px!important;white-space:nowrap!important;line-height:1.2!important;font-size:13px!important}
+ #dashboard>.admin-tabs .sidebar-brand,#dashboard>.admin-tabs .sidebar-foot{display:none!important}
+ #dashboard>.admin-tabs button .nav-number{display:none!important}
+ .admin-page-header{background:#fff!important}
+ .admin-header-summary{min-width:0!important}
+ body{background:#fff!important}
+}
+</style>
+<header class="admin-page-header"><div class="admin-header-summary"><h1>🌿 鬆沐｜預約管理</h1><section id="bookingCountSummary" class="booking-count-banner" hidden aria-labelledby="currentBookingsTitle"><h2 id="currentBookingsTitle" role="status" aria-live="polite" aria-atomic="true"><span>目前預約</span><span class="booking-count-value" id="count">…</span><span>筆預約</span></h2></section></div><div id="adminTopActions" class="admin-top-actions" hidden aria-label="管理操作"><button id="logout" class="toolbar-logout" type="button">登出</button></div></header><button id="installApp" hidden>安裝鬆沐管理</button><p id="installStatus" class="muted" role="status"></p><p id="status" role="status"></p>
+<section id="login" class="card"><form id="loginForm"><p>管理員：guts1989921@gmail.com</p><label>密碼 <input id="password" required type="password" autocomplete="current-password" minlength="12"></label><div><button id="signin" type="submit">登入</button><button id="signup" type="button" hidden>首次建立後臺登入</button><button id="forgot" class="linkbtn" type="button">忘記密碼？</button></div><p class="muted">忘記密碼時會寄重設信到管理員信箱。請勿把密碼傳給任何人。</p></form></section>
+<section id="reset" class="card" hidden><h2>設定新密碼</h2><label>新密碼 <input id="newPassword" type="password" autocomplete="new-password" minlength="12" placeholder="至少 12 碼"></label><label>再次輸入 <input id="newPassword2" type="password" autocomplete="new-password" minlength="12"></label><div><button id="savePassword">儲存新密碼</button><button id="cancelReset" class="linkbtn">取消</button></div></section>
+<section id="dashboard" hidden><nav class="admin-tabs" aria-label="後台功能">
+<div class="sidebar-brand"><span class="brand-leaf">♧</span><strong>鬆沐整復</strong><small>店家管理</small></div>
+<div class="admin-group-tabs" role="group" aria-label="五大管理分類">
+<button type="button" data-admin-group="booking" aria-expanded="true">▦ <span>預約管理</span></button>
+<button type="button" data-admin-group="member" aria-expanded="false">♙ <span>會員管理</span></button>
+<button type="button" data-admin-group="revenue" aria-expanded="false">▥ <span>營收分析</span></button>
+<button type="button" data-admin-group="service" aria-expanded="false">◷ <span>服務管理</span></button>
+<button type="button" data-admin-group="system" aria-expanded="false">⚙ <span>系統設定</span></button>
+</div>
+<div class="admin-subnav" aria-label="分類功能">
+<div data-subnav-group="booking"><button type="button" data-admin-view="bookings">預約月曆／今日預約</button><button type="button" data-admin-view="details">預約詳情</button><button type="button" data-admin-view="history">服務紀錄</button></div>
+<div data-subnav-group="member" hidden><button type="button" data-admin-view="search">會員資料搜尋</button></div>
+<div data-subnav-group="revenue" hidden><button type="button" data-admin-view="income">營收報表</button></div>
+<div data-subnav-group="service" hidden><button type="button" data-admin-view="services">服務項目</button><button type="button" data-admin-view="opening">時段設定</button></div>
+<div data-subnav-group="system" hidden><button type="button" data-admin-view="settings">系統設定</button></div>
+</div><p class="sidebar-foot">SONGMU · 慢下來，鬆一點</p></nav><section id="bookingsPanel" data-admin-panel="bookings"><div class="admin-toolbar"><div class="toolbar-head"><div><h2 class="toolbar-title"><span class="section-number">01</span> 預約月曆</h2><p class="toolbar-subtitle">查看客人資訊，在此確認預約狀態</p></div><button id="reload" class="toolbar-refresh" type="button" aria-label="重新整理預約資料">↻ <span>重新整理</span></button></div><p id="bookingLastUpdated" class="booking-last-updated" role="status" aria-live="polite">尚未更新預約資料</p><div id="bookingFilters" class="booking-overview-filters" role="group" aria-label="篩選預約狀態"><button type="button" data-booking-filter="all" aria-pressed="true">全部</button><button type="button" data-booking-filter="pending" aria-pressed="false">待確認</button><button type="button" data-booking-filter="confirmed" aria-pressed="false">已確認</button></div></div><section class="card booking-calendar" aria-label="預約月曆"><div class="booking-calendar-head"><div><h2>預約月曆</h2><p class="muted">點選日期篩選預約；在客人列表確認、改期或完成服務。</p></div><div class="booking-calendar-nav"><button type="button" id="calendarPrev" aria-label="上一個月">‹</button><strong id="calendarMonth"></strong><button type="button" id="calendarNext" aria-label="下一個月">›</button><button type="button" id="calendarToday">今天</button></div></div><div id="bookingCalendarGrid" class="booking-calendar-grid" role="group" aria-label="每月預約日期"></div><div class="booking-calendar-footer"><span id="calendarSelection" class="muted">顯示全部預約</span><button id="calendarClear" type="button" class="opening-light" hidden>顯示全部日期</button></div><p class="booking-calendar-legend"><span>● 待確認</span><span>● 已確認</span><span>● 已完成</span><span>● 已取消</span></p></section><section class="booking-list-section" aria-label="客人預約列表"><h2 class="active-bookings-title"><span class="section-number">04</span> 預約詳情／狀態管理</h2><p class="muted">新申請會保持待確認；由你核對資料並確認儲存後，才會更新狀態。</p><p id="bookingListCount" class="muted" role="status"></p><div id="cards"></div></section></section><section id="historyPage" class="card history-panel" data-admin-panel="history" aria-label="服務紀錄" hidden><div class="history-header"><div><h2>服務紀錄</h2><p class="muted">查看已完成或取消的服務與客人資料</p></div><button id="historyReload" class="toolbar-refresh" type="button" aria-label="更新服務紀錄">↻ 更新</button></div><div class="history-categories" role="group" aria-label="服務紀錄分類"><button id="historyAll" type="button">全部紀錄</button><button id="historyNormal" type="button">正常完成</button><button id="historyBefore" type="button">服務前取消</button><button id="historyDuring" type="button">服務中取消</button></div><label class="history-search-label" for="historySearch">搜尋客人</label><input id="historySearch" placeholder="姓名、手機、症狀、備註" type="search"><h3 id="historyTitle">全部會員紀錄</h3><p class="muted">同一位客人的紀錄按預約時間由舊到新排列。</p><p id="historyCount" role="status"></p><div id="historyCards"></div></section><section id="openingPanel" data-admin-panel="opening" hidden><section class="card opening-panel" aria-label="開放預約時間"><div class="opening-head"><div><h2><span class="section-number">06</span> 時段設定</h2><p class="muted">選日期、設定時段，儲存後客人即可在預約頁選擇。</p></div><button id="openingReload" type="button" class="opening-light">更新時段</button></div><div class="opening-fields"><label>開放日期（台灣時間）<input type="date" id="openingDate"></label><label>開始時間（台灣）<input type="time" id="openingStart" value="10:00" step="1800"></label><label>結束時間（台灣）<input type="time" id="openingEnd" value="19:00" step="1800"></label></div><div class="opening-buttons"><button id="openingSave" type="button">＋ 開放／更新時段</button><button id="openingRemove" type="button" class="opening-light">關閉當日預約</button></div><p id="openingStatus" class="muted" role="status"></p><div id="openingList" class="opening-list"></div><div class="opening-preview"><h3>客人實際可選時間</h3><p class="muted">選擇日期和服務後，可預覽客人目前看得到的開始時間（台灣時間）。</p><label>預覽服務 <select id="previewService"><option value="30">肌肉舒壓 30 分鐘</option><option value="60">半身放鬆 60 分鐘</option><option value="90" selected>全身放鬆 90 分鐘</option><option value="120">全身 120 分鐘</option></select></label><button id="previewRefresh" class="opening-light" type="button">查看客人可選時段</button><div id="previewSlots" class="preview-slots" aria-live="polite"></div></div><p class="muted">此處設定的是客人可選的開始時間區間，包含最後時間。例如設定 13:00～19:00，客人可選到 19:00 開始服務；服務結束可晚於 19:00（仍會排除已預約及衝突時段）。使用台灣時間；每 30 分鐘為一個刻度。已有待確認或已確認預約的日期，不可直接關閉或縮短至影響客人時段。</p></section></section><section id="incomePanel" data-admin-panel="income" hidden><section class="card" aria-label="收入統計"><div class="income-page-header"><h2><span class="section-number">03</span> 營收報表</h2><button id="export" class="toolbar-export" type="button">↓ <span>匯出 Excel 報表</span></button></div><div id="incomeSummary" class="grid"></div><section class="report-section"><div class="report-heading"><h3>營收趨勢</h3><label>月份 <input id="reportMonth" type="month"></label></div><p id="reportSummary" class="muted"></p><div id="revenueChart" class="revenue-chart"></div><h3>服務項目統計</h3><div id="serviceReport" class="table-scroll"></div></section><p class="muted">僅正常完成服務計入，按預約日期（臺灣）統計；本週為週一至週日。取消及尚未完成不計收入。</p></section></section><section id="searchPanel" data-admin-panel="search" hidden><section class="card"><h2><span class="section-number">02</span> 會員資料</h2><div id="memberSummary" class="member-grid"></div><p class="muted">搜尋全部預約及完成／取消紀錄；處理預約請前往「預約總覽」。</p><label>搜尋姓名、手機、症狀、備註 <input id="search" placeholder="輸入關鍵字"></label><p id="customerSearchCount" aria-live="polite"></p><div id="customerSearchCards"></div></section></section>
+<section id="servicesPanel" class="card" data-admin-panel="services" hidden><div class="report-heading"><h2><span class="section-number">05</span> 服務項目</h2><button id="servicesReload" type="button">更新清單</button></div><p class="feature-notice">目前可查看正式服務資料。價格、時長與名稱編輯尚未開放：客人預約頁仍需同步改為讀取服務目錄，避免前後台價格不一致。照片、說明與上下架功能尚未有後端支援。</p><p id="servicesStatus" role="status"></p><div id="serviceCatalog"></div></section><section id="settingsPanel" class="card" data-admin-panel="settings" hidden><h2><span class="section-number">07</span> 系統設定</h2><div class="settings-grid"><section><h3>管理員帳號</h3><p>guts1989921@gmail.com</p><p class="muted">若需重設密碼，登出後使用登入頁的「忘記密碼？」。</p></section><section><h3>日期與時間</h3><p>台灣時間 · Asia/Taipei</p><p class="muted">預約、收入報表與開放時段皆使用台灣時間。</p></section><section><h3>通知設定</h3><p>沿用現有 LINE 服務結果通知</p><p class="muted">通知結果可在服務紀錄查看；失敗時可使用原有重試功能。</p></section><section><h3>基本資訊與通知方式編輯</h3><p class="feature-notice">尚未開放：目前沒有可儲存店名、地址、電話與通知偏好的設定介面。</p></section></div><p class="muted">介面版本：2026.10.22 · 參考圖改版</p></section></section><button id="pageUp" class="page-up" type="button" aria-label="回到頂端" title="回到頂端" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h14M12 20V8m-6 6 6-6 6 6"/></svg></button>
+<script src="/songmu-booking/admin/config.js"></script><script src="/songmu-booking/admin/xlsx.js?v=20261006-income"></script><script src="/songmu-booking/admin/revenue.js?v=20261006-income"></script><script>
+const ADMIN_PATH='/songmu-booking/admin/',ADMIN_URL='https://ck1011989.github.io'+ADMIN_PATH;
+if(location.pathname!==ADMIN_PATH)location.replace(ADMIN_URL+location.search+location.hash);
+let token=null,records=[],pageView=readPageView();const $=id=>document.getElementById(id),msg=s=>$('status').textContent=s;
+function friendlyError(text=''){const s=String(text).toLowerCase();if(s.includes('service_not_finished'))return '這筆預約尚未到服務結束時間，暫時不能標記完成。若只是測試預約，可填寫原因後按「服務前取消」。';if(s.includes('email rate limit exceeded')||s.includes('rate limit'))return '密碼重設信寄送次數過於頻繁，請稍後再試，請勿重複點擊「忘記密碼」。';if(s.includes('invalid login credentials'))return '密碼不正確，請重新輸入；若忘記密碼請使用「忘記密碼？」。';if(s.includes('email not confirmed'))return '管理員信箱尚未完成驗證，請先查看驗證信。';if(s.includes('password')&&s.includes('characters'))return '密碼格式不符合要求，請設定至少 12 碼的新密碼。';return text||'操作失敗，請稍後再試。'}
+async function api(path,options={}){if(adminSession&&adminSession.expires_at*1000<=Date.now()+60000)await refreshAdminSession();const r=await fetch(SB+path,{...options,headers:{apikey:KEY,...(token?{Authorization:'Bearer '+token}:{}),'Content-Type':'application/json',...(options.headers||{})}});const raw=await r.text();let v;try{v=raw?JSON.parse(raw):null}catch{v=null}if(!r.ok)throw Error(friendlyError(v?.msg||v?.message||v?.error_description||'操作失敗，請重新登入'));return v}
+const labels={pending:'待確認',confirmed:'已確認',completed:'已完成',cancelled:'已取消'},outcomes={normal:'正常完成',cancelled_before_service:'服務前取消',cancelled_during_service:'服務中取消'};
+function field(parent,label,value){const d=document.createElement('div'),b=document.createElement('b');b.textContent=label+'：';d.append(b,document.createTextNode(value||'—'));parent.append(d)}
+function isArchived(r){return r.status==='completed'||r.status==='cancelled'}
+function recordOutcome(r){return r.outcome==='cancelled_during_service'?'cancelled_during_service':r.status==='cancelled'||r.outcome==='cancelled_before_service'?'cancelled_before_service':'normal'}
+
+const SESSION_KEY='songmu-admin-session';
+let adminSession=null,sessionRefresh=null,sessionGeneration=0;
+function validAdminSession(v){return v&&typeof v.access_token==='string'&&!!v.access_token&&typeof v.refresh_token==='string'&&!!v.refresh_token&&Number.isFinite(v.expires_at)}
+function readStoredAdminSession(){let saved;try{saved=localStorage.getItem(SESSION_KEY)}catch{}if(!saved)try{saved=sessionStorage.getItem(SESSION_KEY)}catch{}if(!saved)return null;try{const v=JSON.parse(saved);return validAdminSession(v)?v:null}catch{return null}}
+function clearAdminSession(){sessionGeneration++;adminSession=null;token=null;try{localStorage.removeItem(SESSION_KEY)}catch{}try{sessionStorage.removeItem(SESSION_KEY)}catch{}}
+function persistAdminSession(){try{localStorage.setItem(SESSION_KEY,JSON.stringify(adminSession));try{sessionStorage.removeItem(SESSION_KEY)}catch{}}catch{try{sessionStorage.setItem(SESSION_KEY,JSON.stringify(adminSession))}catch{}msg('瀏覽器未允許保存登入，關閉後可能需要重新登入。')}}
+function storeAdminSession(v){if(!v.user?.email_confirmed_at||v.user.email?.toLowerCase()!=='guts1989921@gmail.com')throw Error('請使用已驗證的管理員帳號登入');const next={access_token:v.access_token,refresh_token:v.refresh_token,expires_at:v.expires_at||Math.floor(Date.now()/1000)+v.expires_in};if(!validAdminSession(next))throw Error('登入資料不完整，請重新登入');adminSession=next;token=v.access_token;persistAdminSession()}
+function showSignedOut(message='已登出'){records=[];lastBookingUpdated='';$('bookingLastUpdated').textContent='尚未更新預約資料';bookingStatusResults.clear();$('bookingListCount').textContent='';for(const id of ['cards','historyCards','customerSearchCards','incomeSummary','openingList','previewSlots','memberSummary','revenueChart','serviceReport','serviceCatalog'])$(id).replaceChildren();$('historyPage').hidden=true;$('dashboard').hidden=true;$('adminTopActions').hidden=true;$('bookingCountSummary').hidden=true;$('count').textContent='…';$('login').hidden=false;msg(message)}
+async function refreshAdminSession(){
+if(sessionRefresh)return sessionRefresh;const generation=sessionGeneration;
+const run=async()=>{if(generation!==sessionGeneration)throw Error('登入狀態已變更');const stored=readStoredAdminSession();if(stored){adminSession=stored;token=stored.access_token}if(!adminSession)throw Error('請重新登入');
+if(adminSession.expires_at*1000>Date.now()+60000)return;
+const r=await fetch(SB+'/auth/v1/token?grant_type=refresh_token',{method:'POST',headers:{apikey:KEY,'Content-Type':'application/json'},body:JSON.stringify({refresh_token:adminSession.refresh_token})});
+if(generation!==sessionGeneration)throw Error('登入狀態已變更');
+if(!r.ok){if(r.status===400||r.status===401){clearAdminSession();showSignedOut('登入憑證已失效，請重新登入。')}throw Error('登入狀態暫時無法更新，恢復連線後會自動重試。')}
+const value=await r.json();if(generation!==sessionGeneration)throw Error('登入狀態已變更');storeAdminSession(value)};
+sessionRefresh=(navigator.locks?.request?navigator.locks.request('songmu-admin-refresh',{mode:'exclusive'},run):run()).finally(()=>{sessionRefresh=null});return sessionRefresh
+}
+async function restoreAdminSession(){try{const saved=readStoredAdminSession();if(!saved)return;adminSession=saved;token=saved.access_token;const generation=sessionGeneration;const user=await api('/auth/v1/user');if(generation!==sessionGeneration)return;if(!user.email_confirmed_at||user.email?.toLowerCase()!=='guts1989921@gmail.com'){clearAdminSession();throw Error('請使用管理員帳號登入')}persistAdminSession();$('login').hidden=true;rememberAdmin();setPage(pageView,false);await refresh()}catch(e){if(!adminSession)token=null;msg(friendlyError(e.message))}}
+async function keepAdminSession(){if(!adminSession||document.visibilityState==='hidden')return;try{if($('login').hidden)await refreshAdminSession();else await restoreAdminSession()}catch{/* Preserve the session through a temporary connection failure. */}}
+setInterval(keepAdminSession,30000);
+window.addEventListener('focus',keepAdminSession);
+window.addEventListener('online',keepAdminSession);
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')keepAdminSession()});
+window.addEventListener('storage',event=>{if(event.key!==SESSION_KEY&&event.key!==null)return;if(event.newValue===null){clearAdminSession();showSignedOut();return}const saved=readStoredAdminSession();if(saved){adminSession=saved;token=saved.access_token;if(!$('reset').hidden)return;if(!$('login').hidden)restoreAdminSession()}});
+
+function rememberAdmin(){try{localStorage.setItem('songmu-admin-created','yes')}catch{}$('signup').hidden=true}
+$('signup').hidden=true;
+let historyType=new URLSearchParams(location.search).get('type')||'all';
+if(!['all','normal','cancelled_before_service','cancelled_during_service'].includes(historyType))historyType='all';
+const historyButtons={all:'historyAll',normal:'historyNormal',cancelled_before_service:'historyBefore',cancelled_during_service:'historyDuring'};
+const adminViews=['bookings','history','opening','income','search','details','services','settings'];
+function readPageView(){const view=new URLSearchParams(location.search).get('view');return ['history','opening','income','search','details','services','settings'].includes(view)?view:'bookings'}
+function setPage(view,updateUrl=true,type=null){
+if(!adminViews.includes(view))view='bookings';if(type)historyType=['all','normal','cancelled_before_service','cancelled_during_service'].includes(type)?type:'all';pageView=view;document.body.dataset.view=view;songmuSelectGroup(songmuViewGroups[view]||'booking');
+$('adminTopActions').hidden=!token;$('bookingCountSummary').hidden=!token;$('dashboard').hidden=!token;
+for(const [kind,id] of Object.entries(historyButtons)){$(id).setAttribute('aria-controls','historyCards');$(id).setAttribute('aria-pressed',String(historyType===kind))}
+document.querySelectorAll('[data-admin-panel]').forEach(panel=>panel.hidden=!token||panel.dataset.adminPanel!==(view==='details'?'bookings':view));
+document.querySelectorAll('[data-admin-view]').forEach(button=>button.setAttribute('aria-current',button.dataset.adminView===view?'page':'false'));
+if(updateUrl)history.pushState(null,'',ADMIN_PATH+(view==='bookings'?'':'?view='+view+(view==='history'?'&type='+encodeURIComponent(historyType):'')));
+show();if(view==='services'&&token)loadServiceCatalog()
+}
+const songmuViewGroups={bookings:'booking',details:'booking',history:'booking',search:'member',income:'revenue',services:'service',opening:'service',settings:'system'};
+function songmuSelectGroup(group){document.querySelectorAll('[data-admin-group]').forEach(b=>{const active=b.dataset.adminGroup===group;b.setAttribute('aria-expanded',String(active));b.setAttribute('aria-pressed',String(active))});document.querySelectorAll('[data-subnav-group]').forEach(el=>el.hidden=el.dataset.subnavGroup!==group)}
+document.querySelectorAll('[data-admin-group]').forEach(b=>b.addEventListener('click',()=>{const group=b.dataset.adminGroup;songmuSelectGroup(group);const first=document.querySelector('[data-subnav-group="'+group+'"] [data-admin-view]');if(first)setPage(first.dataset.adminView)}));
+document.querySelectorAll('[data-admin-view]').forEach(button=>button.onclick=()=>setPage(button.dataset.adminView));
+function showCustomerSearch(){
+const target=$('customerSearchCards'),q=$('search').value.trim().toLowerCase();target.replaceChildren();
+if(!q){$('customerSearchCount').textContent='請輸入姓名、手機、症狀或備註開始搜尋。';return}
+const selected=records.filter(r=>[r.submitted_name,r.submitted_phone,r.symptoms,r.notes,r.admin_notes,r.outcome_note,r.customers?.name,r.customers?.phone].join(' ').toLowerCase().includes(q)).sort((a,b)=>Date.parse(b.starts_at)-Date.parse(a.starts_at));
+$('customerSearchCount').textContent='找到 '+selected.length+' 筆紀錄（依預約時間由新到舊）';
+for(const r of selected){const card=document.createElement('article');card.className='card';const heading=document.createElement('h3');heading.textContent=r.submitted_name||r.customers?.name||'未填姓名';card.append(heading);field(card,'預約時間',new Date(r.starts_at).toLocaleString('zh-TW',{timeZone:'Asia/Taipei'}));field(card,'手機',r.submitted_phone||r.customers?.phone);field(card,'服務',r.service_name);field(card,'金額',r.price_ntd==null?'—':'NT$ '+r.price_ntd);field(card,'預約狀態',labels[r.status]||r.status);field(card,'處理結果',isArchived(r)?outcomes[recordOutcome(r)]:'尚未處理');field(card,'症狀',r.symptoms);field(card,'客人備註',r.notes);if(r.admin_notes)field(card,'店家備註（僅後台）',r.admin_notes);field(card,'處理備註',r.outcome_note);target.append(card)}
+if(!selected.length){const empty=document.createElement('p');empty.textContent='沒有符合條件的客人紀錄。';target.append(empty)}
+}
+function showHistory(){
+$('historyTitle').textContent=({'normal':'正常完成紀錄','cancelled_before_service':'服務前取消紀錄','cancelled_during_service':'服務中取消紀錄'})[historyType]||'全部會員紀錄';
+const q=$('historySearch').value.trim().toLowerCase(),filter=historyType;
+const selected=records.filter(r=>isArchived(r)&&(filter==='all'||recordOutcome(r)===filter)&&[r.submitted_name,r.submitted_phone,r.symptoms,r.notes,r.admin_notes,r.outcome_note,r.customers?.name,r.customers?.phone].join(' ').toLowerCase().includes(q));
+const groups=new Map();for(const r of selected){const key=r.line_member_id||r.customer_id||r.submitted_phone||r.id;if(!groups.has(key))groups.set(key,[]);groups.get(key).push(r)}
+$('historyCards').replaceChildren();
+for(const group of [...groups.values()].sort((a,b)=>Math.max(...b.map(r=>Date.parse(r.starts_at)))-Math.max(...a.map(r=>Date.parse(r.starts_at))))){
+group.sort((a,b)=>Date.parse(a.starts_at)-Date.parse(b.starts_at)||String(a.id).localeCompare(String(b.id)));
+const member=document.createElement('article');member.className='card';const latest=group[group.length-1],heading=document.createElement('h3');heading.textContent=latest.submitted_name||latest.customers?.name||'未填姓名';member.append(heading);field(member,'手機',latest.submitted_phone||latest.customers?.phone);
+for(const r of group){const entry=document.createElement('section');entry.className='card';const h=document.createElement('h4');h.textContent=new Date(r.starts_at).toLocaleString('zh-TW',{timeZone:'Asia/Taipei'})+'｜'+outcomes[recordOutcome(r)];entry.append(h);field(entry,'服務',r.service_name);field(entry,'金額',r.price_ntd==null?'—':'NT$ '+r.price_ntd);field(entry,'症狀',r.symptoms);field(entry,'客人備註',r.notes);if(r.admin_notes)field(entry,'店家備註（僅後台）',r.admin_notes);field(entry,'處理備註',r.outcome_note);field(entry,'處理時間',r.outcome_at?new Date(r.outcome_at).toLocaleString('zh-TW',{timeZone:'Asia/Taipei'}):'—');field(entry,'LINE 通知',({accepted:'LINE 已接受通知',pending:'等待發送',failed:'未成功，可重試',skipped:'未綁定 LINE',not_requested:'舊紀錄，未發送'})[r.line_notification_status]||'未發送');if(['pending','failed'].includes(r.line_notification_status)){const retry=document.createElement('button');retry.textContent='重試 LINE 通知';retry.onclick=async()=>{retry.disabled=true;await notifyOutcome(r.id);retry.disabled=false};entry.append(retry)}member.append(entry)}
+$('historyCards').append(member)}
+$('historyCount').textContent=groups.size+' 位會員，共 '+selected.length+' 筆紀錄';if(!selected.length){const p=document.createElement('p');p.textContent='目前沒有符合條件的完成或取消紀錄。';$('historyCards').append(p)}
+}
+async function notifyOutcome(id){try{const result=await api('/functions/v1/notify-outcome',{method:'POST',body:JSON.stringify({appointment_id:id})});const record=records.find(r=>r.id===id);if(record)record.line_notification_status=result.status;msg(result.message||'通知處理完成');if(pageView==='history')showHistory()}catch{msg('預約已存檔，但通知尚未成功，可在客人紀錄中重試。')}}
+async function saveOutcome(r,type,note){
+if(!['pending','confirmed'].includes(r.status)||(r.status==='pending'&&type!=='cancelled_before_service'))throw Error('請先確認預約，才能標記服務完成或服務中取消。');
+if(type!=='normal'&&!note.trim())throw Error('請先填寫取消原因。');
+const status=type==='cancelled_before_service'?'cancelled':'completed';
+const saved=await api('/rest/v1/appointments?id=eq.'+r.id+'&status=eq.'+r.status+'&starts_at=eq.'+encodeURIComponent(r.starts_at),{method:'PATCH',headers:{Prefer:'return=representation'},body:JSON.stringify({outcome:type,outcome_note:type==='normal'?null:note.trim(),outcome_at:new Date().toISOString(),status})});
+if(!saved?.length||saved[0].status!==status)throw Error('這筆預約已變更，請更新資料後重試。');
+Object.assign(r,saved[0]);show();msg('已存入服務紀錄：'+outcomes[type]+'，正在處理客人通知…');await notifyOutcome(r.id);
+}
+function showIncome(){const report=revenueReport(records);const g=$('incomeSummary');g.replaceChildren();for(const [label,amount] of [['正常服務總費用',report.total],['今日收入',report.todayTotal],['本週收入',report.weekTotal],['本月收入',report.monthTotal]])field(g,label,'NT$ '+amount.toLocaleString('zh-TW'))}
+
+let bookingFilter='all';
+const bookingStatusResults=new Map();
+document.querySelectorAll('[data-booking-filter]').forEach(button=>button.onclick=()=>{bookingFilter=button.dataset.bookingFilter;show()});
+
+const bookingBusy=new Set();
+function bookingActionError(e){
+ const text=String(e.message||e);
+ if(text.includes('reschedule_conflict'))return '這個時段已有其他預約（含10分鐘整理時間），請選擇其他時間。';
+ if(text.includes('outside_opening_hours'))return '這個時間未開放預約，請先到「開放預約時間」設定。';
+ if(text.includes('invalid_reschedule_time'))return '請選擇未來的整點或半點時間。';
+ if(text.includes('booking_changed_refresh'))return '這筆預約已變更，請更新資料後再操作。';
+ return text;
+}
+function bookingStatusButtons(r){
+ const group=document.createElement('section');group.className='booking-status-control';
+ const badge=document.createElement('span');badge.className='booking-status-badge '+r.status;badge.textContent=labels[r.status]||r.status;
+ const feedback=document.createElement('p');feedback.className='booking-status-feedback';feedback.setAttribute('role','status');feedback.textContent=bookingStatusResults.get(r.id)||(r.status==='pending'?'等待你確認這筆預約。':'這筆預約已確認。');
+ const actions=document.createElement('div');actions.className='booking-action-row';
+ const button=(label,cls='')=>{const b=document.createElement('button');b.type='button';b.textContent=label;b.className=cls;return b};
+ const panel=(title)=>{const d=document.createElement('details');d.className='booking-edit-panel';const summary=document.createElement('summary');summary.textContent=title;d.append(summary);return d};
+ const context=()=> '客人：'+(r.submitted_name||r.customers?.name||'未填姓名')+'\n原時間：'+new Date(r.starts_at).toLocaleString('zh-TW',{timeZone:'Asia/Taipei'});
+ const run=async(task)=>{
+  if(bookingBusy.has(r.id))return;bookingBusy.add(r.id);group.setAttribute('aria-busy','true');
+  const controls=[...group.querySelectorAll('button,input,select,textarea')];controls.forEach(b=>b.disabled=true);feedback.textContent='正在儲存，請稍候…';
+  try{await task()}catch(e){feedback.textContent='未能確認儲存成功，請更新資料後重試。'+bookingActionError(e);msg(feedback.textContent)}
+  finally{bookingBusy.delete(r.id);group.removeAttribute('aria-busy');controls.forEach(b=>b.disabled=false)}
+ };
+ const savedResult=text=>{bookingStatusResults.set(r.id,text);show();msg(text)};
+ const changeStatus=async value=>{
+  const saved=await api('/rest/v1/appointments?id=eq.'+r.id+'&status=eq.'+r.status+'&starts_at=eq.'+encodeURIComponent(r.starts_at),{method:'PATCH',headers:{Prefer:'return=representation'},body:JSON.stringify({status:value})});
+  if(!saved?.length||saved[0].status!==value)throw Error('這筆預約已變更，請更新資料後再試。');
+  Object.assign(r,saved[0]);savedResult('已儲存：預約狀態為「'+labels[value]+'」。');
+ };
+ if(r.status==='pending'){
+  const accept=button('確認預約','booking-primary');accept.onclick=()=>{if(confirm(context()+'\n服務：'+(r.service_name||'—')+'\n\n確認接受這筆預約？'))return run(()=>changeStatus('confirmed'))};actions.append(accept);
+ }
+ 
+ const editTime=panel('更改時間'),dateLabel=document.createElement('label');dateLabel.textContent='選擇已開放日期（台灣時間）';
+ const dateSelect=document.createElement('select');dateSelect.setAttribute('aria-label','選擇已開放日期');dateLabel.append(dateSelect);
+ const timeHint=document.createElement('p');timeHint.className='muted';timeHint.textContent='展開後讀取可用時段；服務 '+r.duration_minutes+' 分鐘，含10分鐘整理間隔。';
+ timeHint.setAttribute('role','status');
+ const slotList=document.createElement('div');slotList.className='reschedule-slot-grid';slotList.setAttribute('role','group');slotList.setAttribute('aria-label','選擇新預約時間');
+ const selectedText=document.createElement('p');selectedText.className='muted';selectedText.setAttribute('role','status');
+ const reloadSlots=button('更新可用時段','booking-slots-reload');
+ const saveTime=button('確認更改時間');saveTime.disabled=true;
+ let slotRows=[],selectedStart='',slotRequest=0,daysRequest=0,daysLoaded=false;
+ const clearSelection=()=>{selectedStart='';selectedText.textContent='請點選一個新時段。';saveTime.disabled=true};
+ async function loadSlots(){
+  const request=++slotRequest;slotRows=[];clearSelection();slotList.replaceChildren();
+  if(!dateSelect.value){timeHint.textContent='目前沒有已開放日期，請先到「開放預約時間」設定。';return}
+  timeHint.textContent='正在讀取當天可用時段…';
+  try{
+   const rows=await api('/rest/v1/rpc/admin_reschedule_slots',{method:'POST',body:JSON.stringify({p_id:r.id,p_day:dateSelect.value})});
+   if(request!==slotRequest||!group.isConnected)return;
+   slotRows=rows||[];
+   timeHint.textContent=slotRows.length?'服務 '+r.duration_minutes+' 分鐘，已排除其他預約及10分鐘整理間隔。':'這一天沒有可用時段，請選擇其他日期。';
+   for(const row of slotRows){
+    const current=Date.parse(row.starts_at)===Date.parse(r.starts_at);
+    const time=button(new Date(row.starts_at).toLocaleTimeString('zh-TW',{timeZone:'Asia/Taipei',hour:'2-digit',minute:'2-digit',hour12:false})+(current?'（原時段）':''),'reschedule-slot');
+    time.setAttribute('aria-pressed','false');time.onclick=()=>{
+     if(bookingBusy.has(r.id))return;
+     selectedStart=row.starts_at;for(const item of slotList.children)item.setAttribute('aria-pressed',String(item===time));
+     selectedText.textContent=(current?'目前原時段：':'已選新時間：')+new Date(row.starts_at).toLocaleString('zh-TW',{timeZone:'Asia/Taipei'});
+     saveTime.disabled=current;
+    };slotList.append(time);
+   }
+  }catch(e){if(request!==slotRequest||!group.isConnected)return;timeHint.textContent='無法讀取可用時段：'+bookingActionError(e)+' 請按「更新可用時段」重試。'}
+ }
+ async function loadDates(){
+  const request=++daysRequest;slotRequest++;clearSelection();slotList.replaceChildren();dateSelect.disabled=true;reloadSlots.disabled=true;timeHint.textContent='正在讀取已開放日期…';
+  const previous=dateSelect.value||new Date(Date.parse(r.starts_at)+8*3600000).toISOString().slice(0,10);
+  try{
+   const days=await api('/rest/v1/rpc/admin_get_opening_days',{method:'POST',body:'{}'});
+   if(request!==daysRequest||!group.isConnected)return;
+   dateSelect.replaceChildren();
+   for(const d of days||[]){const option=document.createElement('option');option.value=d.day;option.textContent=d.day;dateSelect.append(option)}
+   dateSelect.value=(days||[]).some(d=>d.day===previous)?previous:((days||[])[0]?.day||'');
+   daysLoaded=true;await loadSlots();
+  }catch(e){if(request!==daysRequest||!group.isConnected)return;dateSelect.replaceChildren();timeHint.textContent='無法讀取已開放日期：'+bookingActionError(e)+' 請按「更新可用時段」重試。'}
+  finally{if(request===daysRequest){dateSelect.disabled=bookingBusy.has(r.id)||!dateSelect.children.length;reloadSlots.disabled=bookingBusy.has(r.id)}}
+ }
+ dateSelect.onchange=loadSlots;reloadSlots.onclick=loadDates;
+ editTime.ontoggle=()=>{if(editTime.open&&!daysLoaded)return loadDates()};
+ saveTime.onclick=()=>{
+  const row=slotRows.find(slot=>slot.starts_at===selectedStart),start=new Date(selectedStart);
+  if(!row||!Number.isFinite(start.getTime())||start.getTime()<=Date.now()){feedback.textContent='請先選擇有效的新時段，必要時更新可用時段。';saveTime.disabled=true;return}
+  if(start.getTime()===Date.parse(r.starts_at)){feedback.textContent='新時間與目前相同，請選擇其他時段。';return}
+  if(!confirm(context()+'\n新時間：'+start.toLocaleString('zh-TW',{timeZone:'Asia/Taipei'})+'\n\n確認已與客人協調並更改時間？'))return;
+  return run(async()=>{const saved=await api('/rest/v1/rpc/admin_reschedule_appointment',{method:'POST',body:JSON.stringify({p_id:r.id,p_expected_start:r.starts_at,p_expected_status:r.status,p_start:start.toISOString()})});if(!saved?.length||Date.parse(saved[0].starts_at)!==start.getTime())throw Error('未收到改期成功結果。');Object.assign(r,saved[0]);savedResult('已儲存新預約時間；預約狀態維持「'+labels[r.status]+'」。')});
+ };
+ editTime.append(dateLabel,reloadSlots,timeHint,slotList,selectedText,saveTime);
+ const cancelPanel=panel(r.status==='pending'?'取消／不接受預約':'取消預約'),cancelLabel=document.createElement('label');cancelLabel.textContent='取消原因（必填）';
+ const reason=document.createElement('textarea');reason.maxLength=4000;reason.placeholder='例如：時間無法配合，已與客人說明';cancelLabel.append(reason);
+ const cancelButton=button('確認取消預約','danger');cancelButton.onclick=()=>{
+  if(!reason.value.trim()){feedback.textContent='請先填寫取消原因。';cancelPanel.open=true;reason.focus();return}
+  if(!confirm(context()+'\n原因：'+reason.value.trim()+'\n\n確定取消？儲存後會移至「服務前取消」紀錄，並嘗試發送 LINE 通知。'))return;
+  return run(()=>saveOutcome(r,'cancelled_before_service',reason.value));
+ };
+ cancelPanel.append(cancelLabel,cancelButton);
+ const notesPanel=panel('店家備註（僅後台可見）'),notesLabel=document.createElement('label');notesLabel.textContent='內部聯繫與服務提醒';
+ const notes=document.createElement('textarea');notes.maxLength=4000;notes.value=r.admin_notes||'';notes.placeholder='例如：已電話聯絡、等待客人回覆';notesLabel.append(notes);
+ const saveNotes=button('儲存店家備註');saveNotes.onclick=()=>{
+  if(!confirm(context()+'\n\n確認儲存這筆店家備註？'))return;
+  return run(async()=>{const value=notes.value.trim();const saved=await api('/rest/v1/appointments?id=eq.'+r.id+'&status=eq.'+r.status,{method:'PATCH',headers:{Prefer:'return=representation'},body:JSON.stringify({admin_notes:value||null})});if(!saved?.length||(saved[0].admin_notes||'')!==value)throw Error('未收到備註儲存成功結果。');Object.assign(r,saved[0]);savedResult('店家備註已儲存，僅後台可見。')});
+ };
+ notesPanel.append(notesLabel,saveNotes);
+ group.append(badge,actions,editTime,cancelPanel,notesPanel);
+ if(r.status==='confirmed'){const more=panel('更多操作');const revert=button('改回待確認');revert.onclick=()=>{if(confirm(context()+'\n\n確認改回「待確認」？'))return run(()=>changeStatus('pending'))};more.append(revert);group.append(more)}
+ group.append(feedback);return group;
+}
+
+
+const completionControls=new Map();
+function completionAvailability(r,now=Date.now()){
+ const end=r.ends_at?Date.parse(r.ends_at):Date.parse(r.starts_at)+Number(r.duration_minutes)*60000;
+ return {end,ready:r.status==='confirmed'&&Number.isFinite(end)&&now>=end};
+}
+function updateCompletionControls(){
+ for(const [id,control] of completionControls){
+  if(!control.button.isConnected){completionControls.delete(id);continue}
+  const state=completionAvailability(control.record);
+  control.button.disabled=!state.ready||bookingBusy.has(id);
+  control.button.textContent='確認服務已完成';
+  control.hint.textContent=!Number.isFinite(state.end)?'無法確認服務結束時間，請更新預約資料。':state.ready?'已到預計結束時間，請確認客人實際完成服務後再按下按鈕。':'尚未到服務結束時間｜預計 '+new Date(state.end).toLocaleString('zh-TW',{timeZone:'Asia/Taipei',year:'numeric',month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit',hour12:false})+' 結束後可確認。';
+ }
+}
+setInterval(()=>{if(document.visibilityState!=='hidden')updateCompletionControls()},1000);
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')updateCompletionControls()});
+window.addEventListener('focus',updateCompletionControls);
+
+let calendarMonthDate=new Date();calendarMonthDate=new Date(calendarMonthDate.getFullYear(),calendarMonthDate.getMonth(),1);let calendarSelectedDate=null;
+function calendarTaipeiDate(value){return new Intl.DateTimeFormat('sv-SE',{timeZone:'Asia/Taipei',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date(value))}
+function drawBookingCalendar(){const grid=$('bookingCalendarGrid');if(!grid)return;grid.replaceChildren();const year=calendarMonthDate.getFullYear(),month=calendarMonthDate.getMonth(),today=calendarTaipeiDate(Date.now());$('calendarMonth').textContent=year+' 年 '+(month+1)+' 月';for(const name of ['日','一','二','三','四','五','六']){const el=document.createElement('span');el.className='booking-calendar-weekday';el.textContent=name;grid.append(el)}const first=new Date(year,month,1).getDay(),last=new Date(year,month+1,0).getDate();for(let i=0;i<first;i++){const empty=document.createElement('span');empty.className='booking-calendar-day empty';grid.append(empty)}for(let day=1;day<=last;day++){const date=year+'-'+String(month+1).padStart(2,'0')+'-'+String(day).padStart(2,'0');const matches=records.filter(r=>calendarTaipeiDate(r.starts_at)===date);const button=document.createElement('button');button.type='button';button.className='booking-calendar-day'+(date===today?' today':'');button.setAttribute('aria-pressed',String(calendarSelectedDate===date));button.setAttribute('aria-label',date+'，'+matches.length+' 筆預約');const number=document.createElement('span');number.textContent=day;button.append(number);const dots=document.createElement('span');dots.className='booking-calendar-dots';for(const status of ['pending','confirmed','completed','cancelled']){if(matches.some(r=>r.status===status)){const dot=document.createElement('span');dot.className='booking-calendar-dot '+status;dots.append(dot)}}button.append(dots);for(const r of matches.slice().sort((a,b)=>Date.parse(a.starts_at)-Date.parse(b.starts_at)).slice(0,2)){const event=document.createElement('span');event.className='calendar-event '+r.status;event.textContent=new Date(r.starts_at).toLocaleTimeString('zh-TW',{timeZone:'Asia/Taipei',hour:'2-digit',minute:'2-digit',hour12:false})+' '+(r.submitted_name||r.customers?.name||'預約');event.title=event.textContent+' · '+(labels[r.status]||r.status);button.append(event)}if(matches.length){const total=document.createElement('span');total.className='calendar-day-count';total.textContent=matches.length+' 筆';button.append(total)}button.onclick=()=>{calendarSelectedDate=calendarSelectedDate===date?null:date;show()};grid.append(button)}$('calendarSelection').textContent=calendarSelectedDate?'已選日期：'+calendarSelectedDate+'（可再點一次取消）':'顯示全部日期';$('calendarClear').hidden=!calendarSelectedDate}
+$('calendarPrev').onclick=()=>{calendarMonthDate=new Date(calendarMonthDate.getFullYear(),calendarMonthDate.getMonth()-1,1);drawBookingCalendar()};
+$('calendarNext').onclick=()=>{calendarMonthDate=new Date(calendarMonthDate.getFullYear(),calendarMonthDate.getMonth()+1,1);drawBookingCalendar()};
+$('calendarToday').onclick=()=>{const parts=calendarTaipeiDate(Date.now()).split('-').map(Number);calendarMonthDate=new Date(parts[0],parts[1]-1,1);calendarSelectedDate=calendarTaipeiDate(Date.now());show()};
+$('calendarClear').onclick=()=>{calendarSelectedDate=null;show()};
+function show(){renderMemberSummary();renderRevenueDetails();completionControls.clear();drawBookingCalendar();$('count').textContent=records.filter(r=>!isArchived(r)).length.toLocaleString('zh-TW');showIncome();if(pageView==='history')showHistory();if(pageView==='search'){showCustomerSearch();return}if(!['bookings','details'].includes(pageView))return;const active=records.filter(r=>!isArchived(r));for(const button of document.querySelectorAll('[data-booking-filter]')){const filter=button.dataset.bookingFilter;button.setAttribute('aria-pressed',String(bookingFilter===filter));button.textContent=(filter==='all'?'全部':labels[filter])+' '+active.filter(r=>filter==='all'||r.status===filter).length+' 筆'}const selected=active.filter(r=>(bookingFilter==='all'||r.status===bookingFilter)&&(!calendarSelectedDate||calendarTaipeiDate(r.starts_at)===calendarSelectedDate)).sort((a,b)=>(a.status==='pending'?0:1)-(b.status==='pending'?0:1)||Date.parse(a.starts_at)-Date.parse(b.starts_at));$('bookingListCount').textContent='顯示 '+selected.length+' 筆'+(calendarSelectedDate?'（'+calendarSelectedDate+'）':'')+'｜待確認 '+active.filter(r=>r.status==='pending').length+' 筆・已確認 '+active.filter(r=>r.status==='confirmed').length+' 筆';$('cards').replaceChildren();if(!selected.length){const empty=document.createElement('p');empty.className='card muted';empty.textContent=bookingFilter==='all'?'目前沒有預約申請。':'目前沒有「'+labels[bookingFilter]+'」預約。';$('cards').append(empty)}for(const r of selected){const c=document.createElement('article');c.className='card booking-overview-card';const h=document.createElement('h3');h.textContent=(r.submitted_name||r.customers?.name||'未填姓名')+'｜'+new Date(r.starts_at).toLocaleString('zh-TW',{timeZone:'Asia/Taipei'});c.append(h);const g=document.createElement('div');g.className='grid';field(g,'手機',r.submitted_phone||r.customers?.phone);field(g,'服務',r.service_name);field(g,'金額',r.price_ntd?'NT$ '+r.price_ntd:'');field(g,'預約狀態',labels[r.status]||r.status);c.append(g);const details=document.createElement('details');details.className='customer-details';const summary=document.createElement('summary');summary.textContent='展開客人詳情・症狀與備註';details.append(summary);const info=document.createElement('div');info.className='customer-details-body';field(info,'姓名',r.submitted_name||r.customers?.name);field(info,'手機',r.submitted_phone||r.customers?.phone);field(info,'症狀',r.symptoms);field(info,'客人備註',r.notes);if(r.admin_notes)field(info,'店家備註（僅後台）',r.admin_notes);if(r.outcome_note)field(info,'取消／服務紀錄備註',r.outcome_note);details.append(info);c.append(details);c.append(bookingStatusButtons(r));if(r.status==='confirmed'){const note=document.createElement('textarea');note.placeholder='服務中止原因（服務中取消時必填）';note.value=r.outcome_note||'';c.append(note);const a=document.createElement('div');a.className='actions';for(const [text,cls,type,confirmText] of [['確認服務已完成','', 'normal','確認客人已實際完成本次服務？儲存後將存入正常完成紀錄、計入收入，並嘗試發送 LINE 通知。'],['服務中取消','warn','cancelled_during_service','確認服務進行到一半中止？將保留為服務紀錄，並發送 LINE 通知給這位客人。']]){const b=document.createElement('button');b.textContent=text;b.className=cls;b.onclick=async()=>{if(type==='normal'&&!completionAvailability(r).ready){updateCompletionControls();msg('尚未到服務結束時間，暫時不能確認完成。');return}if(type!=='normal'&&!note.value.trim()){msg('請先填寫取消原因，再按「'+text+'」。');alert('請先填寫取消原因，再按「'+text+'」。');note.focus();return}if(bookingBusy.has(r.id)||!confirm(confirmText))return;bookingBusy.add(r.id);b.disabled=true;try{await saveOutcome(r,type,note.value)}catch(e){msg(e.message)}finally{bookingBusy.delete(r.id);b.disabled=false;updateCompletionControls()}};if(type==='normal'){b.className='completion-button';const hint=document.createElement('p');hint.className='completion-hint';hint.setAttribute('role','status');hint.setAttribute('aria-live','polite');completionControls.set(r.id,{record:r,button:b,hint});a.append(b);c.append(hint)}else a.append(b)}c.append(a)}$('cards').append(c)}updateCompletionControls()}
+
+let bookingRefreshTask=null,lastBookingUpdated='';
+function refresh(){
+ if(bookingRefreshTask)return bookingRefreshTask;
+ const generation=sessionGeneration,buttons=[$('reload'),$('historyReload')];
+ buttons.forEach(button=>button.disabled=true);$('reload').textContent='↻ 重新整理中…';
+ $('bookingLastUpdated').textContent='正在讀取最新預約資料…';$('bookingLastUpdated').setAttribute('aria-busy','true');
+ const task=async()=>{
+  try{
+   const nextRecords=[];
+   for(let offset=0;;offset+=500){
+    const rows=await api('/rest/v1/appointments?select=*,customers(name,phone,line_id)&order=starts_at.desc&limit=500&offset='+offset);
+    if(generation!==sessionGeneration)return;
+    nextRecords.push(...rows);if(rows.length<500)break;
+   }
+   records=nextRecords;show();
+   lastBookingUpdated=new Date().toLocaleString('zh-TW',{timeZone:'Asia/Taipei',month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false});
+   $('bookingLastUpdated').textContent='最後更新：'+lastBookingUpdated;
+   msg('');await loadOpeningDays();
+  }catch(e){
+   if(generation!==sessionGeneration)return;
+   $('bookingLastUpdated').textContent='更新失敗｜'+(lastBookingUpdated?'最後成功更新：'+lastBookingUpdated:'尚無成功更新紀錄');
+   msg('預約資料未更新，請稍後重新整理。'+e.message);
+  }finally{
+   buttons.forEach(button=>button.disabled=false);$('reload').textContent='↻ 重新整理';
+   $('bookingLastUpdated').removeAttribute('aria-busy');bookingRefreshTask=null;
+  }
+ };
+ bookingRefreshTask=task();return bookingRefreshTask;
+}
+$('loginForm').onsubmit=async event=>{event.preventDefault();if($('signin').disabled)return;$('signin').disabled=true;try{const v=await api('/auth/v1/token?grant_type=password',{method:'POST',body:JSON.stringify({email:'guts1989921@gmail.com',password:$('password').value})});storeAdminSession(v);$('password').value='';$('login').hidden=true;rememberAdmin();setPage(pageView,false);await refresh()}catch(e){clearAdminSession();msg(friendlyError(e.message))}finally{$('signin').disabled=false}};
+$('signup').onclick=async()=>{if($('password').value.length<12){msg('請設定至少 12 碼密碼');return}try{await api('/auth/v1/signup?redirect_to='+encodeURIComponent(ADMIN_URL),{method:'POST',body:JSON.stringify({email:'guts1989921@gmail.com',password:$('password').value})});$('password').value='';msg('請到管理員信箱完成驗證後回來登入。')}catch(e){msg(friendlyError(e.message))}};
+$('forgot').onclick=async()=>{if(!confirm('要寄送密碼重設信到管理員信箱 guts1989921@gmail.com 嗎？'))return;try{await api('/auth/v1/recover?redirect_to='+encodeURIComponent(ADMIN_URL),{method:'POST',body:JSON.stringify({email:'guts1989921@gmail.com'})});msg('密碼重設信已送出。請查看管理員信箱，點擊最新信件中的「重設密碼」。請勿連續重複寄送。')}catch(e){msg(friendlyError(e.message))}};
+async function readRecovery(){
+const hash=new URLSearchParams(location.hash.slice(1)),query=new URLSearchParams(location.search);
+const error=hash.get('error_description')||query.get('error_description');
+if(error){history.replaceState(null,'',ADMIN_PATH);msg('重設連結已失效或過期，請重新寄送密碼重設信並使用最新信件。');return}
+const access=hash.get('access_token'),type=hash.get('type');
+if(access&&type==='recovery'){
+ clearAdminSession();token=access;history.replaceState(null,'',ADMIN_PATH);
+ try{const user=await api('/auth/v1/user');if(!user.email_confirmed_at||user.email?.toLowerCase()!=='guts1989921@gmail.com')throw Error('此連結不是管理員的密碼重設連結');
+ $('login').hidden=true;$('dashboard').hidden=true;$('reset').hidden=false;msg('請設定新的管理員密碼。');
+ }catch(e){token=null;msg(friendlyError(e.message))}
+}}
+$('savePassword').onclick=async()=>{const p=$('newPassword').value,p2=$('newPassword2').value;if(p.length<12){msg('新密碼至少需要 12 碼');return}if(p!==p2){msg('兩次輸入的密碼不一致');return}try{await api('/auth/v1/user',{method:'PUT',body:JSON.stringify({password:p})});$('newPassword').value=$('newPassword2').value='';$('reset').hidden=true;$('login').hidden=false;token=null;history.replaceState(null,'',location.pathname);msg('密碼已更新，請使用新密碼登入。')}catch(e){msg(friendlyError(e.message))}};$('cancelReset').onclick=()=>{token=null;$('reset').hidden=true;$('login').hidden=false;history.replaceState(null,'',location.pathname);msg('已取消密碼重設')};
+$('logout').onclick=async()=>{const logoutToken=token;clearAdminSession();showSignedOut();if(logoutToken)try{await fetch(SB+'/auth/v1/logout',{method:'POST',headers:{apikey:KEY,Authorization:'Bearer '+logoutToken,'Content-Type':'application/json'}})}catch{}};$('reload').onclick=refresh;$('search').oninput=showCustomerSearch;
+$('export').onclick=()=>{try{downloadXlsx(revenueWorkbookSheets(records),'鬆沐預約資料-'+taiwanDay(new Date())+'.xlsx');msg('已產生服務分類與收入統計 Excel。')}catch(e){msg(e.message)}};
+function openHistory(type){setPage('history',true,type)}
+for(const [type,id] of Object.entries(historyButtons))$(id).onclick=()=>openHistory(type);
+$('historyReload').onclick=refresh;$('historySearch').oninput=showHistory;
+window.addEventListener('popstate',()=>setPage(readPageView(),false,new URLSearchParams(location.search).get('type')||'all'));
+if(location.hash.includes('access_token=')||location.hash.includes('error_description=')||new URLSearchParams(location.search).has('error_description'))readRecovery();else restoreAdminSession();
+
+// Administrator-only opening hours; database RPC validates the authenticated admin.
+let openingDays=[];
+function localDateToday(){return new Intl.DateTimeFormat('sv-SE',{timeZone:'Asia/Taipei',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date())}
+function openingError(e){const m=String(e.message||e);return m.includes('active_bookings_exist')?'當天已有待確認或已確認預約，請先處理客人的預約，再關閉日期。':m.includes('existing_booking_outside_hours')?'新的時段會影響已預約客人，請保留原預約時間。':m.includes('invalid_time_range')?'請確認結束時間晚於開始時間，並使用整點或半點。':m.includes('invalid_day')?'只能修改今天起 180 天內的日期。':friendlyError(m)}
+function renderOpeningDays(){const list=$('openingList');list.replaceChildren();if(!openingDays.length){list.textContent='目前沒有未來開放日期。';return}for(const d of openingDays){const item=document.createElement('div');item.className='opening-day';const info=document.createElement('span');const title=document.createElement('strong');title.textContent=d.day;const start=String(d.opens).slice(0,5);info.append(title,document.createTextNode(start+' ～ '+String(Math.floor(d.closes_minutes/60)).padStart(2,'0')+':'+String(d.closes_minutes%60).padStart(2,'0')));const edit=document.createElement('button');edit.type='button';edit.textContent='編輯';edit.onclick=()=>{$('openingDate').value=d.day;previewCustomerSlots();$('openingStart').value=start;$('openingEnd').value=String(Math.floor(d.closes_minutes/60)).padStart(2,'0')+':'+String(d.closes_minutes%60).padStart(2,'0');$('openingDate').scrollIntoView({behavior:'smooth',block:'center'})};const del=document.createElement('button');del.type='button';del.textContent='刪除';del.className='opening-delete';del.setAttribute('aria-label','刪除 '+d.day+' 的開放時段');del.onclick=()=>saveOpening(false,d.day);const controls=document.createElement('div');controls.className='opening-row-actions';controls.append(edit,del);item.append(info,controls);list.append(item)}}
+async function loadOpeningDays(){if(!token)return;try{openingDays=await api('/rest/v1/rpc/admin_get_opening_days',{method:'POST',body:'{}'});renderOpeningDays();$('openingStatus').textContent='時段已同步'}catch(e){$('openingStatus').textContent=openingError(e)}}
+async function saveOpening(enabled,selectedDay){const day=selectedDay||$('openingDate').value,from=$('openingStart').value,to=$('openingEnd').value;if(!day){$('openingStatus').textContent='請先選擇日期';return}if(enabled&&(!from||!to||to<=from)){$('openingStatus').textContent='請選擇正確的開始與結束時間';return}if(!enabled&&!confirm('確定刪除 '+day+' 的開放時段？刪除後客人將無法選擇該日。'))return;const buttons=[$('openingSave'),$('openingRemove')];buttons.forEach(b=>b.disabled=true);try{await api('/rest/v1/rpc/admin_save_opening_day',{method:'POST',body:JSON.stringify({p_day:day,p_open:from||'00:00',p_close:to||'00:30',p_enabled:enabled})});await loadOpeningDays();await previewCustomerSlots();$('openingStatus').textContent=enabled?'已儲存！客人重新開啟預約頁即可看到時段。':'已關閉此日期。'}catch(e){$('openingStatus').textContent=openingError(e)}finally{buttons.forEach(b=>b.disabled=false)}}
+$('openingDate').min=localDateToday();$('openingDate').value=localDateToday();$('openingSave').onclick=()=>saveOpening(true);$('openingRemove').onclick=()=>saveOpening(false);$('openingReload').onclick=loadOpeningDays;
+
+
+async function previewCustomerSlots(){const target=$('previewSlots');const date=$('openingDate').value;target.textContent='正在查詢客人實際可選時段…';if(!date){target.textContent='請先選擇日期';return}try{const r=await fetch('https://wwavyzxxfspulofwpkmn.supabase.co/functions/v1/booking-api',{headers:{apikey:KEY,Authorization:'Bearer '+KEY},cache:'no-store'});if(!r.ok)throw Error('無法讀取客人預約資料');const days=await r.json(),day=days[date];if(!day){target.textContent='這一天目前未開放預約。';return}const toMin=t=>{const [h,m]=String(t).split(':').map(Number);return h*60+m},fmt=t=>String(Math.floor(t/60)).padStart(2,'0')+':'+String(t%60).padStart(2,'0');const duration=Number($('previewService').value),start=toMin(day.start),end=toMin(day.end),blocked=day.bookings||[],times=[];for(let t=start;t<=end;t+=30){const stamp=new Date(date+'T'+fmt(t)+':00+08:00').getTime();if(stamp<=Date.now())continue;if(blocked.some(b=>t<toMin(b.end)+10&&t+duration+10>toMin(b.start)))continue;times.push(fmt(t))}target.replaceChildren();const explanation=document.createElement('p');explanation.className='muted';explanation.textContent='可預約開始時間 '+day.start+'～'+day.end+'（包含最後時間）；服務 '+duration+' 分鐘。下列為客人可以開始服務的時間：';target.append(explanation);if(!times.length){const p=document.createElement('p');p.textContent='目前沒有可預約時段（可能已額滿、已過期或服務時間不足）。';target.append(p)}else{const grid=document.createElement('div');grid.className='preview-grid';for(const t of times){const span=document.createElement('span');span.textContent=t;grid.append(span)}target.append(grid)}}catch(e){target.textContent='讀取失敗：'+String(e.message||e)}}
+$('previewRefresh').onclick=previewCustomerSlots;$('previewService').onchange=previewCustomerSlots;$('openingDate').onchange=previewCustomerSlots;
+let installPrompt=null;
+window.addEventListener('beforeinstallprompt',event=>{event.preventDefault();installPrompt=event;$('installApp').hidden=false;$('installStatus').textContent='可將鬆沐管理安裝到電腦。'});
+$('installApp').onclick=async()=>{if(!installPrompt)return;const prompt=installPrompt;installPrompt=null;await prompt.prompt();const result=await prompt.userChoice;$('installApp').hidden=true;$('installStatus').textContent=result.outcome==='accepted'?'已安裝鬆沐管理。':'已取消安裝，可使用 Brave 選單中的安裝功能。'};
+window.addEventListener('appinstalled',()=>{$('installApp').hidden=true;$('installStatus').textContent='已安裝鬆沐管理。'});
+if('serviceWorker'in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register(ADMIN_PATH+'sw.js',{scope:ADMIN_PATH,updateViaCache:'none'}).then(r=>r.update()).catch(()=>{$('installStatus').textContent='安裝功能暫時無法啟用，請重新整理後再試。'}));
+</script><script>
+function memberKey(r){return r.customer_id||r.submitted_phone||r.customers?.phone||r.id}
+function renderMemberSummary(){
+ const target=$('memberSummary');if(!target)return;target.replaceChildren();if(!token)return;
+ const groups=new Map();for(const r of records){const key=memberKey(r);if(!groups.has(key))groups.set(key,[]);groups.get(key).push(r)}
+ if(!groups.size){target.textContent='尚無會員預約紀錄。';return}
+ for(const group of groups.values()){
+  group.sort((a,b)=>Date.parse(b.starts_at)-Date.parse(a.starts_at));const r=group[0],card=document.createElement('article');card.className='member-card';
+  const h=document.createElement('h3');h.textContent=r.customers?.name||r.submitted_name||'未填姓名';card.append(h);
+  const p=document.createElement('p');p.textContent=r.customers?.phone||r.submitted_phone||'未提供手機';card.append(p);
+  const line=document.createElement('p');line.textContent='LINE ID：'+(r.customers?.line_id||'未提供');card.append(line);
+  const normal=group.filter(v=>serviceCategory(v)==='正常服務'),stats=document.createElement('div');stats.className='member-stats';
+  for(const [label,value] of [['累計消費','NT$ '+normal.reduce((s,v)=>s+Number(v.price_ntd||0),0).toLocaleString('zh-TW')],['預約次數',group.length+' 次']]){const s=document.createElement('span');s.textContent=label;const b=document.createElement('strong');b.textContent=value;s.append(b);stats.append(s)}card.append(stats);
+  const last=document.createElement('p');last.textContent='最近完成：'+(normal.length?taiwanDay(normal[0].starts_at):'尚無完成紀錄');card.append(last);
+  const btn=document.createElement('button');btn.type='button';btn.textContent='查看預約紀錄';btn.onclick=()=>{$('search').value=r.customers?.phone||r.submitted_phone||r.submitted_name||'';showCustomerSearch();$('customerSearchCards').scrollIntoView({behavior:'smooth',block:'start'})};card.append(btn);target.append(card);
+ }
+}
+function renderRevenueDetails(){
+ if(!$('reportMonth'))return;if(!$('reportMonth').value)$('reportMonth').value=taiwanDay(new Date()).slice(0,7);
+ const month=$('reportMonth').value;if(!/^\d{4}-\d{2}$/.test(month))return;
+ const rows=records.filter(r=>serviceCategory(r)==='正常服務'&&taiwanDay(r.starts_at).slice(0,7)===month),days=new Date(Number(month.slice(0,4)),Number(month.slice(5)),0).getDate(),amounts=Array(days).fill(0),services=new Map();
+ for(const r of rows){amounts[Number(taiwanDay(r.starts_at).slice(8))-1]+=Number(r.price_ntd||0);const name=r.service_name||'未分類',s=services.get(name)||{count:0,total:0};s.count++;s.total+=Number(r.price_ntd||0);services.set(name,s)}
+ const total=amounts.reduce((a,b)=>a+b,0);$('reportSummary').textContent=month+'｜正常完成 '+rows.length+' 筆 · 營收 NT$ '+total.toLocaleString('zh-TW')+' · 平均每筆 NT$ '+(rows.length?Math.round(total/rows.length):0).toLocaleString('zh-TW');
+ const chart=$('revenueChart');chart.replaceChildren();chart.setAttribute('role','img');chart.setAttribute('aria-label',month+' 每日正常服務收入，共 NT$ '+total);const max=Math.max(1,...amounts);
+ amounts.forEach((value,i)=>{const day=document.createElement('div');day.className='chart-day';day.title=month+'-'+String(i+1).padStart(2,'0')+'：NT$ '+value;const bar=document.createElement('span');bar.className='chart-bar';bar.style.height=Math.max(1,value/max*100)+'%';day.append(bar);if(i===0||(i+1)%5===0||i===days-1){const label=document.createElement('span');label.className='chart-label';label.textContent=i+1;day.append(label)}chart.append(day)});
+ const target=$('serviceReport');target.replaceChildren();if(!rows.length){target.textContent='此月份尚無正常完成服務。';return}
+ const table=document.createElement('table');table.className='report-table';const head=document.createElement('tr');for(const label of ['服務項目','完成筆數','營收（NT$）']){const th=document.createElement('th');th.textContent=label;th.scope='col';head.append(th)}const thead=document.createElement('thead');thead.append(head);table.append(thead);const tbody=document.createElement('tbody');for(const [name,s] of services){const tr=document.createElement('tr');for(const value of [name,s.count,s.total.toLocaleString('zh-TW')]){const td=document.createElement('td');td.textContent=value;tr.append(td)}tbody.append(tr)}table.append(tbody);target.append(table);
+}
+async function loadServiceCatalog(){
+ const generation=sessionGeneration,button=$('servicesReload');button.disabled=true;$('servicesStatus').textContent='正在讀取正式服務清單…';
+ try{const rows=await api('/rest/v1/services?select=name,duration,price&order=duration.asc');if(generation!==sessionGeneration||!token)return;if(!Array.isArray(rows))throw Error('服務資料格式不正確');const target=$('serviceCatalog');target.replaceChildren();for(const r of rows){const card=document.createElement('article');card.className='catalog-row';const text=document.createElement('div'),h=document.createElement('h3'),p=document.createElement('p');h.textContent=r.name;p.textContent=r.duration+' 分鐘 · NT$ '+Number(r.price).toLocaleString('zh-TW');text.append(h,p);const edit=document.createElement('button');edit.type='button';edit.textContent='編輯尚未開放';edit.disabled=true;card.append(text,edit);target.append(card)}$('servicesStatus').textContent='已讀取 '+rows.length+' 項正式服務（唯讀）';}
+ catch(e){if(generation===sessionGeneration){$('serviceCatalog').replaceChildren();$('servicesStatus').textContent='讀取失敗：'+e.message}}
+ finally{button.disabled=false}
+}
+$('servicesReload').onclick=loadServiceCatalog;$('reportMonth').onchange=renderRevenueDetails;
+
+const pageUpButton=document.getElementById('pageUp');
+function updatePageUp(){pageUpButton.hidden=window.scrollY<240}
+pageUpButton.addEventListener('click',()=>window.scrollTo({top:0,behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'}));
+window.addEventListener('scroll',updatePageUp,{passive:true});
+window.addEventListener('resize',updatePageUp);
+updatePageUp();
+</script></html>
