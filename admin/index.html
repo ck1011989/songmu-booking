@@ -51,6 +51,60 @@ body{padding:10px 10px 80px}
 }
 @media(max-width:390px){.booking-calendar-day{min-height:62px}.calendar-event{font-size:8px}.admin-tabs button{font-size:10px}}
 @media(prefers-reduced-motion:reduce){.admin-tabs button{transition:none}}
+</style>
+<style id="songmu-whatsfind-inspired-20261022">
+/* What'sfind-inspired editorial blush layout. Presentation only; retain existing backend handlers. */
+:root{--forest:#a36a79;--forest-deep:#824d5e;--cream:#fffaf8;--sand:#ead8d3;--ink:#352d2f;--muted:#857579}
+html{background:#f8f3ef}
+body{background:linear-gradient(180deg,#f8eeeb 0,#fbf8f4 280px,#faf7f4 100%)!important;color:#352d2f!important;font-family:system-ui,-apple-system,"Noto Sans TC",sans-serif!important}
+.admin-page-header{background:transparent!important;box-shadow:none!important;border:0!important;border-bottom:1px solid #e9deda!important;border-radius:0!important;padding:16px 12px 20px!important;margin-bottom:22px!important;position:relative}
+.admin-page-header h1{font-family:Georgia,"Noto Serif TC",serif!important;letter-spacing:.13em!important;color:#42343a!important;font-size:clamp(23px,3vw,32px)!important}
+.admin-page-header::after{content:"STORE ADMIN · 鬆沐店家後台";display:block;position:absolute;left:12px;bottom:2px;color:#ab8c8d;font-size:10px;letter-spacing:.24em}
+.admin-tabs{background:#fffaf8!important;border:1px solid #eadeda!important;box-shadow:0 8px 28px #8c5c6b10!important;border-radius:18px!important;padding:15px!important}
+.sidebar-brand{color:#8d6270!important}.sidebar-brand strong{color:#6f4b57!important;font-family:Georgia,"Noto Serif TC",serif!important;letter-spacing:.12em!important}.sidebar-brand small{color:#aa9294!important}
+.admin-tabs button{background:transparent!important;color:#77676c!important;border:1px solid transparent!important;border-radius:11px!important;box-shadow:none!important}
+.admin-tabs button:hover{background:#f7eae8!important;color:#864f60!important}
+.admin-tabs button[aria-current="page"]{background:#a36a79!important;color:#fff!important;border-color:#a36a79!important}
+.admin-tabs button[aria-current="page"] .nav-number{color:#fff!important}
+.sidebar-foot{color:#ab8f92!important}
+#dashboard{gap:20px!important}
+#dashboard [data-admin-panel]{min-width:0}
+#dashboard [data-admin-panel]>.admin-toolbar,.card,.booking-calendar,#cards .booking-overview-card,.booking-overview-card{background:#fffdfb!important;border:1px solid #eddfdd!important;border-radius:17px!important;box-shadow:0 5px 22px #946f7610!important}
+h2,h3,.toolbar-title{color:#44363b!important}
+.toolbar-title{font-family:Georgia,"Noto Serif TC",serif!important;letter-spacing:.03em}
+.toolbar-subtitle,.muted{color:#948489!important}
+button:not(.booking-calendar-day):not(.calendar-event){transition:background-color .15s,border-color .15s,transform .15s}
+button:not(.booking-calendar-day):not(.calendar-event):active{transform:scale(.99)}
+button:not(.admin-tabs button){border-radius:10px}
+#dashboard button:not(.booking-calendar-day):not(.calendar-event):not([aria-current="page"]):not([aria-pressed="true"]){border-color:#e5cdd0}
+.booking-overview-filters button[aria-pressed="true"],.booking-calendar-day[aria-pressed="true"]{background:#a36a79!important;border-color:#a36a79!important;color:white!important}
+.booking-calendar-day{background:#fffdfb!important;border:1px solid #f0e5e2!important;border-radius:8px!important}
+.booking-calendar-day[aria-pressed="true"]{background:#a36a79!important}
+.booking-calendar-day.today{border:2px solid #c78e9c!important}
+.calendar-event{background:#f8e9eb!important;color:#6e4d56!important;border-color:#e8d0d4!important}
+.calendar-event.pending{background:#fff1e2!important;color:#8a5b38!important}
+.calendar-event.confirmed{background:#e8f3ec!important;color:#476b58!important}
+input,select,textarea{background:#fffefd!important;border:1px solid #e9d9d7!important;border-radius:10px!important;color:#44373b!important}
+input:focus-visible,select:focus-visible,button:focus-visible,textarea:focus-visible{outline:3px solid #dfb2be!important;outline-offset:2px!important}
+#incomePanel .card,#searchPanel .card,#servicesPanel .card,#settingsPanel .card,#openingPanel .card,#historyPanel .card{background:#fffdfb!important}
+@media(max-width:760px){
+ body{padding:10px 12px 100px!important}
+ .admin-page-header{padding:15px 3px 22px!important;margin-bottom:14px!important}
+ .admin-page-header h1{font-size:22px!important;letter-spacing:.045em!important}
+ .admin-page-header::after{left:3px!important;letter-spacing:.12em!important}
+ .admin-tabs{display:flex!important;flex-wrap:nowrap!important;overflow-x:auto!important;overscroll-behavior-x:contain!important;gap:7px!important;padding:9px!important;border-radius:13px!important;scrollbar-width:thin!important;-webkit-overflow-scrolling:touch}
+ .admin-tabs .sidebar-brand,.admin-tabs .sidebar-foot{display:none!important}
+ .admin-tabs button{flex:0 0 auto!important;min-width:max-content!important;padding:10px 12px!important;font-size:13px!important;white-space:nowrap!important;min-height:40px!important}
+ .admin-tabs button .nav-number{display:none!important}
+ #dashboard{display:block!important}
+ #dashboard [data-admin-panel]{width:100%!important;max-width:100%!important}
+ .booking-calendar-grid{gap:3px!important}
+ .booking-calendar-day{min-height:53px!important;padding:5px 1px!important;font-size:12px!important}
+ .admin-top-actions{gap:6px!important}
+ .admin-top-actions button{font-size:12px!important;padding:7px 9px!important}
+ .toolbar-head{gap:9px!important}
+ .card{padding:13px!important}
+}
 </style></head>
 <style>body{font:16px system-ui;background:#fbf9f6;color:#43352d;margin:20px auto;max-width:1200px;padding:14px}input,button,select,textarea{font:inherit;padding:9px;margin:4px;border:1px solid #bda995;border-radius:8px}button{cursor:pointer;background:#705943;color:#fff}.linkbtn{background:transparent;color:#705943;border:0;text-decoration:underline}.danger{background:#8a4f45}.warn{background:#9a7044}.card{background:#fff;border:1px solid #e5dcd3;border-radius:14px;padding:14px;margin:12px 0}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:8px}.muted{color:#7b6a5e;font-size:14px}[hidden]{display:none!important}#status{white-space:pre-wrap}textarea{width:calc(100% - 28px);min-height:70px}.actions{display:flex;flex-wrap:wrap;gap:6px}
 /* Mobile-first admin layout */
