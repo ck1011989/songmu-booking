@@ -915,6 +915,18 @@ body:not([data-view="bookings"]) .admin-page-header #bookingCountSummary{display
 #todayAgenda .today-phrase.pending{color:var(--warn-ink)}
 #todayAgenda .today-phrase.ended{color:var(--due-ink)}
 #todayAgenda .today-who>span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap!important}
+
+/* 服務名稱鎖定 */
+.locked-name{background:#f1f4f2!important;color:#5c7366!important;cursor:not-allowed}
+.locked-note{margin:-2px 0 4px;font-size:13px;line-height:1.5;color:#7a5310;background:#fff8e8;border:1px solid #efd9a6;border-radius:10px;padding:8px 10px}
+
+/* 方案修改／刪除 */
+.plan-actions{display:flex;flex-wrap:wrap;gap:8px;align-items:flex-start;margin-top:4px}
+.plan-actions .plan-edit{flex:0 0 auto;margin:0!important;background:#fff!important;border:1px solid #c9dcf0!important;border-radius:999px!important}
+.plan-actions .plan-edit>summary{min-height:32px;padding:4px 14px!important;font-size:13px!important;color:#24507a!important;list-style:none}
+.plan-actions .plan-edit>summary::-webkit-details-marker{display:none}
+.plan-actions .plan-edit[open]{flex:1 1 100%;border-radius:12px!important;padding:0 12px 8px!important}
+.plan-actions .plan-delete{margin:0!important;min-height:32px;padding:4px 14px!important;font-size:13px!important;background:#fff!important;color:#9a4426!important;border:1px solid #e3c3b4!important;border-radius:999px!important}
 </style></head>
 <header class="admin-page-header"><div class="admin-header-summary"><h1>🌿 鬆沐｜<span id="pageName">預約管理</span></h1><section id="bookingCountSummary" class="booking-count-banner header-chips" hidden aria-labelledby="currentBookingsTitle"><h2 id="currentBookingsTitle" class="sr-only">預約摘要</h2><div class="chip-row" role="status" aria-live="polite" aria-atomic="true"><button type="button" class="head-chip pending" id="chipPending" title="只顯示待確認預約">待確認 <b id="pendingCount">0</b></button><button type="button" class="head-chip today" id="chipToday" title="查看今日行程">今日 <b id="todayCount">0</b></button><span class="head-chip total" title="尚未完成或取消的預約">進行中 <b class="booking-count-value" id="count">…</b></span></div></section></div><div id="adminTopActions" class="admin-top-actions" hidden aria-label="管理操作"><details id="adminAccount" class="admin-account"><summary aria-label="管理員帳號"><svg class="account-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8.5" r="3.6"/><path d="M4.8 20c.9-3.6 3.8-5.6 7.2-5.6s6.3 2 7.2 5.6"/></svg><span class="account-text">管理員帳號</span></summary><div class="admin-account-menu"><span class="muted">目前登入帳號</span><p id="adminAccountEmail"></p><button id="accountForgot" class="linkbtn" type="button">忘記密碼？</button><button id="menuLogout" class="menu-logout" type="button">登出</button></div></details><button id="logout" class="toolbar-logout" type="button">登出</button></div></header><button id="installApp" hidden>安裝鬆沐管理</button><p id="installStatus" class="muted" role="status"></p><p id="status" role="status"></p>
 <section id="login" class="card"><form id="loginForm"><p>管理員：guts1989921@gmail.com</p><label>密碼 <input id="password" required type="password" autocomplete="current-password" minlength="12" autofocus></label><div><button id="signin" type="submit">登入</button><button id="signup" type="button" hidden>首次建立後臺登入</button><button id="forgot" class="linkbtn" type="button">忘記密碼？</button></div><p class="muted">忘記密碼時會寄重設信到管理員信箱。請勿把密碼傳給任何人。</p></form></section>
@@ -1364,7 +1376,7 @@ if(access&&type==='recovery'){
 $('savePassword').onclick=async()=>{const p=$('newPassword').value,p2=$('newPassword2').value;if(p.length<12){msg('新密碼至少需要 12 碼');return}if(p!==p2){msg('兩次輸入的密碼不一致');return}try{await api('/auth/v1/user',{method:'PUT',body:JSON.stringify({password:p})});$('newPassword').value=$('newPassword2').value='';$('reset').hidden=true;$('login').hidden=false;token=null;history.replaceState(null,'',location.pathname);msg('密碼已更新，請使用新密碼登入。')}catch(e){msg(friendlyError(e.message))}};$('cancelReset').onclick=()=>{token=null;$('reset').hidden=true;$('login').hidden=false;history.replaceState(null,'',location.pathname);msg('已取消密碼重設')};
 $('accountForgot').onclick=()=>{if(token)$('forgot').click()};
 $('logout').onclick=async()=>{const logoutToken=token;clearAdminSession();showSignedOut();if(logoutToken)try{await fetch(SB+'/auth/v1/logout',{method:'POST',headers:{apikey:KEY,Authorization:'Bearer '+logoutToken,'Content-Type':'application/json'}})}catch{}};$('reload').onclick=refresh;$('search').oninput=()=>{renderMemberSummary();showCustomerSearch()};
-$('export').onclick=()=>{try{downloadXlsx(revenueWorkbookSheets(records),'鬆沐預約資料-'+taiwanDay(new Date())+'.xlsx');msg('已產生服務分類與收入統計 Excel。')}catch(e){msg(e.message)}};
+$('export').onclick=()=>{try{downloadXlsx(packageWorkbookSheets(records),'鬆沐預約資料-'+taiwanDay(new Date())+'.xlsx');msg('已產生服務分類與收入統計 Excel。')}catch(e){msg(e.message)}};
 function openHistory(type){setPage('history',true,type)}
 for(const [type,id] of Object.entries(historyButtons))$(id).onclick=()=>openHistory(type);
 $('historyReload').onclick=refresh;$('historySearch').oninput=showHistory;
@@ -1407,7 +1419,9 @@ function renderMemberSummary(){
  }
  $('memberListTitle').textContent=q?'符合的會員（'+shown+' 位）':'全部會員（'+groups.size+' 位）';if(q&&!shown){const p=document.createElement('p');p.className='muted';p.textContent='沒有符合的會員。';target.append(p)}
 }
+const LOCKED_SERVICE_NAMES=new Set(['新客體驗｜全身 90 分鐘','鬆活方案｜全身放鬆 90 分鐘 × 10 次','運動功能評估＆居家運動建議（暫預留 30 分鐘）']);
 async function saveCatalogService(original,changes){
+ if(LOCKED_SERVICE_NAMES.has(original)&&changes.name!==undefined&&changes.name!==original)throw Error('這個服務的名稱已鎖定，不能修改。');
  const path='/rest/v1/services?name=eq.'+encodeURIComponent(original);
  const rows=await api(path,{method:'PATCH',headers:{Prefer:'return=representation'},body:JSON.stringify(changes)});
  if(!Array.isArray(rows)||rows.length!==1)throw Error('儲存未完成，請重新登入並確認權限');
@@ -1424,7 +1438,7 @@ async function loadServiceCatalog(){
    const card=document.createElement('article');card.className='catalog-row';card.style.cssText='display:flex;flex-direction:column;align-items:stretch;gap:12px';
    const top=document.createElement('div');top.style.cssText='display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap';
    const title=document.createElement('div'),h=document.createElement('h3'),p=document.createElement('p');
-   h.textContent=r.name;p.textContent=r.duration+' 分鐘 · NT$ '+Number(r.price).toLocaleString('zh-TW')+' · '+(r.is_active?'上架中':'已下架')+(String(r.name).startsWith('鬆活方案')?' · 買 10 送 1，共 11 次':String(r.name).startsWith('新客體驗')?' · 每位新客限用一次':'');
+   h.textContent=(LOCKED_SERVICE_NAMES.has(r.name)?'🔒 ':'')+r.name;p.textContent=r.duration+' 分鐘 · NT$ '+Number(r.price).toLocaleString('zh-TW')+' · '+(r.is_active?'上架中':'已下架')+(String(r.name).startsWith('鬆活方案')?' · 買 10 送 1，共 11 次':String(r.name).startsWith('新客體驗')?' · 每位新客限用一次':'');
    p.style.color=r.is_active?'#285b41':'#8b7563';title.append(h,p);top.append(title);
    const actions=document.createElement('div');actions.style.cssText='display:flex;gap:8px;flex-wrap:wrap';
    const edit=document.createElement('button');edit.type='button';edit.textContent='編輯';
@@ -1434,7 +1448,9 @@ async function loadServiceCatalog(){
    if(r.description){const description=document.createElement('p');description.textContent=r.description;card.append(description)}
    const form=document.createElement('form');form.hidden=true;form.style.cssText='display:grid;gap:10px;padding:14px;background:#f4f8f5;border-radius:12px';
    const field=(label,type,value)=>{const wrap=document.createElement('label');wrap.textContent=label;wrap.style.cssText='display:grid;gap:5px';const input=document.createElement(type==='textarea'?'textarea':'input');if(type!=='textarea')input.type=type;input.value=value;input.required=type!=='textarea';if(type==='number'){input.min='1';input.step='1'}wrap.append(input);form.append(wrap);return input};
-   const name=field('服務名稱','text',r.name),duration=field('服務時間（分鐘）','number',r.duration),price=field('價格（NT$）','number',r.price),description=field('服務說明','textarea',r.description||'');price.min='0';name.maxLength=150;description.maxLength=1000;
+   const name=field('服務名稱','text',r.name),duration=field('服務時間（分鐘）','number',r.duration),price=field('價格（NT$）','number',r.price),description=field('服務說明','textarea',r.description||'');price.min='0';name.maxLength=150;
+   // 這三項服務的名稱被客人預約頁與資料庫用來辨認（體驗價資格、方案、評估），改名會讓規則失效，因此鎖住名稱
+   if(LOCKED_SERVICE_NAMES.has(r.name)){name.readOnly=true;name.classList.add('locked-name');const why=document.createElement('p');why.className='locked-note';why.textContent='🔒 名稱已鎖定：客人預約頁與資料庫靠這個名稱辨認「'+(r.name.startsWith('新客體驗')?'新客體驗資格（每人限一次）':r.name.startsWith('鬆活方案')?'鬆活方案':'運動功能評估')+'」，改名會讓規則失效。價格、時間、說明仍可修改。';name.closest('label').after(why)}description.maxLength=1000;
    const save=document.createElement('button');save.type='submit';save.textContent='儲存修改';const cancel=document.createElement('button');cancel.type='button';cancel.textContent='取消編輯';cancel.onclick=()=>{form.hidden=true;edit.hidden=false};const controls=document.createElement('div');controls.style.cssText='display:flex;gap:8px;flex-wrap:wrap';controls.append(save,cancel);form.append(controls);card.append(form);
    edit.onclick=()=>{form.hidden=!form.hidden;edit.hidden=!form.hidden;if(!form.hidden)name.focus()};
    form.onsubmit=async e=>{e.preventDefault();const changes={name:name.value.trim(),duration:Number(duration.value),price:Number(price.value),description:description.value.trim()};if(!changes.name||!Number.isInteger(changes.duration)||changes.duration<1||changes.duration>240||!Number.isInteger(changes.price)||changes.price<0||changes.price>1000000){alert('請確認服務名稱、分鐘數與價格正確');return}if(!confirm('確定儲存「'+r.name+'」的修改？新預約將使用更新後的資料，已成立預約不受影響。'))return;save.disabled=true;try{await saveCatalogService(r.name,changes);await loadServiceCatalog();$('servicesStatus').textContent='服務修改已儲存'}catch(err){alert('儲存失敗：'+err.message);save.disabled=false}};
@@ -1626,11 +1642,39 @@ function memberPlanBlock(card,key,group){
  const trial=group.filter(v=>isTrialService(v)&&serviceCategory(v)!=='已取消').sort((a,b)=>Date.parse(a.starts_at)-Date.parse(b.starts_at))[0];
  const tp=document.createElement('p');tp.className='member-trial';tp.textContent=trial?'新客體驗：已使用（'+formatDay(taiwanDay(trial.starts_at))+'）':'新客體驗：尚未使用';wrap.append(tp);
  if(packagesReady){
-  for(const p of memberPackages(key)){const u=packageUsage(p),box=document.createElement('div');box.className='plan-progress'+(u.remaining?'':' done');const t=document.createElement('strong');t.textContent='鬆活方案　已用 '+u.used+'／'+u.total+(u.booked?'・已預約 '+u.booked:'')+'・剩 '+u.remaining+' 次';const bar=document.createElement('div');bar.className='plan-dots';bar.setAttribute('role','img');bar.setAttribute('aria-label','共 '+u.total+' 次，已用 '+u.used+' 次，已預約 '+u.booked+' 次');for(let i=0;i<u.total;i++){const d=document.createElement('span');d.className=i<u.used?'used':i<u.used+u.booked?'booked':'';bar.append(d)}const meta=document.createElement('span');meta.textContent=formatDay(String(p.purchased_at).slice(0,10))+' 購買・實收 NT$ '+Number(p.price_paid||0).toLocaleString('zh-TW')+(p.note?'・'+p.note:'');box.append(t,bar,meta);wrap.append(box)}
+  for(const p of memberPackages(key)){const u=packageUsage(p),box=document.createElement('div');box.className='plan-progress'+(u.remaining?'':' done');const t=document.createElement('strong');t.textContent='鬆活方案　已用 '+u.used+'／'+u.total+(u.booked?'・已預約 '+u.booked:'')+'・剩 '+u.remaining+' 次';const bar=document.createElement('div');bar.className='plan-dots';bar.setAttribute('role','img');bar.setAttribute('aria-label','共 '+u.total+' 次，已用 '+u.used+' 次，已預約 '+u.booked+' 次');for(let i=0;i<u.total;i++){const d=document.createElement('span');d.className=i<u.used?'used':i<u.used+u.booked?'booked':'';bar.append(d)}const meta=document.createElement('span');meta.textContent=formatDay(String(p.purchased_at).slice(0,10))+' 購買・實收 NT$ '+Number(p.price_paid||0).toLocaleString('zh-TW')+(p.note?'・'+p.note:'');box.append(t,bar,meta,packageActions(p,u));wrap.append(box)}
   if(!activePackage(key)){const d=document.createElement('details');d.className='booking-edit-panel plan-buy';const sm=document.createElement('summary');sm.textContent=memberPackages(key).length?'再購買一份鬆活方案':'登記購買鬆活方案';d.append(sm);const f=purchaseForm(null,()=>renderMemberSummary());f.dataset.key=key;f.dataset.name=r.customers?.name||r.submitted_name||'';f.dataset.phone=r.customers?.phone||r.submitted_phone||'';d.append(f);wrap.append(d)}
  }
  card.append(wrap);
 }
 // 營收：方案在購買日一次計入；用方案扣次的服務不重複計費。
 function packageRevenueRows(from,to){return packages.filter(p=>{const d=String(p.purchased_at).slice(0,10);return d>=from&&d<=to}).map(p=>({day:String(p.purchased_at).slice(0,10),amount:Number(p.price_paid||0),name:'鬆活方案（售出）'}))}
+
+// Excel 匯出：扣次服務以 0 元計（已預付），方案在購買日計入一筆；另附「鬆活方案」工作表。revenue.js 不變。
+function packageWorkbookSheets(list){
+ const adj=list.map(r=>r.package_id?{...r,price_ntd:0,service_name:(r.service_name||'')+'（鬆活方案扣次）'}:r);
+ const sold=packages.map(p=>({id:'package-'+p.id,status:'completed',outcome:'normal',starts_at:String(p.purchased_at).slice(0,10)+'T12:00:00+08:00',price_ntd:Number(p.price_paid||0),service_name:'鬆活方案（售出，共 '+(Number(p.total_sessions)||PLAN_SESSIONS)+' 次）',submitted_name:p.customer_name||'',submitted_phone:p.customer_phone||'',outcome_note:p.note||''}));
+ const sheets=revenueWorkbookSheets(adj.concat(sold));
+ if(packages.length)sheets.push({name:'鬆活方案',rows:[['客人','手機','購買日期','實收（NT$）','總次數','已用','已預約','剩餘','備註'],...packages.map(p=>{const u=packageUsage(p);return [p.customer_name||'',p.customer_phone||'',String(p.purchased_at).slice(0,10),Number(p.price_paid||0),u.total,u.used,u.booked,u.remaining,p.note||'']})]});
+ return sheets;
+}
+// 會員卡上的方案：修改金額／日期／次數／備註，或刪除（只限尚未扣次）
+function packageActions(p,u){
+ const row=document.createElement('div');row.className='plan-actions';
+ const edit=document.createElement('details');edit.className='booking-edit-panel plan-edit';const sm=document.createElement('summary');sm.textContent='修改';edit.append(sm);
+ const form=document.createElement('form');form.className='plan-form';
+ const mk=(label,type,value,attrs={})=>{const l=document.createElement('label');l.textContent=label;const i=document.createElement('input');i.type=type;i.value=value;Object.assign(i,attrs);l.append(i);form.append(l);return i};
+ const price=mk('實收金額（NT$）','number',Number(p.price_paid||0),{min:0,step:1,required:true}),day=mk('購買日期','date',String(p.purchased_at).slice(0,10),{required:true}),total=mk('總次數','number',u.total,{min:Math.max(1,u.used+u.booked),max:50,step:1,required:true}),note=mk('備註（選填）','text',p.note||'',{maxLength:200});
+ const save=document.createElement('button');save.type='submit';save.textContent='儲存修改';form.append(save);
+ form.onsubmit=async e=>{e.preventDefault();const changes={price_paid:Number(price.value),purchased_at:day.value,total_sessions:Number(total.value),note:note.value.trim()||null};
+  if(!Number.isInteger(changes.price_paid)||changes.price_paid<0||!changes.purchased_at||!Number.isInteger(changes.total_sessions)||changes.total_sessions<Math.max(1,u.used+u.booked)){msg('請確認金額、日期與次數（次數不能少於已用＋已預約的 '+(u.used+u.booked)+' 次）。');return}
+  if(!confirm('確認修改「'+(p.customer_name||'這位客人')+'」的鬆活方案？\n實收 NT$ '+changes.price_paid.toLocaleString('zh-TW')+'・'+changes.purchased_at+'・共 '+changes.total_sessions+' 次'))return;save.disabled=true;
+  try{const rows=await api('/rest/v1/member_packages?id=eq.'+encodeURIComponent(p.id),{method:'PATCH',headers:{Prefer:'return=representation'},body:JSON.stringify(changes)});if(!rows?.length)throw Error('未收到儲存結果');Object.assign(p,rows[0]);msg('已修改鬆活方案。');renderMemberSummary()}catch(err){msg('修改失敗：'+err.message);save.disabled=false}};
+ edit.append(form);row.append(edit);
+ const del=document.createElement('button');del.type='button';del.className='plan-delete';del.textContent='刪除';
+ del.onclick=async()=>{if(u.used+u.booked>0){msg('這份方案已有 '+(u.used+u.booked)+' 次扣次紀錄，不能刪除。若是登記錯誤，請先把那幾次預約「改回一般付費」，或改用「修改」調整。');return}
+  if(!confirm('確定刪除「'+(p.customer_name||'這位客人')+'」'+String(p.purchased_at).slice(0,10)+' 登記的鬆活方案？刪除後無法復原。'))return;del.disabled=true;
+  try{await api('/rest/v1/member_packages?id=eq.'+encodeURIComponent(p.id),{method:'DELETE',headers:{Prefer:'return=minimal'}});packages=packages.filter(x=>x.id!==p.id);msg('已刪除這筆方案登記。');renderMemberSummary()}catch(err){msg('刪除失敗：'+err.message);del.disabled=false}};
+ row.append(del);return row;
+}
 </script></html>
