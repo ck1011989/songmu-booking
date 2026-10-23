@@ -808,7 +808,7 @@ body:not([data-view="bookings"]) .admin-page-header #bookingCountSummary{display
 .plan-progress strong{font-size:14px}
 .plan-progress>span{font-size:12px;color:#5b7894}
 .plan-progress.done{opacity:.7}
-.plan-dots{display:grid;grid-template-columns:repeat(11,1fr);gap:4px}
+.plan-dots{display:grid;grid-template-columns:repeat(10,1fr);gap:4px}
 .plan-dots span{height:10px;border-radius:999px;background:#d7e5f3}
 .plan-dots span.used{background:#2f6aa3}
 .plan-dots span.booked{background:repeating-linear-gradient(45deg,#2f6aa3 0 3px,#a9c6e3 3px 6px)}
@@ -1438,7 +1438,7 @@ async function loadServiceCatalog(){
    const card=document.createElement('article');card.className='catalog-row';card.style.cssText='display:flex;flex-direction:column;align-items:stretch;gap:12px';
    const top=document.createElement('div');top.style.cssText='display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap';
    const title=document.createElement('div'),h=document.createElement('h3'),p=document.createElement('p');
-   h.textContent=(LOCKED_SERVICE_NAMES.has(r.name)?'🔒 ':'')+r.name;p.textContent=r.duration+' 分鐘 · NT$ '+Number(r.price).toLocaleString('zh-TW')+' · '+(r.is_active?'上架中':'已下架')+(String(r.name).startsWith('鬆活方案')?' · 買 10 送 1，共 11 次':String(r.name).startsWith('新客體驗')?' · 每位新客限用一次':'');
+   h.textContent=(LOCKED_SERVICE_NAMES.has(r.name)?'🔒 ':'')+r.name;p.textContent=r.duration+' 分鐘 · NT$ '+Number(r.price).toLocaleString('zh-TW')+' · '+(r.is_active?'上架中':'已下架')+(String(r.name).startsWith('鬆活方案')?' · 共 10 次':String(r.name).startsWith('新客體驗')?' · 每位新客限用一次':'');
    p.style.color=r.is_active?'#285b41':'#8b7563';title.append(h,p);top.append(title);
    const actions=document.createElement('div');actions.style.cssText='display:flex;gap:8px;flex-wrap:wrap';
    const edit=document.createElement('button');edit.type='button';edit.textContent='編輯';
@@ -1576,10 +1576,10 @@ for(const b of statsTabs){b.onclick=()=>{statsTab=b.dataset.statsTab;renderReven
 // 手機底部選單：與上方四大分類同步。
 for(const b of document.querySelectorAll('[data-bottom-group]'))b.onclick=()=>document.querySelector('[data-admin-group="'+b.dataset.bottomGroup+'"]').click();
 </script><script>
-// 鬆活方案（買 10 送 1）與新客體驗價。方案資料存在 member_packages 表；預約用 appointments.package_id 標記「這次用方案扣次」。
+// 鬆活方案（10 次 NT$13,000）與新客體驗價。方案資料存在 member_packages 表；預約用 appointments.package_id 標記「這次用方案扣次」。
 // 正式資料庫尚未建立 member_packages 時，讀取失敗會自動略過，其餘功能照常運作。
 let packages=[],packagesReady=false;
-const PLAN_PREFIX='鬆活方案',TRIAL_PREFIX='新客體驗',PLAN_SESSIONS=11,PLAN_PRICE_DEFAULT=13000;
+const PLAN_PREFIX='鬆活方案',TRIAL_PREFIX='新客體驗',PLAN_SESSIONS=10,PLAN_PRICE_DEFAULT=13000;
 const isPlanService=r=>String(r.service_name||'').startsWith(PLAN_PREFIX);
 const isTrialService=r=>String(r.service_name||'').startsWith(TRIAL_PREFIX);
 async function loadPackages(){try{const v=await api('/rest/v1/member_packages?select=*&order=purchased_at.asc');packagesReady=true;return Array.isArray(v)?v:[]}catch{packagesReady=false;return []}}
@@ -1603,15 +1603,15 @@ async function setBookingPackage(r,packageId){
  Object.assign(r,saved[0]);
 }
 function purchaseForm(r,onDone,firstDefault=true){
- // 登記購買：收款後由店家登記，一份方案共 11 次（買 10 送 1）。
+ // 登記購買：收款後由店家登記，一份方案共 10 次。
  const form=document.createElement('form');form.className='plan-form';
  const mk=(label,type,value,attrs={})=>{const l=document.createElement('label');l.textContent=label;const i=document.createElement('input');i.type=type;i.value=value;Object.assign(i,attrs);l.append(i);form.append(l);return i};
- const price=mk('實收金額（NT$）','number',PLAN_PRICE_DEFAULT,{min:0,step:1,required:true}),day=mk('購買日期','date',taiwanDay(Date.now()),{required:true}),total=mk('總次數（買 10 送 1）','number',PLAN_SESSIONS,{min:1,max:50,step:1,required:true}),note=mk('備註（選填）','text','',{maxLength:200,placeholder:'例如：現金、轉帳末五碼'});
+ const price=mk('實收金額（NT$）','number',PLAN_PRICE_DEFAULT,{min:0,step:1,required:true}),day=mk('購買日期','date',taiwanDay(Date.now()),{required:true}),total=mk('總次數','number',PLAN_SESSIONS,{min:1,max:50,step:1,required:true}),note=mk('備註（選填）','text','',{maxLength:200,placeholder:'例如：現金、轉帳末五碼'});
  let first=null;if(r&&['pending','confirmed'].includes(r.status)&&!r.package_id){const l=document.createElement('label');l.className='plan-check';first=document.createElement('input');first.type='checkbox';first.checked=firstDefault;l.append(first,document.createTextNode(' 這次預約算'+(memberPackages(packageKeyOf(r)).length?'新方案的':'')+'第 1 次'));form.append(l)}
  const save=document.createElement('button');save.type='submit';save.textContent='確認登記購買';form.append(save);
  form.onsubmit=async e=>{e.preventDefault();const amount=Number(price.value),count=Number(total.value);if(!Number.isInteger(amount)||amount<0||!Number.isInteger(count)||count<1||!day.value){msg('請確認金額、日期與次數。');return}
   const who=r?bookingName(r):'這位客人';if(!confirm('確認登記「'+who+'」購買鬆活方案？\n實收 NT$ '+amount.toLocaleString('zh-TW')+'・共 '+count+' 次'))return;save.disabled=true;
-  try{const rows=await api('/rest/v1/member_packages',{method:'POST',headers:{Prefer:'return=representation'},body:JSON.stringify({member_key:form.dataset.key,customer_name:form.dataset.name,customer_phone:form.dataset.phone||null,plan_name:'鬆活方案（買 10 送 1）',total_sessions:count,price_paid:amount,purchased_at:day.value,note:note.value.trim()||null})});
+  try{const rows=await api('/rest/v1/member_packages',{method:'POST',headers:{Prefer:'return=representation'},body:JSON.stringify({member_key:form.dataset.key,customer_name:form.dataset.name,customer_phone:form.dataset.phone||null,plan_name:'鬆活方案（10 次）',total_sessions:count,price_paid:amount,purchased_at:day.value,note:note.value.trim()||null})});
    if(!rows?.length)throw Error('未收到登記結果');packages.push(rows[0]);if(first?.checked)await setBookingPackage(r,rows[0].id);msg('已登記鬆活方案：共 '+count+' 次'+(first?.checked?'，這次預約算第 1 次。':'。'));onDone()}catch(err){msg('登記失敗：'+err.message);save.disabled=false}};
  return form;
 }
@@ -1634,15 +1634,15 @@ function planPanel(r){
  if(active){const u=packageUsage(active);d.classList.add('on');sm.textContent='鬆活方案・剩 '+u.remaining+' 次';text('這位客人有鬆活方案：剩 '+u.remaining+' 次（已用 '+u.used+'／'+u.total+'）'+(u.remaining<=2?'・快用完了，可提醒客人續購':''));const b=document.createElement('button');b.type='button';b.textContent='這次用方案扣 1 次';b.onclick=async()=>{if(!confirm('這次預約用鬆活方案扣 1 次？完成服務後不另外計費。'))return;b.disabled=true;try{await setBookingPackage(r,active.id);msg('已設定：這次用鬆活方案。');show()}catch(e){msg(e.message);b.disabled=false}};body.append(b);return d}
  const owned=memberPackages(key);
  if(owned.length){const last=owned[owned.length-1],u=packageUsage(last);d.classList.add('warn');sm.textContent='鬆活方案・已用完';text('鬆活方案已用完（'+u.used+'／'+u.total+' 次，'+formatDay(String(last.purchased_at).slice(0,10))+' 購買）。客人要續購的話，收款後在這裡登記。');form(true);return d}
- if(isPlanService(r)){d.classList.add('warn');sm.textContent='鬆活方案・待登記';text('客人選了鬆活方案（買 10 送 1，共 11 次）。收款後請登記購買，之後每次服務都能直接扣次。');form(true);return d}
- sm.textContent='鬆活方案';text('這位客人還沒有鬆活方案（買 10 送 1，共 11 次）。客人當場購買時，收款後在這裡登記。');form(false);return d;
+ if(isPlanService(r)){d.classList.add('warn');sm.textContent='鬆活方案・待登記';text('客人選了鬆活方案（10 次 NT$13,000）。收款後請登記購買，之後每次服務都能直接扣次。');form(true);return d}
+ sm.textContent='鬆活方案';text('這位客人還沒有鬆活方案（10 次 NT$13,000）。客人當場購買時，收款後在這裡登記。');form(false);return d;
 }
 function memberPlanBlock(card,key,group){
  const r=group[0],wrap=document.createElement('div');wrap.className='member-plan';
  const trial=group.filter(v=>isTrialService(v)&&serviceCategory(v)!=='已取消').sort((a,b)=>Date.parse(a.starts_at)-Date.parse(b.starts_at))[0];
  const tp=document.createElement('p');tp.className='member-trial';tp.textContent=trial?'新客體驗：已使用（'+formatDay(taiwanDay(trial.starts_at))+'）':'新客體驗：尚未使用';wrap.append(tp);
  if(packagesReady){
-  for(const p of memberPackages(key)){const u=packageUsage(p),box=document.createElement('div');box.className='plan-progress'+(u.remaining?'':' done');const t=document.createElement('strong');t.textContent='鬆活方案　已用 '+u.used+'／'+u.total+(u.booked?'・已預約 '+u.booked:'')+'・剩 '+u.remaining+' 次';const bar=document.createElement('div');bar.className='plan-dots';bar.setAttribute('role','img');bar.setAttribute('aria-label','共 '+u.total+' 次，已用 '+u.used+' 次，已預約 '+u.booked+' 次');for(let i=0;i<u.total;i++){const d=document.createElement('span');d.className=i<u.used?'used':i<u.used+u.booked?'booked':'';bar.append(d)}const meta=document.createElement('span');meta.textContent=formatDay(String(p.purchased_at).slice(0,10))+' 購買・實收 NT$ '+Number(p.price_paid||0).toLocaleString('zh-TW')+(p.note?'・'+p.note:'');box.append(t,bar,meta,packageActions(p,u));wrap.append(box)}
+  for(const p of memberPackages(key)){const u=packageUsage(p),box=document.createElement('div');box.className='plan-progress'+(u.remaining?'':' done');const t=document.createElement('strong');t.textContent='鬆活方案　已用 '+u.used+'／'+u.total+(u.booked?'・已預約 '+u.booked:'')+'・剩 '+u.remaining+' 次';const bar=document.createElement('div');bar.className='plan-dots';bar.style.gridTemplateColumns='repeat('+u.total+',1fr)';bar.setAttribute('role','img');bar.setAttribute('aria-label','共 '+u.total+' 次，已用 '+u.used+' 次，已預約 '+u.booked+' 次');for(let i=0;i<u.total;i++){const d=document.createElement('span');d.className=i<u.used?'used':i<u.used+u.booked?'booked':'';bar.append(d)}const meta=document.createElement('span');meta.textContent=formatDay(String(p.purchased_at).slice(0,10))+' 購買・實收 NT$ '+Number(p.price_paid||0).toLocaleString('zh-TW')+(p.note?'・'+p.note:'');box.append(t,bar,meta,packageActions(p,u));wrap.append(box)}
   if(!activePackage(key)){const d=document.createElement('details');d.className='booking-edit-panel plan-buy';const sm=document.createElement('summary');sm.textContent=memberPackages(key).length?'再購買一份鬆活方案':'登記購買鬆活方案';d.append(sm);const f=purchaseForm(null,()=>renderMemberSummary());f.dataset.key=key;f.dataset.name=r.customers?.name||r.submitted_name||'';f.dataset.phone=r.customers?.phone||r.submitted_phone||'';d.append(f);wrap.append(d)}
  }
  card.append(wrap);
