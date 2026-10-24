@@ -1,73 +1,73 @@
-# CLAUDE.md
+# Unified AI Development Rules / 統一 AI 開發規則
 
-Behavioral guidelines to reduce common LLM coding mistakes. Merge with project-specific instructions as needed.
+適用：ChatGPT、Claude、Codex、其他可讀取專案規則的 AI。工具是否自動載入本檔取決於其設定；未自動載入時須明確提供本檔。
 
-**Tradeoff:** These guidelines bias toward caution over speed. For trivial tasks, use judgment.
+## 1. Think Before Coding / 先確認
+- 先閱讀專案現有程式、文件、依賴與部署方式；不憑空猜測。
+- 明確列出目標、驗收標準與重要假設；有實質歧義才提問。
+- 優先採用最簡單可維護的做法；不擅自擴充需求。
 
-## 1. Think Before Coding
+## 2. Simplicity First / 簡潔
+- 僅實作必要功能，避免過度抽象、重複程式與無需求的設定。
+- 優先沿用現有架構與命名慣例，避免為小修正重建系統。
 
-**Don't assume. Don't hide confusion. Surface tradeoffs.**
+## 3. Surgical Changes / 精準修改
+- 只修改與需求直接相關的程式碼、樣式及文件。
+- 不順手重構、刪除舊功能、調整無關格式或改變 UI。
+- 清除本次修改造成的未使用程式；既有無關問題另行回報。
+- 修改前檢查 git diff 與工作區；不可覆蓋他人未提交的變更。
 
-Before implementing:
-- State your assumptions explicitly. If uncertain, ask.
-- If multiple interpretations exist, present them - don't pick silently.
-- If a simpler approach exists, say so. Push back when warranted.
-- If something is unclear, stop. Name what's confusing. Ask.
+## 4. Goal-Driven Execution / 驗證
+- 將需求轉成可驗收的行為；修 bug 優先重現、再修正、再驗證。
+- 依修改範圍執行測試、靜態檢查與必要的人工流程檢查。
+- 清楚報告已測、未測、風險及實際變更檔案；不得宣稱未驗證的功能正常。
 
-## 2. Simplicity First
+## 5. Security & Privacy / 安全與隱私
+- 不將密碼、API key、access token、服務角色金鑰或客戶個資寫入公開儲存庫、日誌或截圖。
+- 對外部輸入做驗證；後端授權不可只依賴前端隱藏按鈕。
+- 權限採最小化原則；涉及 Supabase RLS、管理員權限、LINE 身分與 webhook 時先檢查信任邊界。
+- 不將測試用資料寫入真實客戶紀錄；正式資料修改前評估備份與回復方式。
+- 第三方套件新增前確認必要性、版本相容性及安全風險。
 
-**Minimum code that solves the problem. Nothing speculative.**
+## 6. UI / UX
+- 保持既有設計語言、手機版排版、操作流程與無障礙基本可用性。
+- 按鈕應有明確狀態、回饋及錯誤提示；不得只做外觀卻宣稱功能完成。
+- 更改預約流程時檢查返回、重複送出、時段失效與確認結果。
 
-- No features beyond what was asked.
-- No abstractions for single-use code.
-- No "flexibility" or "configurability" that wasn't requested.
-- No error handling for impossible scenarios.
-- If you write 200 lines and it could be 50, rewrite it.
+## 7. Database & API
+- Schema 變更需先確認既有資料、相依 API、遷移及回滾方案。
+- 前後端欄位、狀態、時區、價格及驗證邏輯保持一致。
+- 付款、預約確認、完成服務等重要狀態不可僅由客戶端自行決定。
 
-Ask yourself: "Would a senior engineer say this is overcomplicated?" If yes, simplify.
+## 8. Git, Review & Deployment
+- 變更保持小而可審查；提交訊息描述實際修改。
+- 不強制推送、不刪分支、不改正式環境設定，除非使用者明確授權。
+- 修改程式碼與部署是兩件事；未經明確要求不部署正式站。
+- 部署後如有授權，核對線上版本、主要流程及回滾途徑。
 
-## 3. Surgical Changes
+## 9. Handoff / AI 交接
+- 開始前閱讀 README、CLAUDE.md、AGENTS.md 與專案特定規則。
+- 完成時記錄：需求、變更檔案、測試結果、尚待處理項目與部署狀態。
+- 若文件與程式衝突，以已驗證的實際程式行為為依據並標示文件落差；不得自行猜測正式版本。
 
-**Touch only what you must. Clean up only your own mess.**
+## 10. Songmu / 鬆沐整復專案特例
+- 範圍：booking/ 預約頁、admin/ 後台、Supabase booking-api、LINE 登入與通知相關程式。
+- 目前核定服務資料：半身 60 分 NT$1,100；全身 90 分 NT$1,500；鬆活方案 10 次 NT$13,000，文案「10次共省5,000」。若需求變更，以使用者最新明確確認為準。
+- 預約申請與店家確認須區分；未經管理員確認，不得顯示為已確認。
+- 預約尚未實際完成服務時，不得誤標為已完成。
+- 顧客資料只能在授權後台檢視；匯出功能須避免非授權存取。
+- 保留現有白底預約頁設計與使用者已確認的互動，除非明確要求修改。
+- LINE OA 後台、GitHub、Supabase 各自是不同系統；只修改其中一處不代表其他處已同步。
+- 不擅自發布到 songmu.tw 或 GitHub Pages；發布前確認實際部署目標。
 
-When editing existing code:
-- Don't "improve" adjacent code, comments, or formatting.
-- Don't refactor things that aren't broken.
-- Match existing style, even if you'd do it differently.
-- If you notice unrelated dead code, mention it - don't delete it.
+## 11. Other Projects / 其他專案
+- 內容生產線：外部平台數據須標示來源與取得時間；未授權 API 不可假稱取得真實觀看數。
+- 廣告產製：素材與文案須可分離重用；不得虛構療效或客戶見證。
+- 其他專案僅套用通用第 1–9 節；不得硬套鬆沐的價格、品牌與資料模型。
 
-When your changes create orphans:
-- Remove imports/variables/functions that YOUR changes made unused.
-- Don't remove pre-existing dead code unless asked.
-
-The test: Every changed line should trace directly to the user's request.
-
-## 4. Goal-Driven Execution
-
-**Define success criteria. Loop until verified.**
-
-Transform tasks into verifiable goals:
-- "Add validation" → "Write tests for invalid inputs, then make them pass"
-- "Fix the bug" → "Write a test that reproduces it, then make it pass"
-- "Refactor X" → "Ensure tests pass before and after"
-
-For multi-step tasks, state a brief plan:
-```
-1. [Step] → verify: [check]
-2. [Step] → verify: [check]
-3. [Step] → verify: [check]
-```
-
-Strong success criteria let you loop independently. Weak criteria ("make it work") require constant clarification.
-
----
-
-**These guidelines are working if:** fewer unnecessary changes in diffs, fewer rewrites due to overcomplication, and clarifying questions come before implementation rather than after mistakes.
-
-## Project-specific safeguards: Songmu Booking
-
-- Preserve existing booking, admin, LINE authentication, and Supabase API behavior unless the request explicitly changes them.
-- Never commit credentials, access tokens, or customer personal data.
-- Verify changed behavior before reporting success; clearly label untested paths.
-- Do not deploy or modify production settings without an explicit request.
-- Keep booking prices and service descriptions consistent with the approved business requirements; verify the latest requirements before changing them.
+## Completion Checklist / 完成檢查
+- [ ] 已確認需求與範圍
+- [ ] 未更動無關功能
+- [ ] 安全及權限已檢查
+- [ ] 已完成適當測試或明示未測
+- [ ] 已記錄修改及部署狀態
