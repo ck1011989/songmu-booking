@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>到府預約｜鬆沐整復</title>
+<style>
+:root{--forest:#1c4431;--forest-soft:#eef4ef;--brown:#765b45;--brown-soft:#f6f0ea;--ink:#2f3430;--muted:#7b847e;--line:#c9d3cb;--bg:#fff;--page:#eef1ec;--warn:#c8673f}
+*{box-sizing:border-box}
+body{margin:0;background:var(--page);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif}
+.app{max-width:640px;margin:auto;background:var(--bg);min-height:100dvh;padding-bottom:96px}
+header{padding:22px 20px 12px;border-bottom:1px solid #e6ebe7;position:sticky;top:0;background:rgba(255,255,255,.97);z-index:5}
+header h1{margin:0;font-size:22px;color:var(--forest)}header small{color:var(--muted)}
+.steps{display:flex;gap:18px;overflow:auto;padding:14px 20px 4px;white-space:nowrap;scrollbar-width:none;font-size:15px;color:#a3aca6}
+.steps .on{color:var(--forest);font-weight:700}
+main{padding:8px 20px 24px}
+h2{font-size:21px;color:var(--forest);margin:18px 0 6px}
+.lead{color:var(--muted);margin:0 0 16px;font-size:15px;line-height:1.6}
+.card{border:1.5px solid var(--line);border-radius:18px;padding:18px;margin-bottom:14px;background:#fff;line-height:1.6}
+.choice{cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:12px}
+.choice h3{margin:0;font-size:18px}.choice p{margin:2px 0 0;color:var(--muted);font-size:14px}
+.choice .price{font-weight:800;color:var(--forest);white-space:nowrap;font-size:18px}
+.choice.sel{border:2px solid var(--forest);background:var(--forest-soft);box-shadow:0 0 0 3px rgba(28,68,49,.12)}
+.tag{display:inline-block;font-size:12px;padding:2px 9px;border-radius:99px;background:var(--warn);color:#fff;margin-bottom:6px}
+.plan{border-color:#71806b;background:#f4f2ea}
+label{display:block;font-weight:700;margin:16px 0 6px}
+label .opt{font-weight:400;color:var(--muted);font-size:14px}
+input,select,textarea{width:100%;font:inherit;font-size:17px;padding:13px 14px;border:1.5px solid var(--line);border-radius:12px;background:#fff;color:var(--ink)}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--forest)}
+textarea{min-height:90px;resize:vertical}
+.chips{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.chip{border:1.5px solid #e2d5c8;border-radius:14px;padding:13px 6px;text-align:center;background:#fff;font:inherit;font-size:16px;color:var(--brown);cursor:pointer}
+.chip small{display:block;font-size:12px;color:var(--muted)}
+.chip.sel{background:var(--brown);border-color:var(--brown);color:#fff}.chip.sel small{color:#eadfd4}
+.check{display:flex;gap:10px;align-items:flex-start;font-weight:400;margin:12px 0 0;cursor:pointer}
+.check input{width:22px;height:22px;flex:none;margin-top:2px;accent-color:var(--forest)}
+.note{font-size:14px;color:var(--muted);line-height:1.65;margin:8px 0 0}
+.box{background:var(--brown-soft);border-radius:14px;padding:14px 16px;font-size:15px;line-height:1.7}
+.est{display:flex;justify-content:space-between;align-items:baseline;font-size:15px;padding:6px 0;border-bottom:1px dashed #dde3de}
+.est.total{border:0;font-size:18px;font-weight:800;color:var(--forest);padding-top:10px}
+.sum div{padding:9px 0;border-bottom:1px dashed #dde3de;font-size:16px}.sum b{color:var(--brown)}
+.err{color:var(--warn);font-size:14px;margin-top:6px;min-height:1em}
+.actions{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:min(640px,100%);display:flex;gap:12px;padding:12px 16px calc(12px + env(safe-area-inset-bottom));background:rgba(255,255,255,.97);border-top:1px solid #e3e8e4;z-index:6}
+.actions button{flex:1;font:inherit;font-size:17px;padding:13px;border-radius:12px;border:2px solid var(--forest);background:#fff;color:var(--forest);cursor:pointer}
+.actions .primary{background:var(--forest);color:#fff}
+.actions button:disabled{opacity:.35;cursor:default}
+.hidden{display:none!important}
+.done{text-align:center;padding:30px 0}.done h2{font-size:24px}
+.msg{white-space:pre-wrap;text-align:left;background:#e9f6e6;border-radius:16px;padding:14px;font-size:14px;line-height:1.6;margin-top:14px}
+.demo{background:#fff3e6;color:#7a5530;font-size:13px;font-weight:600;padding:8px 16px;border-bottom:1px solid #ecd3b2}
+</style></head>
+<body><div class="app">
+<header><h1>鬆沐整復｜到府預約</h1><small>把放鬆帶到你家・填好後由店家確認時間與總價</small></header>
+<nav class="steps" id="steps"></nav>
+<main id="main"></main>
+<div class="actions"><button id="back" type="button">上一步</button><button id="next" class="primary" type="button">下一步</button></div>
+</div>
+<script>
+const DEMO=false;
+const OA='@227osyby';
+const SERVICES=[
+ {id:'s30',name:'肌肉舒壓 30 分鐘',price:600,min:30},
+ {id:'s60',name:'半身放鬆 60 分鐘',price:1100,min:60},
+ {id:'s90',name:'全身放鬆 90 分鐘',price:1500,min:90},
+ {id:'s120',name:'全身放鬆 120 分鐘',price:2000,min:120},
+ {id:'trial',name:'新客體驗｜全身 90 分鐘',price:1300,min:90,tag:'限首次體驗'},
+ {id:'eval',name:'運動功能評估＆居家運動建議',price:300,min:30,desc:'約 30 分鐘'},
+ {id:'plan',name:'到府鬆活方案（已購買，扣次）',price:0,min:90,desc:'全身放鬆 90 分鐘，使用方案次數',plan:true}
+];
+const TIERS=[
+ {fee:500,label:'15 分鐘內',areas:['龍井區','西屯區','沙鹿區','大肚區']},
+ {fee:700,label:'15–25 分鐘',areas:['南屯區','西區','北區','中區','梧棲區','清水區','大雅區']},
+ {fee:900,label:'25–40 分鐘',areas:['北屯區','東區','南區','烏日區','神岡區','潭子區','大里區','太平區','彰化市']},
+ {fee:null,label:'40 分鐘以上',areas:['豐原區','霧峰區','后里區','大甲區','其他地區']}];
+const tierOf=a=>TIERS.find(t=>t.areas.includes(a));
+const feeText=t=>t?(t.fee?money(t.fee):'店家報價'):'—';
+const SLOTS=[['上午','09:00–12:00'],['下午','12:00–17:00'],['晚上','17:00–21:00'],['都可以','由店家安排']];
+const STEPS=['1. 服務','2. 時間','3. 地址','4. 資料','5. 確認'];
+const d={service:'',others:[],addEval:false,people:'1',date:'',slot:'',time:'',alt:'',district:'',address:'',home:'住家',floor:'',parking:'',name:'',phone:'',body:'',note:'',agree:false};
+let page=0;
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const svc=()=>SERVICES.find(s=>s.id===d.service);
+const money=n=>'NT$'+n.toLocaleString();
+function dayLabel(v){if(!v)return'';const[y,m,dd]=v.split('-').map(Number);return m+'/'+dd+'（'+'日一二三四五六'[new Date(Date.UTC(y,m-1,dd)).getUTCDay()]+'）'}
+function ymd(t){return t.getFullYear()+'-'+String(t.getMonth()+1).padStart(2,'0')+'-'+String(t.getDate()).padStart(2,'0')}
+function dateOptions(){const out=[],t=new Date();for(let i=1;i<=30;i++){const x=new Date(t);x.setDate(t.getDate()+i);out.push(ymd(x))}return out}
+function estimate(){const s=svc();if(!s)return null;const rows=[];let total=0,quote=false;
+ const add=(who,x)=>{if(!x)return;if(x.plan)rows.push([who+x.name,'扣 1 次']);else{rows.push([who+x.name,money(x.price)]);total+=x.price}};
+ const multi=d.people!=='1';add(multi?'第 1 位：':'',s);
+ d.others.slice(0,Number(d.people)-1).forEach((id,i)=>add('第 '+(i+2)+' 位：',SERVICES.find(x=>x.id===id)));
+ if(d.addEval&&s.id!=='eval'){rows.push(['加選：運動功能評估＆居家運動建議',money(300)]);total+=300}
+ const t=tierOf(d.district);const allPlan=s.plan&&!d.others.slice(0,Number(d.people)-1).some(id=>id&&!SERVICES.find(x=>x.id===id).plan);
+ if(!t||t.fee===null){rows.push(['到府費（'+(t?t.label:'未選區域')+'）','店家報價']);quote=true}
+ else if(allPlan){const extra=t.fee-500;rows.push(['到府費差額（'+t.label+'，方案已含 NT$500）',extra?money(extra):'已含']);total+=extra}
+ else{rows.push(['到府費（'+t.label+'，一趟收一次）',money(t.fee)]);total+=t.fee}
+ return{rows,total,quote}}
+function othersDone(){return d.others.slice(0,Number(d.people)-1).filter(Boolean).length===Number(d.people)-1}
+const views=[
+()=>`<h2>想預約哪個服務？</h2><p class="lead">服務價格與門市相同，另加一趟到府費（依距離 NT$500 起，同一地址多人只收一次）。</p>
+${d.people!=='1'?'<h3 style="margin:4px 0 10px;color:var(--brown)">第 1 位</h3>':''}${SERVICES.map(s=>`<div class="card choice ${s.plan?'plan':''} ${d.service===s.id?'sel':''}" data-svc="${s.id}"><div>${s.tag?`<span class="tag">${s.tag}</span>`:''}<h3>${esc(s.name)}</h3>${s.desc?`<p>${esc(s.desc)}</p>`:''}</div><div class="price">${s.plan?'扣次':money(s.price)}</div></div>`).join('')}
+${d.service&&d.service!=='eval'?`<label class="check"><input type="checkbox" id="addEval" ${d.addEval?'checked':''}><span>同一趟加選「運動功能評估＆居家運動建議」<b>＋NT$300</b></span></label>`:''}
+<label for="people">服務人數 <span class="opt">（同一地址）</span></label><select id="people">${['1','2','3'].map(n=>`<option ${d.people===n?'selected':''}>${n}</option>`).join('')}</select>
+${Array.from({length:Number(d.people)-1},(_,i)=>`<label for="o${i}">第 ${i+2} 位的服務</label><select id="o${i}" data-other="${i}"><option value="">請選擇</option>${SERVICES.filter(x=>x.id!=='trial').map(x=>`<option value="${x.id}" ${d.others[i]===x.id?'selected':''}>${esc(x.name)}${x.plan?'':'　'+money(x.price)}</option>`).join('')}</select>`).join('')}
+<p class="note">多人同一地址，到府費只收一次。</p>
+<p class="note">到府鬆活方案：全身放鬆 90 分鐘 × 10 次，NT$13,000＋到府費 NT$500 × 10 趟，合計 NT$18,000，平均每次 NT$1,800，10 次共省 NT$2,000，另贈送運動功能評估＆居家運動建議。較遠區域每趟補到府費差額。想購買可在備註寫「想購買方案」。</p>`,
+()=>`<h2>希望什麼時候？</h2><p class="lead">到府時間需搭配交通安排，送出後由店家確認實際到達時間。</p>
+<label for="date">希望日期</label><select id="date"><option value="">請選擇日期</option>${dateOptions().map(v=>`<option value="${v}" ${d.date===v?'selected':''}>${dayLabel(v)}</option>`).join('')}</select>
+<label>希望時段</label><div class="chips">${SLOTS.map(([a,b])=>`<button type="button" class="chip ${d.slot===a?'sel':''}" data-slot="${a}">${a}<small>${b}</small></button>`).join('')}</div>
+<label for="time">指定時間 <span class="opt">（選填）</span></label><input id="time" type="time" step="1800" value="${esc(d.time)}">
+<label for="alt">其他可以的時間 <span class="opt">（選填）</span></label><input id="alt" placeholder="例如：週六下午也可以" value="${esc(d.alt)}">`,
+()=>`<h2>到府地址</h2><p class="lead">以東海別墅轉運站為起點，依機車單程時間計算交通費。</p>
+<div class="chips" style="grid-template-columns:1fr 1fr 1fr">${['住家','公司','其他'].map(x=>`<button type="button" class="chip ${d.home===x?'sel':''}" data-home="${x}">${x}</button>`).join('')}</div>
+<label for="district">區域</label><select id="district"><option value="">請選擇區域</option>${TIERS.map(t=>`<optgroup label="${t.label}・到府費 ${feeText(t)}">${t.areas.map(a=>`<option ${d.district===a?'selected':''}>${a}</option>`).join('')}</optgroup>`).join('')}</select>
+${d.district?`<div class="box" style="margin-top:10px">到府費：<b>${feeText(tierOf(d.district))}</b>（${tierOf(d.district).label}）${tierOf(d.district).fee===null?'，店家會依實際距離報價':''}</div>`:''}
+<label for="address">詳細地址</label><input id="address" placeholder="路名、巷弄、門牌號碼" value="${esc(d.address)}">
+<label for="floor">樓層／電梯 <span class="opt">（選填）</span></label><input id="floor" placeholder="例如：5 樓，有電梯" value="${esc(d.floor)}">
+<label>停車方式</label><div class="chips">${[['附近好停','路邊停車'],['有車位','社區／大樓車位'],['需付費停車','停車費另計'],['不確定','請店家評估']].map(([a,b])=>`<button type="button" class="chip ${d.parking===a?'sel':''}" data-park="${a}">${a}<small>${b}</small></button>`).join('')}</div>
+<p class="note">分級以東海別墅轉運站為起點、機車單程時間估算；實際以店家確認為準。停車費另計。</p>
+<div class="box" style="margin-top:16px">請預留一個可以躺下的空間（床或地墊皆可），店家會攜帶按摩床或墊子。</div>`,
+()=>`<h2>聯絡資料</h2>
+<label for="name">姓名</label><input id="name" autocomplete="name" value="${esc(d.name)}">
+<label for="phone">手機</label><input id="phone" type="tel" inputmode="numeric" autocomplete="tel" placeholder="09xxxxxxxx" value="${esc(d.phone)}">
+<label for="body">想放鬆的部位／身體狀況 <span class="opt">（選填）</span></label><textarea id="body" placeholder="例如：肩頸很緊、久坐腰痠">${esc(d.body)}</textarea>
+<label for="note">備註 <span class="opt">（選填）</span></label><textarea id="note" placeholder="例如：家裡有寵物、門口密碼、多人服務內容">${esc(d.note)}</textarea>
+<div class="box" style="margin-top:14px">🌿 本店提供保養舒壓服務，並無任何醫療行為。如近期有受傷、手術、懷孕或其他特殊身體狀況，請先告知。</div>`,
+()=>{const s=svc(),e=estimate();return `<h2>最後確認一下 🌿</h2><div class="card sum">
+<div><b>服務：</b>${esc(s.name)}${d.addEval&&s.id!=='eval'?'＋運動功能評估':''}${d.others.slice(0,Number(d.people)-1).map((id,i)=>'<br>第 '+(i+2)+' 位：'+esc(SERVICES.find(x=>x.id===id).name)).join('')}</div><div><b>人數：</b>${d.people} 位</div>
+<div><b>希望時間：</b>${dayLabel(d.date)} ${esc(d.slot)}${d.time?' '+esc(d.time):''}</div>${d.alt?`<div><b>其他可以：</b>${esc(d.alt)}</div>`:''}
+<div><b>地址：</b>${esc(d.district+d.address)}${d.floor?'（'+esc(d.floor)+'）':''}</div><div><b>停車：</b>${esc(d.parking)}</div>
+<div><b>姓名：</b>${esc(d.name)}　<b>手機：</b>${esc(d.phone)}</div>${d.body?`<div><b>想放鬆的部位：</b>${esc(d.body)}</div>`:''}${d.note?`<div><b>備註：</b>${esc(d.note)}</div>`:''}</div>
+<div class="card"><b>費用預估</b>${e.rows.map(([a,b])=>`<div class="est"><span>${esc(a)}</span><span>${b}</span></div>`).join('')}<div class="est total"><span>總計</span><span>${e.quote?'到府費由店家報價':money(e.total)}</span></div>
+<p class="note">停車費另計；實際金額以店家確認為準。</p></div>
+<label class="check"><input type="checkbox" id="agree" ${d.agree?'checked':''}><span>我同意鬆沐為安排到府服務，使用以上姓名、手機與地址聯繫我。</span></label>
+<p class="note">按「用 LINE 送出」後，會開啟鬆沐的 LINE 聊天室並帶入預約內容，<b>請記得按傳送</b>。店家回覆確認後，預約才成立。</p>`},
+()=>`<div class="done"><h2>預約內容已準備好 🌿</h2><p class="lead">${DEMO?'（預覽版）客人在 LINE 會送出以下訊息：':'請在 LINE 聊天室按「傳送」，店家確認後預約才成立。'}</p><div class="msg">${esc(message())}</div></div>`
+];
+function message(){const s=svc(),e=estimate();return['【到府預約】',
+'服務：'+s.name+(d.addEval&&s.id!=='eval'?'＋運動功能評估':''),...d.others.slice(0,Number(d.people)-1).map((id,i)=>'第 '+(i+2)+' 位：'+SERVICES.find(x=>x.id===id).name),'人數：'+d.people+' 位',
+'希望時間：'+dayLabel(d.date)+' '+d.slot+(d.time?' '+d.time:''),d.alt?'其他可以：'+d.alt:'',
+'地址：'+d.district+d.address+(d.floor?'（'+d.floor+'）':''),'地點：'+d.home+'／停車：'+d.parking,
+'姓名：'+d.name,'手機：'+d.phone,d.body?'想放鬆的部位：'+d.body:'',d.note?'備註：'+d.note:'',
+'費用：'+e.rows.map(([a,b])=>a+' '+b).join('、'),'總計：'+(e.quote?'到府費待店家報價':money(e.total))+'（停車費另計）'].filter(Boolean).join('\n')}
+function valid(){
+ if(page===0)return !d.service?'請選擇服務':!othersDone()?'請選擇每一位的服務':'';
+ if(page===1)return !d.date?'請選擇日期':!d.slot?'請選擇時段':'';
+ if(page===2)return !d.district?'請選擇區域':!d.address.trim()?'請填寫詳細地址':!d.parking?'請選擇停車方式':'';
+ if(page===3)return !d.name.trim()?'請填寫姓名':!/^09\d{8}$/.test(d.phone.replace(/\D/g,''))?'手機格式請填 09 開頭 10 碼':'';
+ if(page===4)return d.agree?'':'請勾選同意';return''}
+function render(){
+ $('#steps').innerHTML=STEPS.map((s,i)=>`<span class="${i===Math.min(page,4)?'on':''}">${s}</span>`).join('');
+ $('#main').innerHTML=views[page]()+'<p class="err" id="err"></p>';
+ $('#back').classList.toggle('hidden',page===0||page===5);
+ $('#next').textContent=page===4?'用 LINE 送出':page===5?'重新填寫':'下一步';
+ $('#next').disabled=!!valid()&&page!==5;
+ bind();window.scrollTo(0,0)}
+function bind(){
+ document.querySelectorAll('[data-svc]').forEach(el=>el.onclick=()=>{d.service=el.dataset.svc;if(d.service==='eval')d.addEval=false;render()});
+ document.querySelectorAll('[data-slot]').forEach(el=>el.onclick=()=>{d.slot=el.dataset.slot;refresh()});
+ document.querySelectorAll('[data-home]').forEach(el=>el.onclick=()=>{d.home=el.dataset.home;refresh()});
+ document.querySelectorAll('[data-park]').forEach(el=>el.onclick=()=>{d.parking=el.dataset.park;refresh()});
+ ['people','date','time','alt','district','address','floor','name','phone','body','note'].forEach(k=>{const el=document.getElementById(k);if(el)el.oninput=el.onchange=()=>{d[k]=el.value;if(k==='people'||k==='district'){refresh();return}$('#next').disabled=!!valid()}});
+ document.querySelectorAll('[data-other]').forEach(el=>el.onchange=()=>{d.others[+el.dataset.other]=el.value;$('#next').disabled=!!valid()});
+ const a=$('#addEval');if(a)a.onchange=()=>{d.addEval=a.checked};
+ const g=$('#agree');if(g)g.onchange=()=>{d.agree=g.checked;$('#next').disabled=!!valid()}}
+function refresh(){const y=window.scrollY;render();window.scrollTo(0,y)}
+$('#back').onclick=()=>{page=Math.max(0,page-1);render()};
+$('#next').onclick=()=>{
+ if(page===5){Object.assign(d,{service:'',others:[],addEval:false,date:'',slot:'',time:'',alt:'',agree:false});page=0;render();return}
+ const e=valid();if(e){$('#err').textContent=e;return}
+ if(page===4){if(!DEMO){location.href='https://line.me/R/oaMessage/'+encodeURIComponent(OA)+'/?'+encodeURIComponent(message());}page=5;render();return}
+ page++;render()};
+render();
+</script></body></html>
