@@ -28,7 +28,7 @@ textarea{min-height:90px;resize:vertical}
 .chips{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .chip{border:1.5px solid #e2d5c8;border-radius:14px;padding:13px 6px;text-align:center;background:#fff;font:inherit;font-size:16px;color:var(--brown);cursor:pointer}
 .chip small{display:block;font-size:12px;color:var(--muted)}
-.chip.sel{background:var(--brown);border-color:var(--brown);color:#fff}.chip.sel small{color:#eadfd4}
+.chip.sel{background:var(--brown);border-color:var(--brown);color:#fff}.chip:disabled{background:#f2f2ef;border-color:#e3e3de;color:#a7aca8;cursor:not-allowed;text-decoration:line-through}.chip:disabled small{text-decoration:none;color:#b9564a}.chip.sel small{color:#eadfd4}
 .check{display:flex;gap:10px;align-items:flex-start;font-weight:400;margin:12px 0 0;cursor:pointer}
 .check input{width:22px;height:22px;flex:none;margin-top:2px;accent-color:var(--forest)}
 .note{font-size:14px;color:var(--muted);line-height:1.65;margin:8px 0 0}
@@ -73,13 +73,19 @@ const tierOf=a=>TIERS.find(t=>t.areas.includes(a));
 const money=n=>'NT$'+Number(n).toLocaleString();
 const feeText=t=>t?(t.fee?money(t.fee):'店家報價'):'—';
 const SLOTS=[['上午',9*60,12*60],['下午',12*60,17*60],['晚上',17*60,21*60]];
-let OPEN={};// 與門市相同的開放日期與時間：{日期:[開始分鐘,最晚開始分鐘]}
+let OPEN={};// 與門市相同的開放日期與時間：{日期:[開始分鐘,最晚開始分鐘,[[已佔用開始,結束]…]]}（已佔用時段含其他預約的車程）
+const PREP=10;// 每筆預約之間的整理準備時間（分鐘），與系統規則相同
 const toMin=t=>{const [h,m]=String(t).split(':').map(Number);return h*60+(m||0)};
 const hm=m=>String(Math.floor(m/60)).padStart(2,'0')+':'+String(m%60).padStart(2,'0');
 function slotsFor(day){const o=OPEN[day];if(!o)return [];const out=[];for(const [n,a,b] of SLOTS){const s=Math.max(a,o[0]),e=Math.min(b,o[1]);if(e-s>=30)out.push([n,s,e])}out.push(['都可以',o[0],o[1]]);return out}
-function timesFor(day){const o=OPEN[day];if(!o)return [];const now=new Date(Date.now()+8*36e5),today=now.toISOString().slice(0,10),nowMin=now.getUTCHours()*60+now.getUTCMinutes();const out=[];for(let m=o[0];m<=o[1];m+=30){if(day===today&&m<=nowMin+120)continue;out.push(hm(m))}return out}
-async function loadOpen(){try{const r=await fetch(API,{headers:apiHeaders,cache:'no-store'});const v=await r.json();const o={};const today=new Date(Date.now()+8*36e5).toISOString().slice(0,10);for(const [day,x] of Object.entries(v||{})){if(day>=today&&x&&x.start&&x.end)o[day]=[toMin(x.start),toMin(x.end)]}OPEN=o;return true}catch{OPEN={};return false}}
-const STEPS=['1. 服務','2. 時間','3. 地址','4. 資料','5. 確認'];
+const travelMin=()=>{const t=tierOf(d.district);return t?t.min:60};
+// 這個開始時間放得下嗎：本次服務前後各留單程車程，與其他預約（已含對方車程）之間再留整理準備時間
+function fits(day,m){const o=OPEN[day];if(!o)return false;const T=travelMin(),s=m-T,e=m+totalMin()+T;return !(o[2]||[]).some(([bs,be])=>bs<e+PREP&&be+PREP>s)}
+function inSlot(day,slot,m){if(!slot||slot==='都可以')return true;const x=slotsFor(day).find(z=>z[0]===slot);if(!x)return false;return m>=x[1]&&(m<x[2]||(x[2]===OPEN[day][1]&&m<=x[2]))}
+function timesFor(day,slot){return openTimes(day).filter(t=>fits(day,toMin(t))&&inSlot(day,slot,toMin(t)))}
+function openTimes(day){const o=OPEN[day];if(!o)return [];const now=new Date(Date.now()+8*36e5),today=now.toISOString().slice(0,10),nowMin=now.getUTCHours()*60+now.getUTCMinutes();const out=[];for(let m=o[0];m<=o[1];m+=30){if(day===today&&m<=nowMin+120)continue;out.push(hm(m))}return out}
+async function loadOpen(){try{const r=await fetch(API,{headers:apiHeaders,cache:'no-store'});const v=await r.json();const o={};const today=new Date(Date.now()+8*36e5).toISOString().slice(0,10);for(const [day,x] of Object.entries(v||{})){if(day>=today&&x&&x.start&&x.end)o[day]=[toMin(x.start),toMin(x.end),(Array.isArray(x.bookings)?x.bookings:[]).map(b=>[toMin(b.start),toMin(b.end)])]}OPEN=o;return true}catch{return false}}
+const STEPS=['1. 服務','2. 地址','3. 時間','4. 資料','5. 確認'];
 const d={service:'',others:[],addEval:false,people:'1',date:'',slot:'',time:'',alt:'',district:'',address:'',home:'住家',floor:'',parking:'',name:'',phone:'',body:'',note:'',agree:false,request_id:''};
 let page=-1,lineToken=null,member=null,loginError='',sending=false,resultId='',sendError='';
 const $=s=>document.querySelector(s);
@@ -92,7 +98,7 @@ function options(){
 const opt=id=>options().find(o=>o.id===id);
 function dayLabel(v){if(!v)return'';const[y,m,dd]=v.split('-').map(Number);return m+'/'+dd+'（'+'日一二三四五六'[new Date(Date.UTC(y,m-1,dd)).getUTCDay()]+'）'}
 function ymd(t){return t.getFullYear()+'-'+String(t.getMonth()+1).padStart(2,'0')+'-'+String(t.getDate()).padStart(2,'0')}
-function dateOptions(){return Object.keys(OPEN).sort().filter(day=>timesFor(day).length)}
+function dateOptions(){return Object.keys(OPEN).sort().filter(day=>openTimes(day).length)}
 const chosen=()=>[opt(d.service),...d.others.slice(0,Number(d.people)-1).map(opt)].filter(Boolean);
 const totalMin=()=>chosen().reduce((a,o)=>a+o.min,0)+(d.addEval&&d.service!==EVAL?30:0);
 function estimate(){const s=opt(d.service);if(!s)return null;const rows=[];let total=0,quote=false;const multi=d.people!=='1';
@@ -113,11 +119,6 @@ ${d.service&&d.service!==EVAL?`<label class="check"><input type="checkbox" id="a
 ${Array.from({length:Number(d.people)-1},(_,i)=>`<label for="o${i}">第 ${i+2} 位的服務</label><select id="o${i}" data-other="${i}"><option value="">請選擇</option>${list.filter(x=>x.id!==TRIAL).map(x=>`<option value="${esc(x.id)}" ${d.others[i]===x.id?'selected':''}>${esc(x.name)}${x.plan?'':'　'+money(x.price)}</option>`).join('')}</select>`).join('')}
 <p class="note">多人同一地址，到府費只收一次；總服務時間最多 4 小時。</p>
 <p class="note">到府鬆活方案：全身放鬆 90 分鐘 × 10 次，NT$13,000＋到府費 NT$500 × 10 趟，合計 NT$18,000，平均每次 NT$1,800，10 次共省 NT$2,000，另贈送運動功能評估＆居家運動建議。較遠區域每趟補到府費差額。想購買可在備註寫「想購買方案」。</p>`},
-()=>`<h2>希望什麼時候？</h2><p class="lead">到府時間需搭配交通安排，送出後由店家確認實際到達時間。</p>
-${dateOptions().length?`<label for="date">希望日期 <span class="opt">（與門市相同的開放日）</span></label><select id="date"><option value="">請選擇日期</option>${dateOptions().map(v=>`<option value="${v}" ${d.date===v?'selected':''}>${dayLabel(v)}　${hm(OPEN[v][0])}–${hm(OPEN[v][1])}</option>`).join('')}</select>
-${d.date?`<label>希望時段</label><div class="chips">${slotsFor(d.date).map(([a,s,e])=>`<button type="button" class="chip ${d.slot===a?'sel':''}" data-slot="${a}">${a}<small>${hm(s)}–${hm(e)}</small></button>`).join('')}</div>
-<label for="time">指定開始時間 <span class="opt">（選填）</span></label><select id="time"><option value="">不指定，由店家安排</option>${timesFor(d.date).map(t=>`<option ${d.time===t?'selected':''}>${t}</option>`).join('')}</select>`:''}`:'<div class="box">目前還沒有開放的日期，請稍後再來，或直接在 LINE 聊天室詢問。</div>'}
-<label for="alt">其他可以的時間 <span class="opt">（選填）</span></label><input id="alt" maxlength="100" placeholder="例如：週六下午也可以" value="${esc(d.alt)}">`,
 ()=>`<h2>到府地址</h2><p class="lead">以東海別墅轉運站為起點，依機車單程時間計算到府費。</p>
 <div class="chips" style="grid-template-columns:1fr 1fr 1fr">${['住家','公司','其他'].map(x=>`<button type="button" class="chip ${d.home===x?'sel':''}" data-home="${x}">${x}</button>`).join('')}</div>
 <label for="district">區域</label><select id="district"><option value="">請選擇區域</option>${TIERS.map(t=>`<optgroup label="${t.label}・到府費 ${feeText(t)}">${t.areas.map(a=>`<option ${d.district===a?'selected':''}>${a}</option>`).join('')}</optgroup>`).join('')}</select>
@@ -127,6 +128,11 @@ ${d.district?`<div class="box" style="margin-top:10px">到府費：<b>${feeText(
 <label>停車方式</label><div class="chips">${[['附近好停','路邊停車'],['有車位','社區／大樓車位'],['需付費停車','停車費另計'],['不確定','請店家評估']].map(([a,b])=>`<button type="button" class="chip ${d.parking===a?'sel':''}" data-park="${a}">${a}<small>${b}</small></button>`).join('')}</div>
 <p class="note">分級以東海別墅轉運站為起點、機車單程時間估算；實際以店家確認為準。停車費另計。</p>
 <div class="box" style="margin-top:16px">請預留一個可以躺下的空間（床或地墊皆可），店家會攜帶按摩床或墊子。</div>`,
+()=>{const days=dateOptions();return `<h2>希望什麼時候？</h2><p class="lead">已自動避開其他客人的預約，並預留車程（${d.district?esc(d.district)+'單程約 '+travelMin()+' 分鐘':'依區域'}）與 ${PREP} 分鐘整理準備時間。送出後由店家確認實際到達時間。</p>${sendError?`<p class="err" style="font-size:15px">${esc(sendError)}</p>`:''}
+${days.length?`<label for="date">希望日期 <span class="opt">（與門市相同的開放日）</span></label><select id="date"><option value="">請選擇日期</option>${days.map(v=>{const full=!timesFor(v).length;return `<option value="${v}" ${d.date===v?'selected':''} ${full?'disabled':''}>${dayLabel(v)}　${hm(OPEN[v][0])}–${hm(OPEN[v][1])}${full?'（已約滿）':''}</option>`}).join('')}</select>
+${d.date?`<label>希望時段</label><div class="chips">${slotsFor(d.date).map(([a,s,e])=>{const n=timesFor(d.date,a).length;return `<button type="button" class="chip ${d.slot===a?'sel':''}" data-slot="${a}" ${n?'':'disabled'}>${a}<small>${n?hm(s)+'–'+hm(e):'已約滿'}</small></button>`}).join('')}</div>
+${d.slot?`<label for="time">指定開始時間 <span class="opt">（選填，只列出還排得下的時間）</span></label><select id="time"><option value="">不指定，由店家安排</option>${timesFor(d.date,d.slot).map(t=>`<option ${d.time===t?'selected':''}>${t}</option>`).join('')}</select>`:''}`:''}`:'<div class="box">目前還沒有開放的日期，請稍後再來，或直接在 LINE 聊天室詢問。</div>'}
+<label for="alt">其他可以的時間 <span class="opt">（選填）</span></label><input id="alt" maxlength="100" placeholder="例如：週六下午也可以" value="${esc(d.alt)}">`},
 ()=>`<h2>聯絡資料</h2>
 <label for="name">姓名</label><input id="name" maxlength="100" autocomplete="name" value="${esc(d.name)}">
 <label for="phone">手機</label><input id="phone" type="tel" inputmode="numeric" autocomplete="tel" placeholder="09xxxxxxxx" value="${esc(d.phone)}">
@@ -151,10 +157,11 @@ function message(){const e=estimate();return['【到府預約】',...chosen().ma
 '姓名：'+d.name,'手機：'+d.phone,d.body?'想放鬆的部位：'+d.body:'',d.note?'備註：'+d.note:'',
 '總計：'+(e.quote?'到府費待店家報價':money(e.total))+'（停車費另計）'].filter(Boolean).join('\n')}
 function lineLink(){return 'https://line.me/R/oaMessage/'+encodeURIComponent(OA)+'/?'+encodeURIComponent(message())}
+function timeError(){return !d.date?'請選擇日期':!timesFor(d.date).length?'這天已約滿，請換一天':!d.slot?'請選擇時段':!timesFor(d.date,d.slot).length?'這個時段已約滿，請換時段':d.time&&!timesFor(d.date,d.slot).includes(d.time)?'這個時間已被其他預約占用，請重新選擇':''}
 function valid(){
  if(page===0)return !d.service?'請選擇服務':!othersDone()?'請選擇每一位的服務':totalMin()>240?'總服務時間超過 4 小時，請分兩次預約':'';
- if(page===1)return !d.date?'請選擇日期':!d.slot?'請選擇時段':d.time&&!timesFor(d.date).includes(d.time)?'指定時間不在開放時間內':'';
- if(page===2)return !d.district?'請選擇區域':!d.address.trim()?'請填寫詳細地址':!d.parking?'請選擇停車方式':'';
+ if(page===1)return !d.district?'請選擇區域':!d.address.trim()?'請填寫詳細地址':!d.parking?'請選擇停車方式':'';
+ if(page===2)return timeError();
  if(page===3)return !d.name.trim()?'請填寫姓名':!/^09\d{8}$/.test(d.phone.replace(/\D/g,''))?'手機格式請填 09 開頭 10 碼':'';
  if(page===4)return d.agree?'':'請勾選同意';return''}
 function waitView(){return `<div class="wait">${loginError?`<p>${esc(loginError)}</p><button type="button" id="retry">重新登入 LINE</button><p class="note">若一直無法登入，也可以直接在 LINE 聊天室留言預約到府。</p>`:'<p>正在透過 LINE 登入，請稍候…</p>'}</div>`}
@@ -170,19 +177,20 @@ function render(){
  bind();if(page<5)upd();window.scrollTo(0,0)}
 function bind(){
  document.querySelectorAll('[data-svc]').forEach(el=>el.onclick=()=>{d.service=el.dataset.svc;if(d.service===EVAL)d.addEval=false;refresh()});
- document.querySelectorAll('[data-slot]').forEach(el=>el.onclick=()=>{d.slot=el.dataset.slot;refresh()});
+ document.querySelectorAll('[data-slot]').forEach(el=>el.onclick=()=>{d.slot=el.dataset.slot;if(d.time&&!timesFor(d.date,d.slot).includes(d.time))d.time='';refresh()});
  document.querySelectorAll('[data-home]').forEach(el=>el.onclick=()=>{d.home=el.dataset.home;refresh()});
  document.querySelectorAll('[data-park]').forEach(el=>el.onclick=()=>{d.parking=el.dataset.park;refresh()});
  ['people','date','time','alt','district','address','floor','name','phone','body','note'].forEach(k=>{const el=document.getElementById(k);if(el)el.oninput=el.onchange=()=>{d[k]=el.value;if(k==='date'){d.slot='';d.time=''}if(k==='people'||k==='district'||k==='date'){refresh();return}upd()}});
  document.querySelectorAll('[data-other]').forEach(el=>el.onchange=()=>{d.others[+el.dataset.other]=el.value;upd()});
  const a=$('#addEval');if(a)a.onchange=()=>{d.addEval=a.checked;upd()};
  const g=$('#agree');if(g)g.onchange=()=>{d.agree=g.checked;upd()}}
-function upd(){const v=valid();$('#next').disabled=sending||!!v;const e=$('#err');if(e)e.textContent=v.includes('4 小時')?v:''}
+function upd(){const v=valid();$('#next').disabled=sending||!!v;const e=$('#err');if(e)e.textContent=/4 小時|約滿|占用/.test(v)?v:''}
 function refresh(){const y=window.scrollY;render();window.scrollTo(0,y)}
 const ERR={line_login_required:'LINE 登入已失效，請重新開啟頁面',trial_not_eligible:'你已完成過服務，新客體驗請改選一般服務',trial_request_exists:'已有一筆新客體驗申請，請先等店家確認',service_unavailable:'有服務目前暫停預約，請重新選擇',identity_conflict:'會員與手機資料需要店家協助確認',member_phone_changed_contact_store:'變更會員手機請先聯絡店家'};
 async function submit(){
  if(sending)return;sending=true;sendError='';render();
  try{
+  await loadOpen();const te=timeError();if(te){page=2;if(d.time&&!timesFor(d.date,d.slot).includes(d.time))d.time='';throw Error(te+'（剛剛有其他客人預約了，請重新選擇時間）')}
   d.request_id||=crypto.randomUUID();
   const services=chosen().map(x=>({name:x.plan?x.svc:x.name,plan:!!x.plan}));
   const r=await fetch(API,{method:'POST',headers:{...apiHeaders,'Content-Type':'application/json'},body:JSON.stringify({action:'home',line_id_token:lineToken,request_id:d.request_id,consent:true,name:d.name.trim(),phone:d.phone.replace(/\D/g,''),symptoms:d.body,note:d.note,services,assessment:!!(d.addEval&&d.service!==EVAL),district:d.district,address:d.address.trim(),floor:d.floor,place:d.home,parking:d.parking,date:d.date,slot:d.slot,time:d.time,alt:d.alt})});
@@ -191,7 +199,7 @@ async function submit(){
  catch(e){sendError=e.message}
  finally{sending=false;render()}}
 $('#back').onclick=()=>{page=Math.max(0,page-1);render()};
-$('#next').onclick=()=>{const e=valid();if(e){$('#err').textContent=e;return}if(page===4)return submit();page++;render()};
+$('#next').onclick=async()=>{const e=valid();if(page!==4)sendError='';if(e){$('#err').textContent=e;return}if(page===4)return submit();if(page===1){$('#next').disabled=true;await loadOpen()}page++;if(page===2&&d.date&&timeError()){if(d.time&&!timesFor(d.date,d.slot).includes(d.time))d.time=''}render()};
 async function loadCatalog(){try{const r=await fetch(API+'?action=services',{cache:'no-store',headers:apiHeaders});const v=await r.json();if(Array.isArray(v.services)&&v.services.length)CATALOG=v.services.map(x=>[String(x.name),Number(x.price),Number(x.duration)]).filter(x=>x[0]&&Number.isFinite(x[1])&&x[2]>0)}catch{}}
 async function startLine(){
  try{
