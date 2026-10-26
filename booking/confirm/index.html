@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>到府時間確認｜鬆沐整復</title>
+<style>
+:root{--forest:#1c4431;--soft:#eef4ef;--brown:#765b45;--muted:#6b746e;--warn:#b5532f}
+body{margin:0;background:#eef1ec;font-family:-apple-system,BlinkMacSystemFont,"Noto Sans TC","PingFang TC",sans-serif;color:#2f3430}
+.box{max-width:460px;margin:0 auto;min-height:100dvh;background:#fff;padding:28px 20px 40px;box-sizing:border-box}
+.top{text-align:center}.icon{font-size:44px}h1{font-size:21px;color:var(--forest);margin:6px 0 4px}p{line-height:1.7;color:var(--muted);margin:8px 0}
+.card{border:1.5px solid #c9d3cb;border-radius:16px;padding:14px 16px;margin:16px 0;line-height:1.8;font-size:16px}
+.card b{color:var(--brown)}.when{font-size:22px;font-weight:800;color:var(--forest)}
+button{display:block;width:100%;margin-top:12px;font:inherit;font-size:17px;padding:14px;border-radius:12px;border:2px solid var(--forest);background:var(--forest);color:#fff;cursor:pointer}
+button.second{background:#fff;color:var(--forest)}button:disabled{opacity:.5}
+textarea{width:100%;box-sizing:border-box;font:inherit;font-size:16px;padding:12px;border:1.5px solid #c9d3cb;border-radius:12px;min-height:90px;margin-top:6px;background:#fff;color:#2f3430;-webkit-appearance:none;appearance:none}
+label{font-weight:700;display:block;margin-top:14px}
+select{width:100%;font:inherit;font-size:17px;padding:12px;border:1.5px solid #c9d3cb;border-radius:12px;background:#fff;margin-top:6px}
+.pick{margin:18px 0 6px}
+.pick-title{margin:0 0 4px;font-size:17px;font-weight:800;color:var(--forest)}
+.step{display:flex;align-items:center;gap:8px;margin:14px 0 8px;font-weight:700;color:#2f3430;font-size:16px}
+.step .n{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:var(--brown);color:#fff;font-size:13px}
+.step .n.off{background:#d8cfc6}.step .req{color:var(--warn);font-size:13px;font-weight:600}
+.days{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.slots{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.days button,.slots button{margin:0;width:100%;min-width:0;padding:10px 4px;font-size:16px;background:#fff;color:var(--brown);border:1.5px solid #e2d5c8;border-radius:12px}
+.days button small{display:block;font-size:12px;color:var(--muted);margin-top:2px}
+.days button.on,.slots button.on{background:var(--brown);border-color:var(--brown);color:#fff}
+.days button.on small{color:#eadfd4}
+.chosen{margin-top:12px;font-size:15px;color:var(--muted)}
+.chosen.ok{color:var(--brown);font-weight:700}
+.hint{font-size:14px;color:var(--muted);margin:6px 0 0}.err{color:var(--warn);font-weight:600}.ok{color:var(--forest);font-weight:700}
+
+</style></head><body><div class="box" id="box"></div>
+<script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+<script>
+const API="https://wwavyzxxfspulofwpkmn.supabase.co/functions/v1/booking-api";
+const APIKEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind3YXZ5enh4ZnNwdWxvZndwa21uIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTExMTI0MjgsImV4cCI6MjEwNjY4ODQyOH0.Xc6e5AIerl7E9KlWfd-aY2GyftQ_UNpBR7-YIOVw9Ik";const H={apikey:APIKEY,Authorization:"Bearer "+APIKEY};
+const box=document.getElementById('box');let q=new URLSearchParams(location.search),token=null,info=null,busy=false;
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const when=iso=>{const d=new Date(new Date(iso).getTime()+8*36e5);return (d.getUTCMonth()+1)+'/'+d.getUTCDate()+'（'+'日一二三四五六'[d.getUTCDay()]+'）'+d.toISOString().slice(11,16)};
+const mins=()=>Math.round((Date.parse(info.ends_at)-Date.parse(info.starts_at))/6e4);
+let OPEN={},want={date:'',time:''};const BACK=15,PREP=10;
+const toMin=t=>{const[h,m]=String(t).split(':').map(Number);return h*60+(m||0)};const hm=m=>String(Math.floor(m/60)).padStart(2,'0')+':'+String(m%60).padStart(2,'0');
+const dayLabel=v=>{const[y,m,d]=v.split('-').map(Number);return m+'/'+d+'（'+'日一二三四五六'[new Date(Date.UTC(y,m-1,d)).getUTCDay()]+'）'};
+async function loadOpen(){const r=await fetch(API,{headers:H,cache:'no-store'});const v=await r.json();const today=new Date(Date.now()+8*36e5).toISOString().slice(0,10);const o={};for(const[day,x]of Object.entries(v||{})){if(day>=today&&x&&x.start&&x.end)o[day]=[toMin(x.start),toMin(x.end),(x.bookings||[]).map(b=>[toMin(b.start),toMin(b.end),!!b.home])]}OPEN=o}
+// 這個開始時間排得下嗎（扣掉自己目前保留的時段；前後車程、10 分整理、到府後接定點多留 15 分）
+function fits(day,m){const o=OPEN[day];if(!o)return false;const T=Number(info.travel_minutes)||0,D=Number(info.duration_minutes)||mins(),s=m-T,e=m+D+T;
+ const own=new Date(Date.parse(info.starts_at)+8*36e5),ownDay=own.toISOString().slice(0,10),os=own.getUTCHours()*60+own.getUTCMinutes()-T,oe=os+T+D+T+BACK;
+ return !o[2].some(([bs,be,home])=>!(day===ownDay&&home&&bs===os&&be===oe)&&bs<e+PREP+(home?0:BACK)&&(home?be-BACK:be)+PREP>s)}
+function timesFor(day){const o=OPEN[day];if(!o)return[];const now=new Date(Date.now()+8*36e5),today=now.toISOString().slice(0,10),nowMin=now.getUTCHours()*60+now.getUTCMinutes();const out=[];for(let m=o[0];m<=o[1];m+=30){if(day===today&&m<=nowMin+120)continue;const own=new Date(Date.parse(info.starts_at)+8*36e5);if(day===own.toISOString().slice(0,10)&&m===own.getUTCHours()*60+own.getUTCMinutes())continue;if(fits(day,m))out.push(hm(m))}return out}
+const msg=(icon,title,html)=>{box.innerHTML='<div class="top"><div class="icon">'+icon+'</div><h1>'+title+'</h1></div>'+html};
+const card=()=>'<div class="card"><div class="when">'+when(info.starts_at)+' 開始</div><div><b>服務：</b>'+esc(info.service_name)+'（約 '+mins()+' 分鐘）</div><div><b>地點：</b>'+esc((info.home_district||'')+(info.home_address||''))+'</div></div>';
+const post=async body=>{const r=await fetch(API,{method:'POST',headers:{...H,'Content-Type':'application/json'},body:JSON.stringify({...body,id:q.get('id'),t:q.get('t'),line_id_token:token})});const v=await r.json().catch(()=>({}));if(!r.ok)throw Error(v.error||'系統忙碌，請稍後再試');return v};
+function pickHtml(){const days=Object.keys(OPEN).sort().filter(d=>timesFor(d).length);if(!days.length)return '<div class="pick"><p class="err">目前沒有其他可排的時間，請直接在 LINE 聊天室告訴我們。</p></div>';
+ return '<div class="pick"><p class="pick-title">📅 想改到什麼時候？</p><p class="hint" style="margin:0">只列出還排得下的時間（已扣除其他預約與車程）</p>'+
+  '<div class="step"><span class="n">1</span>選日期 <span class="req">必選</span></div><div class="days">'+days.map(d=>'<button type="button" data-d="'+d+'" class="'+(want.date===d?'on':'')+'">'+dayLabel(d)+'<small>'+timesFor(d).length+' 個時段可選</small></button>').join('')+'</div>'+
+  '<div class="step"><span class="n'+(want.date?'':' off')+'">2</span>選開始時間 <span class="req">必選</span></div>'+
+  (want.date?'<div class="slots">'+timesFor(want.date).map(t=>'<button type="button" data-t="'+t+'" class="'+(want.time===t?'on':'')+'">'+t+'</button>').join('')+'</div>':'<p class="hint" style="margin:0">請先選日期</p>')+
+  '<div class="chosen'+(want.date&&want.time?' ok':'')+'" id="chosen">'+(want.date&&want.time?'✓ 你選的時間：'+dayLabel(want.date)+' '+want.time:'還沒選好時間')+'</div></div>'}
+function bindPick(){document.querySelectorAll('[data-d]').forEach(b=>b.onclick=()=>{want={date:b.dataset.d,time:''};rerender()});document.querySelectorAll('[data-t]').forEach(b=>b.onclick=()=>{want.time=b.dataset.t;rerender()});
+ const no=document.getElementById('no'),h=document.getElementById('pickHint');if(no){const ok=!!(want.date&&want.time);no.disabled=!ok;if(h)h.textContent=ok?'將通知店家：希望改到 '+dayLabel(want.date)+' '+want.time:'請先選擇方便的日期和時間'}}
+function rerender(){const note=document.getElementById('note')?.value||'';const y=window.scrollY;view();const n=document.getElementById('note');if(n)n.value=note;window.scrollTo(0,y)}
+function view(){
+ if(info.proposal_status==='accepted'||info.status==='confirmed')return msg('✅','這個時間已經確認了',card()+'<p class="ok">預約已成立，我們會準時到府。需要更改請直接在 LINE 聊天室告訴我們。</p>');
+ if(info.proposal_status!=='sent'||info.status!=='pending')return msg('ℹ️','這筆預約已經處理過了','<p>如需更改，請直接在 LINE 聊天室告訴我們。</p>');
+ const wantChange=q.get('a')==='no';
+ msg('🌿','到府時間確認','<p style="text-align:center">我們幫你安排了以下時間，這樣可以嗎？</p>'+card()+
+  (wantChange?pickHtml()+'<label for="note">其他想說的 <span style="font-weight:400;color:#6b746e">（選填）</span></label><textarea id="note" maxlength="200" placeholder="例如：那天晚一點也可以"></textarea><button type="button" id="no" disabled>送出：想改到這個時間</button><p class="hint" id="pickHint">請先選擇方便的日期和時間</p><button type="button" class="second" id="yes">原本的時間可以，不用改了</button>'
+  :'<button type="button" id="yes">✅ 確認這個時間</button><button type="button" class="second" id="change">想改時間</button>')+'<p id="err" class="err"></p>');
+ const yes=document.getElementById('yes');if(yes)yes.onclick=()=>reply(true);
+ const no=document.getElementById('no');if(no)no.onclick=()=>{if(!want.date||!want.time){document.getElementById('pickHint').textContent='⚠ 請先選擇方便的日期和時間';return}reply(false)};
+ bindPick();
+ const ch=document.getElementById('change');if(ch)ch.onclick=()=>{q.set('a','no');view()};
+}
+async function reply(accept){if(busy)return;busy=true;document.querySelectorAll('button').forEach(b=>b.disabled=true);
+ try{const note=document.getElementById('note')?.value||'';await post({action:'proposal_reply',accept,note,want_date:accept?'':want.date,want_time:accept?'':want.time});
+  if(accept)msg('🎉','預約成立！',card()+'<p class="ok">已幫你確認，我們會準時到府。<br>請預留一個可以躺下的空間，店家會攜帶按摩床或墊子。</p>'+closeBtn());
+  else msg('📨','已通知店家',card()+'<p>你希望改到 <b>'+dayLabel(want.date)+' '+want.time+'</b>，店家會確認後再用 LINE 通知你。</p>'+closeBtn());bindClose()}
+ catch(e){const el=document.getElementById('err');if(el)el.textContent=e.message;busy=false;document.querySelectorAll('button').forEach(b=>b.disabled=false)}}
+const closeBtn=()=>window.liff&&liff.isInClient&&liff.isInClient()?'<button type="button" class="second" id="close">關閉</button>':'';
+const bindClose=()=>{const c=document.getElementById('close');if(c)c.onclick=()=>liff.closeWindow()};
+async function start(){
+ if(!/^[0-9a-f-]{36}$/i.test(q.get('id')||'')||!/^[0-9a-f-]{36}$/i.test(q.get('t')||''))return msg('⚠️','連結不完整','<p class="err">請回到 LINE，從店家傳的訊息重新開啟。</p>');
+ msg('⏳','讀取中…','<p style="text-align:center">正在透過 LINE 確認你的帳號，請稍候。</p>');
+ try{
+  const c=await fetch(API+'?action=config',{headers:H,cache:'no-store'}).then(r=>r.json());
+  if(!c.enabled||!c.liff_id)throw Error('LINE 登入暫時無法使用');
+  await liff.init({liffId:c.liff_id});
+  if(!liff.isLoggedIn()){liff.login({redirectUri:location.href});return}
+  token=liff.getIDToken();if(!token)throw Error('LINE 登入缺少必要授權');
+  info=await post({action:'proposal_info'});try{await loadOpen()}catch{}view();
+ }catch(e){msg('⚠️','無法開啟','<p class="err">'+esc(e.message)+'</p><p>也可以直接在 LINE 聊天室回覆店家。</p>')}
+}
+start();
+</script></body></html>
