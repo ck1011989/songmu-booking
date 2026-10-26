@@ -18,6 +18,7 @@ const APIKEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZ
 const box=document.getElementById('box');const code=(new URLSearchParams(location.search).get('code')||'').toUpperCase().replace(/[^A-Z0-9]/g,'');
 const show=(icon,title,html,btn)=>{box.innerHTML='<div class="icon">'+icon+'</div><h1>'+title+'</h1>'+html+(btn?'<button type="button" id="b">'+btn[0]+'</button>':'');if(btn)document.getElementById('b').onclick=btn[1]};
 const tip='<div class="card">之後只要有客人<b>預約當天的時段</b>（定點或到府），鬆沐官方帳號會傳 LINE 提醒你。<br>通知只寫時間與服務，不含客人姓名電話，詳細資料請到後台查看。<br>要收到通知，你的 LINE 需要是鬆沐官方帳號的好友。</div>';
+const tokOk=()=>{try{const d=liff.getDecodedIDToken();return !!d&&d.exp*1000>Date.now()+120000}catch{return false}};
 async function start(){
  if(!/^[A-Z0-9]{8}$/.test(code))return show('⚠️','綁定連結不完整','<p class="err">請回到後台「時段設定」重新產生綁定連結。</p>');
  show('⏳','正在綁定…','<p>正在透過 LINE 確認你的帳號，請稍候。</p>');
@@ -25,6 +26,7 @@ async function start(){
   const c=await fetch(API+'?action=config',{headers:H,cache:'no-store'}).then(r=>r.json());
   if(!c.enabled||!c.liff_id)throw Error('LINE 登入暫時無法使用');
   await liff.init({liffId:c.liff_id});
+  if(liff.isLoggedIn()&&!tokOk()){try{liff.logout()}catch{}}// 登入憑證過期：重新登入
   if(!liff.isLoggedIn()){liff.login({redirectUri:location.href});return}
   const token=liff.getIDToken();if(!token)throw Error('LINE 登入缺少必要授權');
   const r=await fetch(API,{method:'POST',headers:{...H,'Content-Type':'application/json'},body:JSON.stringify({action:'bind_owner',code,line_id_token:token})});
