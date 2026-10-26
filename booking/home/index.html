@@ -169,7 +169,7 @@ function valid(){
 function waitView(){return `<div class="wait">${loginError?`<p>${esc(loginError)}</p><button type="button" id="retry">重新登入 LINE</button><p class="note">若一直無法登入，也可以直接在 LINE 聊天室留言預約到府。</p>`:'<p>正在透過 LINE 登入，請稍候…</p>'}</div>`}
 function render(){
  $('#steps').innerHTML=STEPS.map((s,i)=>`<span class="${i===Math.min(Math.max(page,0),4)?'on':''}">${s}</span>`).join('');
- if(page<0){$('#main').innerHTML=waitView();$('.actions').classList.add('hidden');const r=$('#retry');if(r)r.onclick=()=>{loginError='';render();startLine()};return}
+ if(page<0){$('#main').innerHTML=waitView();$('.actions').classList.add('hidden');const r=$('#retry');if(r)r.onclick=()=>{loginError='';try{liff.logout()}catch{}render();startLine()};return}
  $('.actions').classList.remove('hidden');
  $('#main').innerHTML=views[page]()+'<p class="err" id="err"></p>';
  $('#back').classList.toggle('hidden',page===0||page===5);
@@ -203,12 +203,14 @@ async function submit(){
 $('#back').onclick=()=>{page=Math.max(0,page-1);render()};
 $('#next').onclick=async()=>{const e=valid();if(page!==4)sendError='';if(e){$('#err').textContent=e;return}if(page===4)return submit();if(page===1){$('#next').disabled=true;await loadOpen()}page++;if(page===2&&d.date&&timeError()){if(d.time&&!timesFor(d.date,d.slot).includes(d.time))d.time=''}render()};
 async function loadCatalog(){try{const r=await fetch(API+'?action=services',{cache:'no-store',headers:apiHeaders});const v=await r.json();if(Array.isArray(v.services)&&v.services.length)CATALOG=v.services.map(x=>[String(x.name),Number(x.price),Number(x.duration)]).filter(x=>x[0]&&Number.isFinite(x[1])&&x[2]>0)}catch{}}
+const tokOk=()=>{try{const d=liff.getDecodedIDToken();return !!d&&d.exp*1000>Date.now()+120000}catch{return false}};
 async function startLine(){
  try{
   const c=await fetch(API+'?action=config',{headers:apiHeaders,cache:'no-store'}).then(r=>r.json());
   if(!c.enabled||!c.liff_id)throw Error('LINE 登入暫時無法使用');
   if(!window.liff)throw Error('LINE 登入元件尚未載入');
   await liff.init({liffId:c.liff_id});
+  if(liff.isLoggedIn()&&!tokOk()){try{liff.logout()}catch{}}// 登入憑證過期：重新登入
   if(!liff.isLoggedIn()){liff.login({redirectUri:location.href});return}
   lineToken=liff.getIDToken();if(!lineToken)throw Error('LINE 登入缺少必要授權');
   const r=await fetch(API,{method:'POST',headers:{...apiHeaders,'Content-Type':'application/json'},body:JSON.stringify({action:'member',line_id_token:lineToken})});
