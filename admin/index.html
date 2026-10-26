@@ -786,6 +786,16 @@ body:not([data-view="bookings"]) .admin-page-header #bookingCountSummary{display
 
 /* 2026-10-23 鬆活方案、新客體驗價 */
 .tag.plan{background:#e3eefb!important;color:#24507a!important}
+.copy-phone{margin:0 0 0 8px!important;min-height:0!important;padding:2px 10px!important;font-size:12px!important;border-radius:99px!important;border:1px solid #b9cdbf!important;background:#fff!important;color:#1c4431!important;vertical-align:middle;cursor:pointer}
+.copy-phone:hover{background:#eef4ef!important}
+.tag.home{background:#e4efe6!important;color:#1c4431!important}
+.reminder.home-reminder{border-left:4px solid #c8673f}
+.reminder-note{display:block;font-size:13px;color:#8a5a3c;margin-top:4px}
+.home-plan-panel .home-time-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.home-plan-panel .home-hint{font-size:14px;line-height:1.6;color:#5b625d;margin:8px 0}
+.home-plan-panel .home-hint.ok{background:#e6f4ea;color:#1d5b34;border:1px solid #a8d5b5;border-radius:10px;padding:10px 12px}
+.home-plan-panel .home-hint.is-warn{background:#fdecea;color:#a1251b;border:1px solid #f1b3ad;border-radius:10px;padding:10px 12px;font-weight:600}
+.home-addr{white-space:pre-line}
 .tag.trial{background:#efe6fa!important;color:#5a3a86!important}
 .tag.plan-out{background:#fbe3d6!important;color:#9a4426!important}
 .tag.trial-warn{background:#9a4426!important;color:#fff!important}
@@ -927,6 +937,84 @@ body:not([data-view="bookings"]) .admin-page-header #bookingCountSummary{display
 .plan-actions .plan-edit>summary::-webkit-details-marker{display:none}
 .plan-actions .plan-edit[open]{flex:1 1 100%;border-radius:12px!important;padding:0 12px 8px!important}
 .plan-actions .plan-delete{margin:0!important;min-height:32px;padding:4px 14px!important;font-size:13px!important;background:#fff!important;color:#9a4426!important;border:1px solid #e3c3b4!important;border-radius:999px!important}
+
+/* ---- 月曆改版 ---- */
+#bookingsPanel .cal-view-toggle{display:inline-flex;border:1px solid #cfdcd2;border-radius:10px;overflow:hidden;margin-left:4px}
+#bookingsPanel .cal-view-toggle button{border:0;border-radius:0;min-height:38px;padding:6px 14px;background:#fff;color:#1c4431}
+#bookingsPanel .cal-view-toggle button[aria-pressed=true]{background:#1c4431;color:#fff}
+#bookingsPanel .booking-calendar-day.closed{background:#f1f1ef!important;color:#a6aaa6}
+#bookingsPanel .booking-calendar-day.past{opacity:.55}
+#bookingsPanel .booking-calendar-day.past[aria-pressed=true]{opacity:1}
+#bookingsPanel .cal-open{font-size:10px;line-height:1.2;color:#4f7a60;background:#e6f0e8;border-radius:6px;padding:1px 5px;white-space:nowrap}
+#bookingsPanel .calendar-event.home::before{content:"🏠 "}
+#bookingsPanel .calendar-event.unscheduled{background:#fff!important;border:1px dashed #c8673f!important;border-left:3px dashed #c8673f!important;color:#8a4a2c!important}
+#bookingsPanel .booking-calendar-dot.home{border-radius:2px}
+#bookingsPanel .booking-calendar-dot.unscheduled{background:#fff!important;border:1.5px dashed #c8673f}
+#bookingsPanel .cal-legend .lg.pending{color:#c98a3e}#bookingsPanel .cal-legend .lg.confirmed{color:#338263}#bookingsPanel .cal-legend .lg.completed{color:#6f9a72}#bookingsPanel .cal-legend .lg.home,#bookingsPanel .cal-legend .lg.travel,#bookingsPanel .cal-legend .lg.open{color:#5d665f}
+@media (min-width:761px){#bookingsPanel .booking-calendar-dots{display:none}}
+@media (max-width:760px){
+ #bookingsPanel .booking-calendar-day{min-height:58px!important;padding:5px 1px!important;align-items:center}
+ #bookingsPanel .booking-calendar-day .calendar-event,#bookingsPanel .booking-calendar-day .calendar-day-count{display:none!important}
+ #bookingsPanel .booking-calendar-dots{justify-content:center}
+ #bookingsPanel .booking-calendar-dot{width:7px!important;height:7px!important}
+ #bookingsPanel .cal-open{font-size:9px;padding:0 3px}
+}
+#bookingsPanel .cal-day{margin:6px 0 14px;padding:14px;border:1px solid #dce8de;border-radius:14px;background:#fbfdfb}
+#bookingsPanel .cal-day h3{margin:0 0 2px;font-size:17px;color:#1c4431}
+#bookingsPanel .cal-day .cal-day-sub{margin:0 0 10px;font-size:13px;color:#6b746e}
+#bookingsPanel .cal-tl{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+#bookingsPanel .cal-tl li{display:grid;grid-template-columns:96px 1fr;gap:10px;align-items:center}
+#bookingsPanel .cal-tl .t{font-size:13px;color:#4c5650;font-variant-numeric:tabular-nums}
+#bookingsPanel .cal-tl .b{border-radius:10px;padding:8px 10px;font-size:14px;line-height:1.4;text-align:left;width:100%;margin:0;border:1px solid transparent;min-height:0}
+#bookingsPanel .cal-tl button.b{cursor:pointer}
+#bookingsPanel .cal-tl .b.pending{background:#fff4e7;border-color:#eed2aa;color:#7c5b32}
+#bookingsPanel .cal-tl .b.confirmed{background:#e0f1e7;border-color:#acd2bb;color:#23543a}
+#bookingsPanel .cal-tl .b.completed{background:#e5eddf;border-color:#c5d8c2;color:#486a47}
+#bookingsPanel .cal-tl .b.travel{background:repeating-linear-gradient(135deg,#f3efe8 0 6px,#e8e1d6 6px 12px);color:#7a6a58;font-size:12px;padding:4px 10px}
+#bookingsPanel .cal-tl .b.gap{background:#fff;border:1px dashed #9cc3a8;color:#2f6b49;font-weight:600}
+#bookingsPanel .cal-tl .b.unscheduled{background:#fff;border:1px dashed #c8673f;color:#8a4a2c}
+#bookingsPanel .cal-tl .b small{display:block;font-size:12px;opacity:.85;font-weight:400}
+#bookingsPanel .cal-day-empty{font-size:14px;color:#6b746e;margin:6px 0}
+#bookingsPanel .cal-week{display:grid;grid-template-columns:44px repeat(7,minmax(0,1fr));gap:0 4px;margin:16px 0;font-size:12px}
+#bookingsPanel .cal-week .wh{text-align:center;padding:6px 2px;border-radius:8px;background:#f5f1eb;color:#4b5a50;cursor:pointer;border:1px solid transparent;margin:0;min-height:0}
+#bookingsPanel .cal-week .wh[aria-pressed=true]{border-color:#1c4431}
+#bookingsPanel .cal-week .wh.today{background:#e0f1e7;font-weight:700}
+#bookingsPanel .cal-week .wh small{display:block;font-size:10px;color:#6b746e}
+#bookingsPanel .cal-week .wtodo{grid-column:span 1;min-height:22px;display:flex;flex-direction:column;gap:2px;padding:3px 0}
+#bookingsPanel .cal-week .axis{position:relative}
+#bookingsPanel .cal-week .axis span{position:absolute;right:4px;transform:translateY(-50%);font-size:10px;color:#8a938d}
+#bookingsPanel .cal-week .col{position:relative;background:#f4f4f2;border-radius:8px;overflow:hidden}
+#bookingsPanel .cal-week .col .openband{position:absolute;left:0;right:0;background:#fff;border-top:1px solid #dce8de;border-bottom:1px solid #dce8de}
+#bookingsPanel .cal-week .col .hl{position:absolute;left:0;right:0;border-top:1px dotted #e3e6e3}
+#bookingsPanel .cal-week .blk{position:absolute;left:3px;right:3px;border-radius:6px;padding:2px 4px;font-size:11px;line-height:1.25;overflow:hidden;text-align:left;margin:0;min-height:0;border:1px solid transparent;cursor:pointer}
+#bookingsPanel .cal-week .blk.pending{background:#fff4e7;border-color:#e6c391;color:#7c5b32}
+#bookingsPanel .cal-week .blk.confirmed{background:#dff0e5;border-color:#9ccab0;color:#23543a}
+#bookingsPanel .cal-week .blk.completed{background:#e5eddf;border-color:#c5d8c2;color:#486a47}
+#bookingsPanel .cal-week .tr{position:absolute;left:3px;right:3px;background:repeating-linear-gradient(135deg,#efe9df 0 5px,#e3dbcf 5px 10px);border-radius:4px;opacity:.9}
+#bookingsPanel .cal-week .chip-todo{display:block;width:100%;margin:0;min-height:0;padding:2px 4px;border-radius:6px;border:1px dashed #c8673f;background:#fff;color:#8a4a2c;font-size:10px;text-align:left;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+
+@media (max-width:420px){.home-plan-panel .home-time-grid{grid-template-columns:1fr}#bookingsPanel .cal-tl li{grid-template-columns:78px 1fr;gap:8px}#bookingsPanel .cal-tl .t{font-size:12px}}
+#cards .booking-row-body>.grid>div{min-width:0;overflow-wrap:anywhere}
+#cards .booking-row-body>*,#cards .booking-status-control>*{min-width:0;max-width:100%}#cards .booking-row-body{min-width:0}
+.home-plan-panel{min-width:0;max-width:100%}.home-plan-panel select,.home-plan-panel input{width:100%;min-width:0;max-width:100%;box-sizing:border-box}.home-plan-panel .home-time-grid>label{min-width:0}
+@media (max-width:360px){#cards .booking-row-body>.grid{grid-template-columns:minmax(0,1fr)!important}#cards .booking-row-body>.grid>div{grid-column:auto!important}}
+
+#bookingsPanel .cal-wlist{display:grid;gap:8px;margin:16px 0}
+#bookingsPanel .cal-wlist .wl-row{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;width:100%;margin:0;padding:10px 12px;border-radius:12px;border:1px solid #dce8de;background:#fff;text-align:left;min-height:0;color:#23402f}
+#bookingsPanel .cal-wlist .wl-row[aria-pressed=true]{border-color:#1c4431;box-shadow:0 0 0 2px rgba(28,68,49,.15)}
+#bookingsPanel .cal-wlist .wl-row.today{background:#eef6f0}
+#bookingsPanel .cal-wlist .wl-row.closed{background:#f3f3f1;color:#8b918c}
+#bookingsPanel .cal-wlist .wl-row.past{opacity:.6}
+#bookingsPanel .cal-wlist .wl-date strong{display:block;font-size:15px}
+#bookingsPanel .cal-wlist .wl-date small{display:block;font-size:12px;color:#6b746e;white-space:nowrap}
+#bookingsPanel .cal-wlist .wl-info{font-size:14px;display:flex;flex-direction:column;gap:4px;align-items:flex-end;text-align:right}
+#bookingsPanel .cal-wlist .wl-flags{display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end}
+#bookingsPanel .cal-wlist .wl-flags em{font-style:normal;font-size:11px;padding:1px 7px;border-radius:99px}
+#bookingsPanel .cal-wlist .wl-flags em.pending{background:#fff1dc;color:#8a5a1c}
+#bookingsPanel .cal-wlist .wl-flags em.todo{background:#fff;border:1px dashed #c8673f;color:#8a4a2c}
+#bookingsPanel .cal-wlist .wl-flags em.home{background:#e4efe6;color:#1c4431}
+#bookingsPanel .cal-wlist .wl-go{font-size:18px;color:#7b847e}
+#bookingsPanel .cal-wlist .wl-slot .cal-day{margin:0 0 4px}
 </style></head>
 <header class="admin-page-header"><div class="admin-header-summary"><h1>🌿 鬆沐｜<span id="pageName">預約管理</span></h1><section id="bookingCountSummary" class="booking-count-banner header-chips" hidden aria-labelledby="currentBookingsTitle"><h2 id="currentBookingsTitle" class="sr-only">預約摘要</h2><div class="chip-row" role="status" aria-live="polite" aria-atomic="true"><button type="button" class="head-chip pending" id="chipPending" title="只顯示待確認預約">待確認 <b id="pendingCount">0</b></button><button type="button" class="head-chip today" id="chipToday" title="查看今日行程">今日 <b id="todayCount">0</b></button><span class="head-chip total" title="尚未完成或取消的預約">進行中 <b class="booking-count-value" id="count">…</b></span></div></section></div><div id="adminTopActions" class="admin-top-actions" hidden aria-label="管理操作"><details id="adminAccount" class="admin-account"><summary aria-label="管理員帳號"><svg class="account-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8.5" r="3.6"/><path d="M4.8 20c.9-3.6 3.8-5.6 7.2-5.6s6.3 2 7.2 5.6"/></svg><span class="account-text">管理員帳號</span></summary><div class="admin-account-menu"><span class="muted">目前登入帳號</span><p id="adminAccountEmail"></p><button id="accountForgot" class="linkbtn" type="button">忘記密碼？</button><button id="menuLogout" class="menu-logout" type="button">登出</button></div></details><button id="logout" class="toolbar-logout" type="button">登出</button></div></header><button id="installApp" hidden>安裝鬆沐管理</button><p id="installStatus" class="muted" role="status"></p><p id="status" role="status"></p>
 <section id="login" class="card"><form id="loginForm"><p>管理員：guts1989921@gmail.com</p><label>密碼 <input id="password" required type="password" autocomplete="current-password" minlength="12" autofocus></label><div><button id="signin" type="submit">登入</button><button id="signup" type="button" hidden>首次建立後臺登入</button><button id="forgot" class="linkbtn" type="button">忘記密碼？</button></div><p class="muted">忘記密碼時會寄重設信到管理員信箱。請勿把密碼傳給任何人。</p></form></section>
@@ -946,7 +1034,7 @@ body:not([data-view="bookings"]) .admin-page-header #bookingCountSummary{display
 <div data-subnav-group="revenue" hidden><button type="button" data-admin-view="income">營運概況</button></div>
 <div data-subnav-group="service" hidden><button type="button" data-admin-view="services">服務項目</button><button type="button" data-admin-view="opening">時段設定</button></div>
 
-</div><p class="sidebar-foot">SONGMU · 慢下來，鬆一點</p></nav><section id="bookingsPanel" data-admin-panel="bookings"><section id="todayAgenda" class="card today-agenda" aria-label="今日行程"></section><section class="booking-list-section" aria-label="預約清單"><div class="list-head"><h2 class="active-bookings-title">預約清單</h2><button id="reload" class="toolbar-refresh" type="button" aria-label="重新整理預約資料">↻ <span>重新整理</span></button></div><p id="bookingLastUpdated" class="booking-last-updated" role="status" aria-live="polite">尚未更新預約資料</p><div id="bookingFilters" class="booking-overview-filters" role="group" aria-label="篩選預約狀態"><button type="button" data-booking-filter="all" aria-pressed="true">全部</button><button type="button" data-booking-filter="pending" aria-pressed="false">待確認</button><button type="button" data-booking-filter="confirmed" aria-pressed="false">已確認</button></div><p id="bookingListCount" class="muted" role="status"></p><div id="cards"></div></section><section class="card booking-calendar" aria-label="預約月曆"><div class="booking-calendar-head"><div><h2>預約月曆</h2><p class="muted">點選日期篩選預約；在客人列表確認、改期或完成服務。</p></div><div class="booking-calendar-nav"><button type="button" id="calendarPrev" aria-label="上一個月">‹</button><strong id="calendarMonth"></strong><button type="button" id="calendarNext" aria-label="下一個月">›</button><button type="button" id="calendarToday">今天</button></div></div><div id="bookingCalendarGrid" class="booking-calendar-grid" role="group" aria-label="每月預約日期"></div><div class="booking-calendar-footer"><span id="calendarSelection" class="muted">顯示全部預約</span><button id="calendarClear" type="button" class="opening-light" hidden>顯示全部日期</button></div><p class="booking-calendar-legend"><span>● 待確認</span><span>● 已確認</span><span>● 已完成</span><span>● 已取消</span></p></section></section><section id="historyPage" class="card history-panel" data-admin-panel="history" aria-label="服務紀錄" hidden><div class="history-header"><div><h2>服務紀錄</h2><p class="muted">查看已完成或取消的服務與客人資料</p></div><button id="historyReload" class="toolbar-refresh" type="button" aria-label="更新服務紀錄">↻ 更新</button></div><div class="history-categories" role="group" aria-label="服務紀錄分類"><button id="historyAll" type="button">全部紀錄</button><button id="historyNormal" type="button">正常完成</button><button id="historyBefore" type="button">服務前取消</button><button id="historyDuring" type="button">服務中取消</button></div><label class="history-search-label" for="historySearch">搜尋客人</label><input id="historySearch" placeholder="姓名、手機、症狀、備註" type="search"><h3 id="historyTitle">全部會員紀錄</h3><p class="muted">同一位客人的紀錄按預約時間由舊到新排列。</p><p id="historyCount" role="status"></p><div id="historyCards"></div></section><section id="openingPanel" data-admin-panel="opening" hidden><section class="card opening-panel" aria-label="開放預約時間"><div class="opening-head"><div><h2>時段設定</h2><p class="muted">選日期、設定時段，儲存後客人即可在預約頁選擇。</p></div><button id="openingReload" type="button" class="opening-light">更新時段</button></div><div class="opening-fields"><label>開放日期（台灣時間）<input type="date" id="openingDate"></label><label>開始時間（台灣）<input type="time" id="openingStart" value="10:00" step="1800"></label><label>結束時間（台灣）<input type="time" id="openingEnd" value="19:00" step="1800"></label></div><div class="opening-buttons"><button id="openingSave" type="button">＋ 開放／更新時段</button><button id="openingRemove" type="button" class="opening-light">關閉當日預約</button></div><p id="openingStatus" class="muted" role="status"></p><div id="openingList" class="opening-list"></div><div class="opening-preview"><h3>客人實際可選時間</h3><p class="muted">選擇日期和服務後，可預覽客人目前看得到的開始時間（台灣時間）。</p><label>預覽服務 <select id="previewService"><option value="30">肌肉舒壓 30 分鐘</option><option value="60">半身放鬆 60 分鐘</option><option value="90" selected>全身放鬆 90 分鐘</option><option value="120">全身 120 分鐘</option></select></label><button id="previewRefresh" class="opening-light" type="button">查看客人可選時段</button><div id="previewSlots" class="preview-slots" aria-live="polite"></div></div><p class="muted">此處設定的是客人可選的開始時間區間，包含最後時間。例如設定 13:00～19:00，客人可選到 19:00 開始服務；服務結束可晚於 19:00（仍會排除已預約及衝突時段）。使用台灣時間；每 30 分鐘為一個刻度。已有待確認或已確認預約的日期，不可直接關閉或縮短至影響客人時段。</p></section></section><section id="incomePanel" data-admin-panel="income" hidden><section class="card stats-panel" aria-label="營運概況"><div class="income-page-header"><h2>營運概況</h2><button id="export" class="toolbar-export" type="button">↓ <span>匯出 Excel 報表</span></button></div><div class="stats-toolbar"><div id="statsPeriod" class="stats-period" role="group" aria-label="統計期間"><button type="button" data-period="today" aria-pressed="false">今日</button><button type="button" data-period="week" aria-pressed="false">本週</button><button type="button" data-period="month" aria-pressed="true">本月</button><button type="button" data-period="custom" aria-pressed="false">自訂</button></div><div id="statsRange" class="stats-range" hidden><label>從 <input type="date" id="statsFrom"></label><label>到 <input type="date" id="statsTo"></label></div></div><p id="statsCaption" class="muted stats-caption"></p><div id="incomeSummary" class="stats-grid"></div><div class="stats-tabs" role="tablist" aria-label="分析項目"><button type="button" role="tab" id="statsTabTrend" data-stats-tab="trend" aria-controls="statsPaneTrend" aria-selected="true">營收趨勢</button><button type="button" role="tab" id="statsTabClients" data-stats-tab="clients" aria-controls="statsPaneClients" aria-selected="false" tabindex="-1">新舊客</button><button type="button" role="tab" id="statsTabServices" data-stats-tab="services" aria-controls="statsPaneServices" aria-selected="false" tabindex="-1">服務佔比</button></div><section id="statsPaneTrend" class="report-section" role="tabpanel" aria-labelledby="statsTabTrend" data-stats-pane="trend"><div class="report-heading" hidden><label>月份 <input id="reportMonth" type="month"></label></div><p id="reportSummary" class="muted"></p><div id="revenueChart" class="revenue-chart"></div></section><section id="statsPaneClients" class="report-section" role="tabpanel" aria-labelledby="statsTabClients" data-stats-pane="clients" hidden><div id="clientReport"></div></section><section id="statsPaneServices" class="report-section" role="tabpanel" aria-labelledby="statsTabServices" data-stats-pane="services" hidden><div id="serviceReport" class="table-scroll"></div></section><p class="muted stats-footnote">營收只計入「確認服務已完成」的預約；鬆活方案在購買日一次計入，之後用方案扣次的服務不重複計算。依預約日期（台灣時間）統計，本週為週一起算。每張卡下方會和前一段相同天數比較：今日比昨天、本週比上週同期、本月比上月同期（例如 10/1～10/23 比 9/1～9/23）。▲ 代表變好、▼ 代表變差；比較的那段完成少於 5 筆時，只顯示差多少，不顯示百分比。</p></section></section><section id="searchPanel" data-admin-panel="search" hidden><section class="card"><h2>會員資料</h2><label class="member-search-label">搜尋姓名、手機、症狀、備註 <input id="search" type="search" placeholder="例如：王小明 或 0912" autocomplete="off"></label><p class="muted">會同時篩選下方會員卡與全部預約紀錄（含完成與取消）。</p><p id="customerSearchCount" aria-live="polite"></p><div id="customerSearchCards"></div><h3 id="memberListTitle" class="member-list-title">全部會員</h3><div id="memberSummary" class="member-grid"></div></section></section>
+</div><p class="sidebar-foot">SONGMU · 慢下來，鬆一點</p></nav><section id="bookingsPanel" data-admin-panel="bookings"><section id="todayAgenda" class="card today-agenda" aria-label="今日行程"></section><section class="booking-list-section" aria-label="預約清單"><div class="list-head"><h2 class="active-bookings-title">預約清單</h2><button id="reload" class="toolbar-refresh" type="button" aria-label="重新整理預約資料">↻ <span>重新整理</span></button></div><p id="bookingLastUpdated" class="booking-last-updated" role="status" aria-live="polite">尚未更新預約資料</p><div id="bookingFilters" class="booking-overview-filters" role="group" aria-label="篩選預約狀態"><button type="button" data-booking-filter="all" aria-pressed="true">全部</button><button type="button" data-booking-filter="pending" aria-pressed="false">待確認</button><button type="button" data-booking-filter="confirmed" aria-pressed="false">已確認</button></div><p id="bookingListCount" class="muted" role="status"></p><div id="cards"></div></section><section class="card booking-calendar" aria-label="預約月曆"><div class="booking-calendar-head"><div><h2>預約月曆</h2><p class="muted">點日期看當天時間軸與空檔；下方清單只顯示那天的預約。</p></div><div class="booking-calendar-nav"><button type="button" id="calendarPrev" aria-label="上一個月">‹</button><strong id="calendarMonth"></strong><button type="button" id="calendarNext" aria-label="下一個月">›</button><button type="button" id="calendarToday">今天</button><span class="cal-view-toggle" role="group" aria-label="切換月曆檢視"><button type="button" id="calendarViewMonth" aria-pressed="true">月</button><button type="button" id="calendarViewWeek" aria-pressed="false">週</button></span></div></div><div id="bookingCalendarGrid" class="booking-calendar-grid" role="group" aria-label="每月預約日期"></div><div id="bookingWeek" class="cal-week" hidden></div><section id="calendarDayPanel" class="cal-day" aria-live="polite" hidden></section><div class="booking-calendar-footer"><span id="calendarSelection" class="muted">顯示全部預約</span><button id="calendarClear" type="button" class="opening-light" hidden>顯示全部日期</button></div><p class="booking-calendar-legend cal-legend"><span class="lg pending">● 待確認</span><span class="lg confirmed">● 已確認</span><span class="lg completed">● 已完成</span><span class="lg home">🏠 到府</span><span class="lg travel">▨ 車程</span><span class="lg open">10–21 開放時間</span></p></section></section><section id="historyPage" class="card history-panel" data-admin-panel="history" aria-label="服務紀錄" hidden><div class="history-header"><div><h2>服務紀錄</h2><p class="muted">查看已完成或取消的服務與客人資料</p></div><button id="historyReload" class="toolbar-refresh" type="button" aria-label="更新服務紀錄">↻ 更新</button></div><div class="history-categories" role="group" aria-label="服務紀錄分類"><button id="historyAll" type="button">全部紀錄</button><button id="historyNormal" type="button">正常完成</button><button id="historyBefore" type="button">服務前取消</button><button id="historyDuring" type="button">服務中取消</button></div><label class="history-search-label" for="historySearch">搜尋客人</label><input id="historySearch" placeholder="姓名、手機、症狀、備註" type="search"><h3 id="historyTitle">全部會員紀錄</h3><p class="muted">同一位客人的紀錄按預約時間由舊到新排列。</p><p id="historyCount" role="status"></p><div id="historyCards"></div></section><section id="openingPanel" data-admin-panel="opening" hidden><section class="card opening-panel" aria-label="開放預約時間"><div class="opening-head"><div><h2>時段設定</h2><p class="muted">選日期、設定時段，儲存後客人即可在預約頁選擇。</p></div><button id="openingReload" type="button" class="opening-light">更新時段</button></div><div class="opening-fields"><label>開放日期（台灣時間）<input type="date" id="openingDate"></label><label>開始時間（台灣）<input type="time" id="openingStart" value="10:00" step="1800"></label><label>結束時間（台灣）<input type="time" id="openingEnd" value="19:00" step="1800"></label></div><div class="opening-buttons"><button id="openingSave" type="button">＋ 開放／更新時段</button><button id="openingRemove" type="button" class="opening-light">關閉當日預約</button></div><p id="openingStatus" class="muted" role="status"></p><div id="openingList" class="opening-list"></div><div class="opening-preview"><h3>客人實際可選時間</h3><p class="muted">選擇日期和服務後，可預覽客人目前看得到的開始時間（台灣時間）。</p><label>預覽服務 <select id="previewService"><option value="30">肌肉舒壓 30 分鐘</option><option value="60">半身放鬆 60 分鐘</option><option value="90" selected>全身放鬆 90 分鐘</option><option value="120">全身 120 分鐘</option></select></label><button id="previewRefresh" class="opening-light" type="button">查看客人可選時段</button><div id="previewSlots" class="preview-slots" aria-live="polite"></div></div><p class="muted">此處設定的是客人可選的開始時間區間，包含最後時間。例如設定 13:00～19:00，客人可選到 19:00 開始服務；服務結束可晚於 19:00（仍會排除已預約及衝突時段）。使用台灣時間；每 30 分鐘為一個刻度。已有待確認或已確認預約的日期，不可直接關閉或縮短至影響客人時段。</p></section></section><section id="incomePanel" data-admin-panel="income" hidden><section class="card stats-panel" aria-label="營運概況"><div class="income-page-header"><h2>營運概況</h2><button id="export" class="toolbar-export" type="button">↓ <span>匯出 Excel 報表</span></button></div><div class="stats-toolbar"><div id="statsPeriod" class="stats-period" role="group" aria-label="統計期間"><button type="button" data-period="today" aria-pressed="false">今日</button><button type="button" data-period="week" aria-pressed="false">本週</button><button type="button" data-period="month" aria-pressed="true">本月</button><button type="button" data-period="custom" aria-pressed="false">自訂</button></div><div id="statsRange" class="stats-range" hidden><label>從 <input type="date" id="statsFrom"></label><label>到 <input type="date" id="statsTo"></label></div></div><p id="statsCaption" class="muted stats-caption"></p><div id="incomeSummary" class="stats-grid"></div><div class="stats-tabs" role="tablist" aria-label="分析項目"><button type="button" role="tab" id="statsTabTrend" data-stats-tab="trend" aria-controls="statsPaneTrend" aria-selected="true">營收趨勢</button><button type="button" role="tab" id="statsTabClients" data-stats-tab="clients" aria-controls="statsPaneClients" aria-selected="false" tabindex="-1">新舊客</button><button type="button" role="tab" id="statsTabServices" data-stats-tab="services" aria-controls="statsPaneServices" aria-selected="false" tabindex="-1">服務佔比</button></div><section id="statsPaneTrend" class="report-section" role="tabpanel" aria-labelledby="statsTabTrend" data-stats-pane="trend"><div class="report-heading" hidden><label>月份 <input id="reportMonth" type="month"></label></div><p id="reportSummary" class="muted"></p><div id="revenueChart" class="revenue-chart"></div></section><section id="statsPaneClients" class="report-section" role="tabpanel" aria-labelledby="statsTabClients" data-stats-pane="clients" hidden><div id="clientReport"></div></section><section id="statsPaneServices" class="report-section" role="tabpanel" aria-labelledby="statsTabServices" data-stats-pane="services" hidden><div id="serviceReport" class="table-scroll"></div></section><p class="muted stats-footnote">營收只計入「確認服務已完成」的預約；鬆活方案在購買日一次計入，之後用方案扣次的服務不重複計算。依預約日期（台灣時間）統計，本週為週一起算。每張卡下方會和前一段相同天數比較：今日比昨天、本週比上週同期、本月比上月同期（例如 10/1～10/23 比 9/1～9/23）。▲ 代表變好、▼ 代表變差；比較的那段完成少於 5 筆時，只顯示差多少，不顯示百分比。</p></section></section><section id="searchPanel" data-admin-panel="search" hidden><section class="card"><h2>會員資料</h2><label class="member-search-label">搜尋姓名、手機、症狀、備註 <input id="search" type="search" placeholder="例如：王小明 或 0912" autocomplete="off"></label><p class="muted">會同時篩選下方會員卡與全部預約紀錄（含完成與取消）。</p><p id="customerSearchCount" aria-live="polite"></p><div id="customerSearchCards"></div><h3 id="memberListTitle" class="member-list-title">全部會員</h3><div id="memberSummary" class="member-grid"></div></section></section>
 <section id="servicesPanel" class="card" data-admin-panel="services" hidden><div class="report-heading"><h2>服務項目</h2><button id="servicesReload" type="button">更新清單</button></div><p class="feature-notice">可直接編輯服務名稱、價格、時長、說明及上下架。儲存後客人預約頁會讀取最新上架清單；既有預約保留原服務及成交價格。</p><p id="servicesStatus" role="status"></p><div id="serviceCatalog"></div></section><!-- Retained for restoration only; excluded from active navigation and routing. --><section id="settingsPanel" class="card" data-retired-admin-panel="settings" hidden inert><h2>系統設定</h2><div class="settings-grid"><section><h3>管理員帳號</h3><p>guts1989921@gmail.com</p><p class="muted">若需重設密碼，登出後使用登入頁的「忘記密碼？」。</p></section><section><h3>日期與時間</h3><p>台灣時間 · Asia/Taipei</p><p class="muted">預約、收入報表與開放時段皆使用台灣時間。</p></section><section><h3>通知設定</h3><p>沿用現有 LINE 服務結果通知</p><p class="muted">通知結果可在服務紀錄查看；失敗時可使用原有重試功能。</p></section><section><h3>基本資訊與通知方式編輯</h3><p class="feature-notice">尚未開放：目前沒有可儲存店名、地址、電話與通知偏好的設定介面。</p></section></div><p class="muted">介面版本：2026.10.22 · 參考圖改版</p></section></section><nav id="bottomNav" class="bottom-nav" aria-label="主選單" hidden><button type="button" data-bottom-group="booking" aria-current="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6.5h16v13H4z"/><path d="M4 10.5h16M8.5 4v4M15.5 4v4"/></svg><span>預約</span><b id="bottomPending" class="nav-badge" hidden></b></button><button type="button" data-bottom-group="member" aria-current="false"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="9" r="3.2"/><path d="M3.5 19c.6-3.2 2.8-5 5.5-5s4.9 1.8 5.5 5"/><path d="M15.5 6.2a3 3 0 0 1 0 5.6M17.5 14.4c1.6.6 2.7 2.2 3 4.6"/></svg><span>會員</span></button><button type="button" data-bottom-group="revenue" aria-current="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V4M4 20h16"/><path d="M8 16v-4M12 16V8M16 16v-6"/></svg><span>營運</span></button><button type="button" data-bottom-group="service" aria-current="false"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 7.5V12l3 2"/></svg><span>服務</span></button></nav><button id="pageUp" class="page-up" type="button" aria-label="回到頂端" title="回到頂端" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h14M12 20V8m-6 6 6-6 6 6"/></svg></button>
 <script src="/songmu-booking/admin/config.js"></script><script src="/songmu-booking/admin/xlsx.js?v=20261006-income"></script><script src="/songmu-booking/admin/revenue.js?v=20261006-income"></script><script>
 const ADMIN_PATH='/songmu-booking/admin/',ADMIN_URL='https://ck1011989.github.io'+ADMIN_PATH;
@@ -957,7 +1045,10 @@ function friendlyError(text=''){const s=String(text).toLowerCase();if(s.includes
 const API_TIMEOUT_MS=20000;
 async function api(path,options={}){if(adminSession&&adminSession.expires_at*1000<=Date.now()+60000)await refreshAdminSession();const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),API_TIMEOUT_MS);let r;try{r=await fetch(SB+path,{...options,signal:controller.signal,headers:{apikey:KEY,...(token?{Authorization:'Bearer '+token}:{}),'Content-Type':'application/json',...(options.headers||{})}})}catch(e){throw Error(e.name==='AbortError'?'連線逾時：網路太慢或中斷。若剛才在儲存，請先按「重新整理」確認是否已存好再重試。':navigator.onLine===false?'目前離線，請連上網路後再試。':'網路連線失敗，請稍後再試。')}finally{clearTimeout(timer)}const raw=await r.text();let v;try{v=raw?JSON.parse(raw):null}catch{v=null}if(!r.ok)throw Error(friendlyError(v?.msg||v?.message||v?.error_description||'操作失敗，請重新登入'));return v}
 const labels={pending:'待確認',confirmed:'已確認',completed:'已完成',cancelled:'已取消'},outcomes={normal:'正常完成',cancelled_before_service:'服務前取消',cancelled_during_service:'服務中取消'};
-function field(parent,label,value){const d=document.createElement('div'),b=document.createElement('b');b.textContent=label+'：';if(label==='手機'&&/^[0-9+\-\s()]{8,}$/.test(String(value||''))){const a=document.createElement('a');a.href='tel:'+String(value).replace(/[^0-9+]/g,'');a.textContent=value;d.append(b,a)}else d.append(b,document.createTextNode(value||'—'));parent.append(d)}
+function copyPhoneButton(phone){const b=document.createElement('button');b.type='button';b.className='copy-phone';b.textContent='複製';b.title='複製電話號碼';b.setAttribute('aria-label','複製電話 '+phone);
+ b.onclick=async e=>{e.preventDefault();e.stopPropagation();const v=String(phone).replace(/[^0-9+]/g,'');let ok=false;try{await navigator.clipboard.writeText(v);ok=true}catch{try{const t=document.createElement('textarea');t.value=v;t.style.position='fixed';t.style.opacity='0';document.body.append(t);t.select();ok=document.execCommand('copy');t.remove()}catch{}}
+  b.textContent=ok?'已複製':'複製失敗';msg(ok?'已複製電話 '+v:'無法自動複製，請長按號碼複製。');setTimeout(()=>{b.textContent='複製'},1800)};return b}
+function field(parent,label,value){const d=document.createElement('div'),b=document.createElement('b');b.textContent=label+'：';if(label==='手機'&&/^[0-9+\-\s()]{8,}$/.test(String(value||''))){const a=document.createElement('a');a.href='tel:'+String(value).replace(/[^0-9+]/g,'');a.textContent=value;d.append(b,a,copyPhoneButton(value))}else d.append(b,document.createTextNode(value||'—'));parent.append(d)}
 function isArchived(r){return r.status==='completed'||r.status==='cancelled'}
 function recordOutcome(r){return r.outcome==='cancelled_during_service'?'cancelled_during_service':r.status==='cancelled'||r.outcome==='cancelled_before_service'?'cancelled_before_service':'normal'}
 
@@ -1045,6 +1136,7 @@ document.querySelectorAll('[data-booking-filter]').forEach(button=>button.onclic
 const bookingBusy=new Set();
 function bookingActionError(e){
  const text=String(e.message||e);
+ if(text.includes('重疊'))return '這個時間會撞到已確認的預約（含車程與10分鐘整理），請改時間。';
  if(text.includes('reschedule_conflict'))return '這個時段已有其他預約（含10分鐘整理時間），請選擇其他時間。';
  if(text.includes('outside_opening_hours'))return '這個時間未開放預約，請先到「開放預約時間」設定。';
  if(text.includes('invalid_reschedule_time'))return '請選擇未來的整點或半點時間。';
@@ -1071,7 +1163,7 @@ function bookingStatusButtons(r){
   if(!saved?.length||saved[0].status!==value)throw Error('這筆預約已變更，請更新資料後再試。');
   Object.assign(r,saved[0]);savedResult('已儲存：預約狀態為「'+labels[value]+'」。');
  };
- if(r.status==='pending'){
+ if(r.status==='pending'&&!homeUnscheduled(r)){
   const accept=button('確認預約','booking-primary');accept.onclick=()=>{if(confirm(context()+'\n服務：'+(r.service_name||'—')+'\n\n確認接受這筆預約？'))return run(()=>changeStatus('confirmed'))};actions.append(accept);
  }
  
@@ -1144,7 +1236,7 @@ function bookingStatusButtons(r){
   return run(async()=>{const value=notes.value.trim();const saved=await api('/rest/v1/appointments?id=eq.'+r.id+'&status=eq.'+r.status,{method:'PATCH',headers:{Prefer:'return=representation'},body:JSON.stringify({admin_notes:value||null})});if(!saved?.length||(saved[0].admin_notes||'')!==value)throw Error('未收到備註儲存成功結果。');Object.assign(r,saved[0]);savedResult('店家備註已儲存，僅後台可見。')});
  };
  notesPanel.append(notesLabel,saveNotes);
- group.append(badge,actions,editTime,cancelPanel,notesPanel);
+ group.append(badge,actions,isHome(r)?homePanel(r,run,savedResult,feedback):editTime,cancelPanel,notesPanel);
  // 只在服務開始前提供「改回待確認」（用於誤按確認），改為一行小字連結
  if(r.status==='confirmed'&&Date.now()<Date.parse(r.starts_at)){const revert=button('誤按確認？改回待確認','revert-link');revert.onclick=()=>{if(confirm(context()+'\n\n確認改回「待確認」？'))return run(()=>changeStatus('pending'))};group.append(revert)}
  group.append(feedback);return group;
@@ -1176,10 +1268,89 @@ window.addEventListener('focus',updateCompletionControls);
 let calendarMonthDate=new Date();calendarMonthDate=new Date(calendarMonthDate.getFullYear(),calendarMonthDate.getMonth(),1);let calendarSelectedDate=null;
 const calendarDateFormat=new Intl.DateTimeFormat('sv-SE',{timeZone:'Asia/Taipei',year:'numeric',month:'2-digit',day:'2-digit'});
 function calendarTaipeiDate(value){return calendarDateFormat.format(new Date(value))}
-function drawBookingCalendar(){const grid=$('bookingCalendarGrid');if(!grid)return;grid.replaceChildren();const year=calendarMonthDate.getFullYear(),month=calendarMonthDate.getMonth(),today=calendarTaipeiDate(Date.now());$('calendarMonth').textContent=year+' 年 '+(month+1)+' 月';const byDay=new Map();for(const r of records){const key=calendarTaipeiDate(r.starts_at);if(!byDay.has(key))byDay.set(key,[]);byDay.get(key).push(r)}for(const name of ['日','一','二','三','四','五','六']){const el=document.createElement('span');el.className='booking-calendar-weekday';el.textContent=name;grid.append(el)}const first=new Date(year,month,1).getDay(),last=new Date(year,month+1,0).getDate();for(let i=0;i<first;i++){const empty=document.createElement('span');empty.className='booking-calendar-day empty';grid.append(empty)}for(let day=1;day<=last;day++){const date=year+'-'+String(month+1).padStart(2,'0')+'-'+String(day).padStart(2,'0');const matches=byDay.get(date)||[];const button=document.createElement('button');button.type='button';button.className='booking-calendar-day'+(date===today?' today':'');button.setAttribute('aria-pressed',String(calendarSelectedDate===date));button.setAttribute('aria-label',date+'，'+matches.length+' 筆預約');const number=document.createElement('span');number.textContent=day;button.append(number);const dots=document.createElement('span');dots.className='booking-calendar-dots';for(const status of ['pending','confirmed','completed','cancelled']){if(matches.some(r=>r.status===status)){const dot=document.createElement('span');dot.className='booking-calendar-dot '+status;dots.append(dot)}}button.append(dots);for(const r of matches.slice().sort((a,b)=>Date.parse(a.starts_at)-Date.parse(b.starts_at)).slice(0,2)){const event=document.createElement('span');event.className='calendar-event '+r.status;event.textContent=new Date(r.starts_at).toLocaleTimeString('zh-TW',{timeZone:'Asia/Taipei',hour:'2-digit',minute:'2-digit',hour12:false})+' '+(r.submitted_name||r.customers?.name||'預約');event.title=event.textContent+' · '+(labels[r.status]||r.status);button.append(event)}if(matches.length){const total=document.createElement('span');total.className='calendar-day-count';total.textContent=matches.length+' 筆';button.append(total)}button.onclick=()=>{calendarSelectedDate=calendarSelectedDate===date?null:date;show()};grid.append(button)}$('calendarSelection').textContent=calendarSelectedDate?'已選 '+formatDay(calendarSelectedDate)+'，下方清單只顯示這天（再點一次取消）':'點日期可只看那天的預約';$('calendarClear').hidden=!calendarSelectedDate}
-$('calendarPrev').onclick=()=>{calendarMonthDate=new Date(calendarMonthDate.getFullYear(),calendarMonthDate.getMonth()-1,1);drawBookingCalendar()};
-$('calendarNext').onclick=()=>{calendarMonthDate=new Date(calendarMonthDate.getFullYear(),calendarMonthDate.getMonth()+1,1);drawBookingCalendar()};
-$('calendarToday').onclick=()=>{const parts=calendarTaipeiDate(Date.now()).split('-').map(Number);calendarMonthDate=new Date(parts[0],parts[1]-1,1);calendarSelectedDate=calendarTaipeiDate(Date.now());show()};
+let calendarView='month';
+const hm=m=>String(Math.floor(m/60)).padStart(2,'0')+':'+String(m%60).padStart(2,'0');
+const twMinutes=ms=>{const t=new Date(ms+8*36e5);return t.getUTCHours()*60+t.getUTCMinutes()};
+function dayOpening(date){let list=[];try{list=openingDays||[]}catch{}return list.find(d=>d.day===date)}
+function openMinutes(o){const [h,m]=String(o.opens).split(':').map(Number);return [h*60+(m||0),Number(o.closes_minutes)]}
+function openShort(o){const [a,b]=openMinutes(o);const f=x=>x%60?hm(x):String(x/60);return f(a)+'–'+f(b)}
+function calKey(r){return homeUnscheduled(r)?((r.home_request||{}).date||calendarTaipeiDate(r.starts_at)):calendarTaipeiDate(r.starts_at)}
+function recordsOn(date){return records.filter(r=>r.status!=='cancelled'&&calKey(r)===date)}
+function dayTimeline(date){
+ const box=$('calendarDayPanel');if(!box)return;box.replaceChildren();if(!date){box.hidden=true;return}box.hidden=false;
+ const o=dayOpening(date),items=recordsOn(date),todo=items.filter(homeUnscheduled),sched=items.filter(r=>!homeUnscheduled(r)).sort((a,b)=>busyRange(a)[0]-busyRange(b)[0]);
+ const h=document.createElement('h3');h.textContent=formatDay(date)+' 時間軸';const sub=document.createElement('p');sub.className='cal-day-sub';
+ sub.textContent=(o?'開放 '+hm(openMinutes(o)[0])+'–'+hm(openMinutes(o)[1]):'這天未開放')+'・'+sched.length+' 筆預約'+(todo.length?'・'+todo.length+' 筆到府待排':'');box.append(h,sub);
+ const ul=document.createElement('ul');ul.className='cal-tl';
+ const row=(t,el)=>{const li=document.createElement('li');const a=document.createElement('span');a.className='t';a.textContent=t;li.append(a,el);ul.append(li)};
+ const blk=(cls,text,small,onclick)=>{const b=document.createElement(onclick?'button':'div');if(onclick){b.type='button';b.onclick=onclick}b.className='b '+cls;b.textContent=text;if(small){const s2=document.createElement('small');s2.textContent=small;b.append(s2)}return b};
+ for(const r of todo)row('待排',blk('unscheduled','🏠 '+bookingName(r)+'・'+(r.service_name||''),'客人希望 '+homeWish(r)+'・按這裡安排時間',()=>{openHomePanelId=r.id;focusBooking(r)}));
+ const day0=Date.parse(date+'T00:00:00+08:00');let cursor=o?day0+openMinutes(o)[0]*6e4:null;const close=o?day0+openMinutes(o)[1]*6e4:null;
+ const gap=(a,b)=>{if(cursor===null||b-a<30*6e4)return;const mins=Math.round((b-a)/6e4);row(hm(twMinutes(a))+'–'+hm(twMinutes(b)),blk('gap','空檔 '+(mins>=60?(Math.round(mins/30)/2)+' 小時':mins+' 分鐘'),'可接受預約'))};
+ for(const r of sched){const [bs,be]=busyRange(r),s1=Date.parse(r.starts_at),e1=Date.parse(r.ends_at);
+  if(cursor!==null&&bs-6e5>cursor)gap(cursor,Math.min(bs-6e5,close));
+  if(s1>bs)row(hm(twMinutes(bs))+'–'+hm(twMinutes(s1)),blk('travel','車程・前往'+(r.home_district||'')));
+  const st=bookingState(r);row(hm(twMinutes(s1))+'–'+hm(twMinutes(e1)),blk(r.status,(isHome(r)?'🏠 ':'')+bookingName(r)+'・'+(r.service_name||''),st.label+(isHome(r)?'・'+(r.home_district||'')+(r.home_address||''):''),()=>focusBooking(r)));
+  if(be>e1)row(hm(twMinutes(e1))+'–'+hm(twMinutes(be)),blk('travel','車程・返回'));
+  if(cursor!==null)cursor=Math.max(cursor,be+6e5)}
+ if(cursor!==null&&close-cursor>=30*6e4)gap(cursor,close);
+ if(!ul.children.length){const p=document.createElement('p');p.className='cal-day-empty';p.textContent=o?'這天還沒有預約，整天都是空檔。':'這天未開放，也沒有預約。';box.append(p)}else box.append(ul)}
+function dayStats(date){const o=dayOpening(date),items=recordsOn(date),sched=items.filter(r=>!homeUnscheduled(r)).sort((a,b)=>busyRange(a)[0]-busyRange(b)[0]);let free=0;
+ if(o){const d0=Date.parse(date+'T00:00:00+08:00');let cur=d0+openMinutes(o)[0]*6e4;const close=d0+openMinutes(o)[1]*6e4;for(const r of sched){const [bs,be]=busyRange(r);if(bs-6e5>cur&&Math.min(bs-6e5,close)-cur>=30*6e4)free+=Math.min(bs-6e5,close)-cur;cur=Math.max(cur,be+6e5)}if(close-cur>=30*6e4)free+=close-cur}
+ return {o,count:sched.length,todo:items.filter(homeUnscheduled).length,pending:items.filter(r=>r.status==='pending'&&!homeUnscheduled(r)).length,home:sched.filter(isHome).length,free:Math.round(free/6e4)}}
+function weekDays(){const base=new Date(calendarMonthDate);base.setDate(base.getDate()-base.getDay());return [...Array(7)].map((_,i)=>{const x=new Date(base);x.setDate(base.getDate()+i);return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0')})}
+function drawWeekList(){
+ const wrap=$('bookingWeek');wrap.replaceChildren();wrap.className='cal-wlist';const days=weekDays(),today=calendarTaipeiDate(Date.now());
+ $('calendarMonth').textContent=monthDay(days[0])+'–'+monthDay(days[6]);
+ for(const d of days){const st=dayStats(d);const b=document.createElement('button');b.type='button';b.className='wl-row'+(d===today?' today':'')+(d<today?' past':'')+(!st.o?' closed':'');b.setAttribute('aria-pressed',String(calendarSelectedDate===d));
+  const left=document.createElement('span');left.className='wl-date';const dd=document.createElement('strong');dd.textContent=formatDay(d);const oh=document.createElement('small');oh.textContent=st.o?'開放 '+hm(openMinutes(st.o)[0])+'–'+hm(openMinutes(st.o)[1]):'未開放';left.append(dd,oh);
+  const right=document.createElement('span');right.className='wl-info';const main=document.createElement('span');main.textContent=(st.count?st.count+' 筆':'沒有預約')+(st.o?'・空檔 '+(st.free>=60?(Math.round(st.free/30)/2)+' 小時':st.free+' 分'):'');right.append(main);
+  const flags=document.createElement('span');flags.className='wl-flags';if(st.pending){const x=document.createElement('em');x.className='pending';x.textContent=st.pending+' 待確認';flags.append(x)}if(st.todo){const x=document.createElement('em');x.className='todo';x.textContent='🏠 '+st.todo+' 待排';flags.append(x)}if(st.home){const x=document.createElement('em');x.className='home';x.textContent='🏠 到府 '+st.home;flags.append(x)}if(flags.children.length)right.append(flags);
+  const arrow=document.createElement('span');arrow.className='wl-go';arrow.textContent=calendarSelectedDate===d?'▾':'›';
+  b.append(left,right,arrow);b.onclick=()=>{calendarSelectedDate=calendarSelectedDate===d?null:d;show()};wrap.append(b);
+  if(calendarSelectedDate===d){const slot=document.createElement('div');slot.className='wl-slot';wrap.append(slot)}}}
+function drawWeek(){
+ const wrap=$('bookingWeek');wrap.replaceChildren();wrap.className='cal-week';const base=new Date(calendarMonthDate);base.setDate(base.getDate()-base.getDay());const today=calendarTaipeiDate(Date.now());
+ const days=[...Array(7)].map((_,i)=>{const x=new Date(base);x.setDate(base.getDate()+i);return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0')});
+ $('calendarMonth').textContent=monthDay(days[0])+'–'+monthDay(days[6]);
+ let lo=9*60,hi=21*60;for(const d of days){const o=dayOpening(d);if(o){const [a,b]=openMinutes(o);lo=Math.min(lo,a);hi=Math.max(hi,b)}for(const r of recordsOn(d).filter(r=>!homeUnscheduled(r))){const [bs,be]=busyRange(r);lo=Math.min(lo,twMinutes(bs));hi=Math.max(hi,twMinutes(be)||24*60)}}
+ lo=Math.floor(lo/60)*60;hi=Math.min(24*60,Math.ceil(hi/60)*60);const PX=0.9,H=(hi-lo)*PX,y=m=>(m-lo)*PX;
+ wrap.append(document.createElement('span'));
+ for(const d of days){const b=document.createElement('button');b.type='button';b.className='wh'+(d===today?' today':'');b.setAttribute('aria-pressed',String(calendarSelectedDate===d));const o=dayOpening(d);b.innerHTML='';b.append(document.createTextNode(formatDay(d)));const sm=document.createElement('small');sm.textContent=o?'開 '+openShort(o):'未開放';b.append(sm);b.onclick=()=>{calendarSelectedDate=calendarSelectedDate===d?null:d;show()};wrap.append(b)}
+ wrap.append(document.createElement('span'));
+ for(const d of days){const c=document.createElement('div');c.className='wtodo';for(const r of recordsOn(d).filter(homeUnscheduled)){const x=document.createElement('button');x.type='button';x.className='chip-todo';x.textContent='🏠待排 '+bookingName(r);x.title='客人希望 '+homeWish(r);x.onclick=()=>{openHomePanelId=r.id;focusBooking(r)};c.append(x)}wrap.append(c)}
+ const axis=document.createElement('div');axis.className='axis';axis.style.height=H+'px';for(let m=lo;m<=hi;m+=60){const t=document.createElement('span');t.style.top=y(m)+'px';t.textContent=hm(m);axis.append(t)}wrap.append(axis);
+ for(const d of days){const col=document.createElement('div');col.className='col';col.style.height=H+'px';const o=dayOpening(d);
+  for(let m=lo;m<=hi;m+=60){const l=document.createElement('span');l.className='hl';l.style.top=y(m)+'px';col.append(l)}
+  if(o){const [a,b]=openMinutes(o);const band=document.createElement('span');band.className='openband';band.style.top=y(a)+'px';band.style.height=(b-a)*PX+'px';col.append(band)}
+  for(const r of recordsOn(d).filter(r=>!homeUnscheduled(r))){const [bs,be]=busyRange(r),s1=twMinutes(Date.parse(r.starts_at)),e1=s1+r.duration_minutes;
+   if(isHome(r)){const t=twMinutes(bs);for(const [a,b] of [[t,s1],[e1,e1+(s1-t)]]){if(b>a){const tr=document.createElement('span');tr.className='tr';tr.style.top=y(a)+'px';tr.style.height=(b-a)*PX+'px';col.append(tr)}}}
+   const k=document.createElement('button');k.type='button';k.className='blk '+r.status;k.style.top=y(s1)+'px';k.style.height=Math.max(18,(e1-s1)*PX-2)+'px';k.textContent=(isHome(r)?'🏠':'')+formatTime(r.starts_at)+' '+bookingName(r);k.title=k.textContent+'・'+(r.service_name||'')+'・'+(labels[r.status]||r.status);k.onclick=()=>focusBooking(r);col.append(k)}
+  wrap.append(col)}}
+function drawBookingCalendar(){
+ const grid=$('bookingCalendarGrid');if(!grid)return;{const pn=$('calendarDayPanel'),wk=$('bookingWeek');if(pn&&wk&&wk.contains(pn))wk.after(pn)}const week=calendarView==='week',mobile=!window.matchMedia('(min-width:761px)').matches;
+ $('calendarViewMonth').setAttribute('aria-pressed',String(!week));$('calendarViewWeek').setAttribute('aria-pressed',String(week));
+ grid.hidden=week;$('bookingWeek').hidden=!week;grid.replaceChildren();
+ if(week)(mobile?drawWeekList():drawWeek());else{
+ const year=calendarMonthDate.getFullYear(),month=calendarMonthDate.getMonth(),today=calendarTaipeiDate(Date.now());$('calendarMonth').textContent=year+' 年 '+(month+1)+' 月';
+ for(const name of ['日','一','二','三','四','五','六']){const el=document.createElement('span');el.className='booking-calendar-weekday';el.textContent=name;grid.append(el)}
+ const first=new Date(year,month,1).getDay(),last=new Date(year,month+1,0).getDate();for(let i=0;i<first;i++){const empty=document.createElement('span');empty.className='booking-calendar-day empty';grid.append(empty)}
+ for(let day=1;day<=last;day++){const date=year+'-'+String(month+1).padStart(2,'0')+'-'+String(day).padStart(2,'0');const matches=recordsOn(date).sort((a,b)=>(homeUnscheduled(a)?0:1)-(homeUnscheduled(b)?0:1)||Date.parse(a.starts_at)-Date.parse(b.starts_at));const o=dayOpening(date);
+  const button=document.createElement('button');button.type='button';button.className='booking-calendar-day'+(date===today?' today':'')+(date<today?' past':'')+(!o&&date>=today&&!matches.length?' closed':'');button.setAttribute('aria-pressed',String(calendarSelectedDate===date));
+  button.setAttribute('aria-label',date+(o?'，開放 '+openShort(o):'，未開放')+'，'+matches.length+' 筆預約');
+  const number=document.createElement('span');number.textContent=day;button.append(number);
+  if(o&&date>=today){const t=document.createElement('span');t.className='cal-open';t.textContent=openShort(o);button.append(t)}
+  const dots=document.createElement('span');dots.className='booking-calendar-dots';for(const r of matches.slice(0,5)){const dot=document.createElement('span');dot.className='booking-calendar-dot '+(homeUnscheduled(r)?'unscheduled':r.status)+(isHome(r)?' home':'');dots.append(dot)}button.append(dots);
+  for(const r of matches.slice(0,3)){const event=document.createElement('span');event.className='calendar-event '+r.status+(isHome(r)?' home':'')+(homeUnscheduled(r)?' unscheduled':'');event.textContent=(homeUnscheduled(r)?'待排 ':formatTime(r.starts_at)+' ')+bookingName(r);event.title=event.textContent+' · '+(labels[r.status]||r.status);button.append(event)}
+  if(matches.length>3){const total=document.createElement('span');total.className='calendar-day-count';total.textContent='另 '+(matches.length-3)+' 筆';button.append(total)}
+  button.onclick=()=>{calendarSelectedDate=calendarSelectedDate===date?null:date;show()};grid.append(button)}}
+ dayTimeline(calendarSelectedDate);{const slot=document.querySelector('#bookingWeek .wl-slot'),panel=$('calendarDayPanel');if(slot&&panel&&!$('bookingWeek').hidden)slot.append(panel);else if(panel&&panel.parentElement!==$('bookingWeek').parentElement)$('bookingWeek').after(panel)}
+ $('calendarSelection').textContent=calendarSelectedDate?'已選 '+formatDay(calendarSelectedDate)+'，下方清單只顯示這天（再點一次取消）':'點日期可只看那天的預約';$('calendarClear').hidden=!calendarSelectedDate}
+$('calendarPrev').onclick=()=>{if(calendarView==='week'&&!$('bookingWeek').hidden){calendarMonthDate=new Date(calendarMonthDate.getFullYear(),calendarMonthDate.getMonth(),calendarMonthDate.getDate()-7)}else calendarMonthDate=new Date(calendarMonthDate.getFullYear(),calendarMonthDate.getMonth()-1,1);drawBookingCalendar()};
+$('calendarNext').onclick=()=>{if(calendarView==='week'&&!$('bookingWeek').hidden){calendarMonthDate=new Date(calendarMonthDate.getFullYear(),calendarMonthDate.getMonth(),calendarMonthDate.getDate()+7)}else calendarMonthDate=new Date(calendarMonthDate.getFullYear(),calendarMonthDate.getMonth()+1,1);drawBookingCalendar()};
+$('calendarViewMonth').onclick=()=>{calendarView='month';const t=calendarSelectedDate||calendarTaipeiDate(Date.now()),q=t.split('-').map(Number);calendarMonthDate=new Date(q[0],q[1]-1,1);drawBookingCalendar()};
+$('calendarViewWeek').onclick=()=>{calendarView='week';const t=calendarSelectedDate||calendarTaipeiDate(Date.now()),q=t.split('-').map(Number);calendarMonthDate=new Date(q[0],q[1]-1,q[2]);drawBookingCalendar()};
+$('calendarToday').onclick=()=>{const parts=calendarTaipeiDate(Date.now()).split('-').map(Number);calendarMonthDate=new Date(parts[0],parts[1]-1,calendarView==='week'?parts[2]:1);calendarSelectedDate=calendarTaipeiDate(Date.now());show()};
 $('calendarClear').onclick=()=>{calendarSelectedDate=null;show()};
 const BASE_TITLE='鬆沐｜預約管理',WEEKDAYS=['日','一','二','三','四','五','六'];
 function formatDay(day){const [y,m,d]=String(day).split('-').map(Number);return m+'/'+d+'（'+WEEKDAYS[new Date(Date.UTC(y,m-1,d)).getUTCDay()]+'）'}
@@ -1204,15 +1375,73 @@ function focusBooking(r){
  window.scrollTo({top:card.getBoundingClientRect().top+window.scrollY-12,behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});
  card.classList.remove('flash');void card.offsetWidth;card.classList.add('flash');
 }
+// ---- 到府預約 ----
+const isHome=r=>r.visit_type==='home';
+const homeUnscheduled=r=>isHome(r)&&r.time_confirmed===false;
+const HOME_SLOTS={上午:[9,12,'上午 09–12'],下午:[12,17,'下午 12–17'],晚上:[17,21,'晚上 17–21'],都可以:[9,21,'時段都可以']};
+let openHomePanelId=null;
+function homeWish(r){const q=r.home_request||{};return [q.date?formatDay(q.date):'',(HOME_SLOTS[q.slot]||[])[2]||q.slot||'',q.time||''].filter(Boolean).join(' ')}
+function busyRange(r){const t=(Number(r.travel_minutes)||0)*6e4;return [Date.parse(r.starts_at)-t,Date.parse(r.ends_at)+t]}
+function scheduleConflicts(r,start,end){return records.filter(x=>x.id!==r.id&&['pending','confirmed','completed'].includes(x.status)&&!homeUnscheduled(x)&&!isArchived(x)).filter(x=>{const [s,e]=busyRange(x);return s<end+6e5&&e+6e5>start}).sort((a,b)=>Date.parse(a.starts_at)-Date.parse(b.starts_at))}
+function homeWishWindow(r){const q=r.home_request||{};if(!q.date)return null;if(q.time){const s=Date.parse(q.date+'T'+q.time+':00+08:00');return [s,s+r.duration_minutes*6e4]}const w=HOME_SLOTS[q.slot]||HOME_SLOTS['都可以'];return [Date.parse(q.date+'T'+String(w[0]).padStart(2,'0')+':00:00+08:00'),Date.parse(q.date+'T'+String(w[1]).padStart(2,'0')+':00:00+08:00')]}
+function conflictText(list){return list.slice(0,3).map(x=>formatTime(x.starts_at)+' '+bookingName(x)+(isHome(x)?'（到府）':'')).join('、')+(list.length>3?' 等':'')}
+function homePanel(r,run,savedResult,feedback){
+ const d=document.createElement('details');d.className='booking-edit-panel home-plan-panel';d.open=homeUnscheduled(r)&&(openHomePanelId===r.id||r.status==='pending');
+ const sm=document.createElement('summary');sm.textContent=homeUnscheduled(r)?'安排到府時間（確認後才會占用時段）':'更改到府時間';d.append(sm);
+ const q=r.home_request||{};
+ const wish=document.createElement('p');wish.className='home-hint';wish.textContent='客人希望：'+(homeWish(r)||'未填')+(q.alt?'；其他可以：'+q.alt:'');d.append(wish);
+ const grid=document.createElement('div');grid.className='home-time-grid';
+ const dl=document.createElement('label');dl.textContent='日期（開放日）';const date=document.createElement('select');
+ let opens=[];try{opens=(openingDays||[]).filter(o=>o.day>=taiwanDay(Date.now())).sort((a,b)=>a.day.localeCompare(b.day))}catch{}
+ const want=homeUnscheduled(r)?(q.date||''):calendarTaipeiDate(r.starts_at);
+ for(const o of opens){const op=document.createElement('option');op.value=o.day;op.textContent=formatDay(o.day)+' '+String(o.opens).slice(0,5)+'–'+String(Math.floor(o.closes_minutes/60)).padStart(2,'0')+':'+String(o.closes_minutes%60).padStart(2,'0');date.append(op)}
+ if(want&&!opens.some(o=>o.day===want)){const op=document.createElement('option');op.value=want;op.textContent=formatDay(want)+'（未開放）';date.prepend(op)}
+ date.value=want&&[...date.options].some(o=>o.value===want)?want:(date.options[0]?.value||'');dl.append(date);
+ const tl=document.createElement('label');tl.textContent='開始服務時間';const time=document.createElement('select');
+ const fillTimes=keep=>{time.replaceChildren();let o=null;try{o=(openingDays||[]).find(x=>x.day===date.value)}catch{}if(!o)return;const [h,mm]=String(o.opens).split(':').map(Number);for(let m=h*60+(mm||0);m<=o.closes_minutes;m+=30){const op=document.createElement('option');op.value=String(Math.floor(m/60)).padStart(2,'0')+':'+String(m%60).padStart(2,'0');op.textContent=op.value;time.append(op)}if(keep&&[...time.options].some(x=>x.value===keep))time.value=keep};
+ fillTimes(homeUnscheduled(r)?(q.time||String((HOME_SLOTS[q.slot]||[14])[0]).padStart(2,'0')+':00'):formatTime(r.starts_at));tl.append(time);
+ const ml=document.createElement('label');ml.textContent='單程車程＋架設（分鐘）';const travel=document.createElement('input');travel.type='number';travel.min='0';travel.max='120';travel.step='5';travel.value=String(r.travel_minutes||30);ml.append(travel);
+ grid.append(dl,tl,ml);d.append(grid);
+ const hint=document.createElement('p');hint.className='home-hint';hint.setAttribute('role','status');d.append(hint);
+ const save=document.createElement('button');save.type='button';save.className='booking-primary';save.textContent=homeUnscheduled(r)&&r.status==='pending'?'確認時間並接受預約':'儲存新時間';d.append(save);
+ const calc=()=>{if(!date.value||!time.value)return null;const start=Date.parse(date.value+'T'+time.value+':00+08:00'),end=start+r.duration_minutes*6e4,t=(Number(travel.value)||0)*6e4;return {start,end,busyStart:start-t,busyEnd:end+t}};
+ const update=()=>{const c=calc();if(!c){hint.className='home-hint is-warn';hint.textContent=date.value?'這天門市沒有開放，請改選其他日期，或先到「時段設定」開放這天。':'目前沒有開放的日期，請先到「時段設定」開放日期。';save.disabled=true;return}
+  const list=scheduleConflicts(r,c.busyStart,c.busyEnd);save.disabled=c.start<=Date.now();
+  hint.className='home-hint '+(list.length||c.start<=Date.now()?'is-warn':'ok');
+  hint.textContent=(c.start<=Date.now()?'⚠ 這個時間已經過了。':'')+'服務 '+formatTime(new Date(c.start).toISOString())+'–'+formatTime(new Date(c.end).toISOString())+'；含車程占用 '+formatTime(new Date(c.busyStart).toISOString())+'–'+formatTime(new Date(c.busyEnd).toISOString())+'。'+(list.length?'⚠ 會撞到：'+conflictText(list)+'，請改時間。':'這段時間沒有其他預約。')};
+ date.onchange=()=>{fillTimes(time.value);update()};time.onchange=travel.oninput=update;update();
+ save.onclick=()=>{const c=calc();if(!c)return;const list=scheduleConflicts(r,c.busyStart,c.busyEnd);
+  if(list.length&&!confirm('這段時間會撞到：'+conflictText(list)+'\n仍要儲存嗎？（已確認的預約重疊時，系統會擋下）'))return;
+  if(!confirm('客人：'+bookingName(r)+'\n到府：'+(r.home_district||'')+(r.home_address||'')+'\n時間：'+formatDay(date.value)+' '+time.value+'\n\n確認已與客人約好這個時間？'))return;
+  return run(async()=>{const body={starts_at:new Date(c.start).toISOString(),ends_at:new Date(c.end).toISOString(),travel_minutes:Number(travel.value)||0,time_confirmed:true};if(r.status==='pending')body.status='confirmed';
+   const saved=await api('/rest/v1/appointments?id=eq.'+r.id+'&status=eq.'+r.status+'&starts_at=eq.'+encodeURIComponent(r.starts_at),{method:'PATCH',headers:{Prefer:'return=representation'},body:JSON.stringify(body)});
+   if(!saved?.length||Date.parse(saved[0].starts_at)!==c.start)throw Error('這筆預約已變更，請更新資料後再試。');openHomePanelId=null;Object.assign(r,saved[0]);savedResult(body.status?'已確認到府預約：'+formatDay(date.value)+' '+time.value+'。':'已儲存新的到府時間。')})};
+ return d;
+}
+function homeSheet(list){const rows=[['日期','時間','客人','手機','服務','人數','區域','地址','服務費（NT$）','到府費（NT$）','總額（NT$）','狀態']];
+ for(const r of list.filter(isHome).sort((a,b)=>Date.parse(a.starts_at)-Date.parse(b.starts_at))){const fee=Number(r.travel_fee)||0,total=Number(r.price_ntd)||0;rows.push([homeUnscheduled(r)?'待排':taiwanDay(r.starts_at),homeUnscheduled(r)?homeWish(r):formatTime(r.starts_at),bookingName(r),r.submitted_phone||r.customers?.phone||'',r.service_name||'',(r.home_request||{}).people||1,r.home_district||'',r.home_address||'',total-fee,fee,total,labels[r.status]||r.status])}
+ return {name:'到府',rows}}
 // 提醒：只放「別的地方看不到、需要動手」的事。目前是 LINE 通知沒送成功。
 const HIDDEN_REMINDERS_KEY='songmu-admin-hidden-reminders';
 function hiddenReminders(){try{return new Set(JSON.parse(localStorage.getItem(HIDDEN_REMINDERS_KEY)||'[]'))}catch{return new Set()}}
 function hideReminder(id){const h=hiddenReminders();h.add(String(id));try{localStorage.setItem(HIDDEN_REMINDERS_KEY,JSON.stringify([...h].slice(-200)))}catch{}}
 function renderReminders(box){
  const hidden=hiddenReminders(),failed=records.filter(r=>r.line_notification_status==='failed'&&!hidden.has(String(r.id))).sort((a,b)=>Date.parse(b.starts_at)-Date.parse(a.starts_at));
- if(!failed.length)return;
+ const homes=records.filter(r=>r.status==='pending'&&homeUnscheduled(r)&&!isArchived(r)).sort((a,b)=>String((a.home_request||{}).date).localeCompare(String((b.home_request||{}).date)));
+ if(!failed.length&&!homes.length)return;
  const wrap=document.createElement('section');wrap.className='reminders';wrap.setAttribute('aria-label','提醒');
  const h=document.createElement('h3');h.className='reminders-title';h.textContent='🔔 提醒';wrap.append(h);
+ for(const r of homes){
+  const row=document.createElement('div');row.className='reminder home-reminder';
+  const text=document.createElement('p');text.className='reminder-text';const who=document.createElement('strong');who.textContent=bookingName(r);
+  const q=r.home_request||{},win=homeWishWindow(r),past=q.date&&q.date<taiwanDay(Date.now()),list=win?scheduleConflicts(r,win[0],win[1]):[];
+  text.append(who,document.createTextNode('・🏠 到府申請（'+(r.home_district||'')+'）希望 '+(homeWish(r)||'未填')+'，還沒安排時間'));
+  const note=document.createElement('span');note.className='reminder-note';note.textContent=past?'⚠ 希望日期已過，請聯絡客人改約':list.length?'⚠ 這段時間已有 '+list.length+' 筆預約：'+conflictText(list):'這段時間目前沒有其他預約';text.append(note);
+  const actions=document.createElement('div');actions.className='reminder-actions';
+  const go=document.createElement('button');go.type='button';go.className='reminder-retry';go.textContent='安排時間';go.onclick=()=>{openHomePanelId=r.id;focusBooking(r)};actions.append(go);
+  const phone=r.submitted_phone||r.customers?.phone;if(phone){const a=document.createElement('a');a.href='tel:'+String(phone).replace(/[^0-9+]/g,'');a.className='reminder-call';a.textContent='📞 '+phone;actions.append(a,copyPhoneButton(phone))}
+  row.append(text,actions);wrap.append(row);
+ }
  for(const r of failed){
   const row=document.createElement('div');row.className='reminder';
   const text=document.createElement('p');text.className='reminder-text';const who=document.createElement('strong');who.textContent=bookingName(r);text.append(who,document.createTextNode('・'+formatDay(taiwanDay(r.starts_at))+' '+({normal:'完成服務',cancelled_before_service:'取消預約',cancelled_during_service:'服務中止'})[recordOutcome(r)]+'的通知沒送到 LINE'));
@@ -1220,7 +1449,7 @@ function renderReminders(box){
   const retry=document.createElement('button');retry.type='button';retry.className='reminder-retry';retry.textContent='重送';
   retry.onclick=async()=>{retry.disabled=true;retry.textContent='重送中…';await notifyOutcome(r.id);if(r.line_notification_status==='failed'){retry.disabled=false;retry.textContent='再試一次';msg('LINE 還是沒送成功，建議直接打電話通知客人。');}else show()};
   actions.append(retry);
-  const phone=r.submitted_phone||r.customers?.phone;if(phone){const a=document.createElement('a');a.href='tel:'+String(phone).replace(/[^0-9+]/g,'');a.className='reminder-call';a.textContent='📞 '+phone;actions.append(a)}
+  const phone=r.submitted_phone||r.customers?.phone;if(phone){const a=document.createElement('a');a.href='tel:'+String(phone).replace(/[^0-9+]/g,'');a.className='reminder-call';a.textContent='📞 '+phone;actions.append(a,copyPhoneButton(phone))}
   const dismiss=document.createElement('button');dismiss.type='button';dismiss.className='reminder-dismiss';dismiss.textContent='知道了';dismiss.title='已用其他方式通知，隱藏這則提醒（只在這台裝置）';dismiss.onclick=()=>{hideReminder(r.id);show()};actions.append(dismiss);
   row.append(text,actions);wrap.append(row);
  }
@@ -1245,14 +1474,15 @@ function renderTodayAgenda(active,today){
   const label=document.createElement('li');label.className='today-group '+key;const t=document.createElement('span');t.textContent=title;const c=document.createElement('b');c.textContent=items.length+' 筆';label.append(t,c);list.append(label);
   for(const r of items){
    const day=taiwanDay(r.starts_at),start=Date.parse(r.starts_at),end=completionAvailability(r,now).end;let tagText,tagClass,phrase;
-   if(key==='pending'){tagText='待確認';tagClass='pending';phrase=start<=now?'已過預約時間，請盡快處理':startsIn(start-now)}
+   if(key==='pending'&&homeUnscheduled(r)){tagText='到府待排';tagClass='pending';phrase='到府申請，請安排時間'}
+   else if(key==='pending'){tagText='待確認';tagClass='pending';phrase=start<=now?'已過預約時間，請盡快處理':startsIn(start-now)}
    else if(key==='ended'){tagText='待按完成';tagClass='ready';phrase=day===today?'服務已結束，記得按完成':'之前漏按，記得按完成'}
    else if(start<=now){tagText='服務中';tagClass='in-progress';phrase='預計 '+formatTime(end)+' 結束'}
    else{tagText='已確認';tagClass='confirmed';phrase=startsIn(start-now)}
    const li=document.createElement('li');li.className='today-item '+(key==='other'?(start<=now?'confirmed in-progress':'confirmed'):key);
    const card=document.createElement('button');card.type='button';card.className='today-card';card.setAttribute('aria-label',bookingName(r)+' '+formatWhen(r.starts_at)+'，'+tagText+'，'+phrase+'。點一下前往這筆預約');card.onclick=()=>focusBooking(r);
-   const time=document.createElement('span');time.className='today-time';if(day!==today){const dd=document.createElement('small');dd.textContent=formatDay(day);time.append(dd)}time.append(document.createTextNode(formatTime(r.starts_at)));
-   const who=document.createElement('span');who.className='today-who';const name=document.createElement('strong');name.textContent=bookingName(r);const tag=document.createElement('span');tag.className='tag '+tagClass;tag.textContent=tagText;name.append(tag);const sub=document.createElement('span');sub.textContent=r.service_name||'—';who.append(name,sub);if(phrase){const ph=document.createElement('em');ph.className='today-phrase '+key;ph.textContent=phrase;who.append(ph)}
+   const time=document.createElement('span');time.className='today-time';if(day!==today){const dd=document.createElement('small');dd.textContent=formatDay(day);time.append(dd)}time.append(document.createTextNode(homeUnscheduled(r)?'待排':formatTime(r.starts_at)));
+   const who=document.createElement('span');who.className='today-who';const name=document.createElement('strong');name.textContent=bookingName(r);const tag=document.createElement('span');tag.className='tag '+tagClass;tag.textContent=tagText;name.append(tag);const sub=document.createElement('span');sub.textContent=(isHome(r)?'🏠 到府・':'')+(r.service_name||'—');who.append(name,sub);if(phrase){const ph=document.createElement('em');ph.className='today-phrase '+key;ph.textContent=phrase;who.append(ph)}
    const go=document.createElement('span');go.className='today-go';go.setAttribute('aria-hidden','true');go.innerHTML='<span class="go-text">處理</span><span class="go-arrow">›</span>';
    card.append(time,who,go);li.append(card);list.append(li);
   }
@@ -1293,12 +1523,12 @@ function bookingRow(r,groupKey,visits,now,today){
  const st=bookingState(r,now),c=document.createElement('article');c.className='card booking-overview-card booking-row-card status-'+r.status+' state-'+st.key+(taiwanDay(r.starts_at)===today?' is-today':'');c.id='booking-'+r.id;
  const row=document.createElement('details');row.className='booking-row';row.open=expandedBookings.has(r.id);row.ontoggle=()=>{if(row.open)expandedBookings.add(r.id);else expandedBookings.delete(r.id)};
  const sum=document.createElement('summary');sum.className='booking-row-summary';
- const when=document.createElement('span');when.className='row-when';if(groupKey==='action'||groupKey==='later'){const d=document.createElement('span');d.className='row-date';d.textContent=formatDay(taiwanDay(r.starts_at));when.append(d)}const t=document.createElement('span');t.className='row-time';t.textContent=formatTime(r.starts_at);when.append(t);
+ const when=document.createElement('span');when.className='row-when';if(groupKey==='action'||groupKey==='later'){const d=document.createElement('span');d.className='row-date';d.textContent=formatDay(taiwanDay(r.starts_at));when.append(d)}const t=document.createElement('span');t.className='row-time';t.textContent=homeUnscheduled(r)?'待排':formatTime(r.starts_at);when.append(t);
  const main=document.createElement('span');main.className='row-main';const nm=document.createElement('strong');nm.textContent=bookingName(r);const sv=document.createElement('span');sv.textContent=r.service_name||'—';main.append(nm,sv);
- const side=document.createElement('span');side.className='row-side';const tag=document.createElement('span');tag.className='tag '+st.key;tag.textContent=st.label;const v=visitLabel(r,visits),vis=document.createElement('span');vis.className='row-visit'+(v.fresh?' new':'');vis.textContent=v.text;side.append(tag,vis);for(const [cls,text] of bookingTags(r)){const x=document.createElement('span');x.className='tag '+cls;x.textContent=text;side.append(x)}if(st.key==='pending'){const left=Date.parse(r.starts_at)-now,u=document.createElement('span');u.className='row-urgent';u.textContent=left<=0?'⚠ 已過預約時間':left<36e5?'⚠ 1 小時內開始':left<864e5?'⚠ '+Math.ceil(left/36e5)+' 小時後開始':'';if(u.textContent)side.append(u)}else if(st.key==='ready'){const u=document.createElement('span');u.className='row-urgent ready';u.textContent='服務已結束，記得按完成';side.append(u)}
+ const side=document.createElement('span');side.className='row-side';const tag=document.createElement('span');tag.className='tag '+st.key;tag.textContent=st.label;const v=visitLabel(r,visits),vis=document.createElement('span');vis.className='row-visit'+(v.fresh?' new':'');vis.textContent=v.text;side.append(tag,vis);for(const [cls,text] of bookingTags(r)){const x=document.createElement('span');x.className='tag '+cls;x.textContent=text;side.append(x)}if(st.key==='pending'&&homeUnscheduled(r)){const u=document.createElement('span');u.className='row-urgent';u.textContent='請安排時間';side.append(u)}else if(st.key==='pending'){const left=Date.parse(r.starts_at)-now,u=document.createElement('span');u.className='row-urgent';u.textContent=left<=0?'⚠ 已過預約時間':left<36e5?'⚠ 1 小時內開始':left<864e5?'⚠ '+Math.ceil(left/36e5)+' 小時後開始':'';if(u.textContent)side.append(u)}else if(st.key==='ready'){const u=document.createElement('span');u.className='row-urgent ready';u.textContent='服務已結束，記得按完成';side.append(u)}
  sum.append(when,main,side);row.append(sum);
  const body=document.createElement('div');body.className='booking-row-body';
- const g=document.createElement('div');g.className='grid';field(g,'手機',r.submitted_phone||r.customers?.phone);field(g,'金額',r.price_ntd?'NT$ '+Number(r.price_ntd).toLocaleString('zh-TW'):'');field(g,'預約時間',formatWhen(r.starts_at));field(g,'預約狀態',labels[r.status]||r.status);body.append(g);
+ const g=document.createElement('div');g.className='grid';field(g,'手機',r.submitted_phone||r.customers?.phone);field(g,'金額',r.price_ntd?'NT$ '+Number(r.price_ntd).toLocaleString('zh-TW'):'');field(g,'預約時間',homeUnscheduled(r)?'客人希望：'+homeWish(r):formatWhen(r.starts_at));field(g,'預約狀態',labels[r.status]||r.status);if(isHome(r)){const q=r.home_request||{};field(g,'到府地址',(r.home_district||'')+(r.home_address||'')+(q.floor?'（'+q.floor+'）':''));field(g,'停車',[q.place,r.home_parking].filter(Boolean).join('・'));field(g,'到府費','NT$ '+Number(r.travel_fee||0).toLocaleString('zh-TW')+(r.travel_minutes?'・車程 '+r.travel_minutes+' 分（單程）':''));if(q.people>1)field(g,'人數',q.people+' 位')}body.append(g);
  const details=document.createElement('details');details.className='customer-details';const summary=document.createElement('summary');summary.textContent='客人詳情・症狀與備註'+(r.symptoms?'：'+String(r.symptoms).slice(0,18)+(String(r.symptoms).length>18?'…':''):'');details.append(summary);const info=document.createElement('div');info.className='customer-details-body';field(info,'姓名',r.submitted_name||r.customers?.name);field(info,'手機',r.submitted_phone||r.customers?.phone);field(info,'症狀',r.symptoms);field(info,'客人備註',r.notes);if(r.admin_notes)field(info,'店家備註（僅後台）',r.admin_notes);if(r.outcome_note)field(info,'取消／服務紀錄備註',r.outcome_note);details.append(info);body.append(details);
  body.append(trialBox(r));
  const control=bookingStatusButtons(r),plan=planPanel(r);if(plan)control.insertBefore(plan,control.querySelector('.booking-status-feedback'));body.append(control);
@@ -1388,7 +1618,7 @@ let openingDays=[];
 function localDateToday(){return new Intl.DateTimeFormat('sv-SE',{timeZone:'Asia/Taipei',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date())}
 function openingError(e){const m=String(e.message||e);return m.includes('active_bookings_exist')?'當天已有待確認或已確認預約，請先處理客人的預約，再關閉日期。':m.includes('existing_booking_outside_hours')?'新的時段會影響已預約客人，請保留原預約時間。':m.includes('invalid_time_range')?'請確認結束時間晚於開始時間，並使用整點或半點。':m.includes('invalid_day')?'只能修改今天起 180 天內的日期。':friendlyError(m)}
 function renderOpeningDays(){const list=$('openingList');list.replaceChildren();if(!openingDays.length){list.textContent='目前沒有未來開放日期。';return}for(const d of openingDays){const item=document.createElement('div');item.className='opening-day';const info=document.createElement('span');const title=document.createElement('strong');title.textContent=d.day;const start=String(d.opens).slice(0,5);info.append(title,document.createTextNode(start+' ～ '+String(Math.floor(d.closes_minutes/60)).padStart(2,'0')+':'+String(d.closes_minutes%60).padStart(2,'0')));const edit=document.createElement('button');edit.type='button';edit.textContent='編輯';edit.onclick=()=>{$('openingDate').value=d.day;previewCustomerSlots();$('openingStart').value=start;$('openingEnd').value=String(Math.floor(d.closes_minutes/60)).padStart(2,'0')+':'+String(d.closes_minutes%60).padStart(2,'0');$('openingDate').scrollIntoView({behavior:'smooth',block:'center'})};const del=document.createElement('button');del.type='button';del.textContent='刪除';del.className='opening-delete';del.setAttribute('aria-label','刪除 '+d.day+' 的開放時段');del.onclick=()=>saveOpening(false,d.day);const controls=document.createElement('div');controls.className='opening-row-actions';controls.append(edit,del);item.append(info,controls);list.append(item)}}
-async function loadOpeningDays(){if(!token)return;try{openingDays=await api('/rest/v1/rpc/admin_get_opening_days',{method:'POST',body:'{}'});renderOpeningDays();$('openingStatus').textContent='時段已同步'}catch(e){$('openingStatus').textContent=openingError(e)}}
+async function loadOpeningDays(){if(!token)return;try{openingDays=await api('/rest/v1/rpc/admin_get_opening_days',{method:'POST',body:'{}'});renderOpeningDays();if(['bookings','details'].includes(pageView))drawBookingCalendar();$('openingStatus').textContent='時段已同步'}catch(e){$('openingStatus').textContent=openingError(e)}}
 async function saveOpening(enabled,selectedDay){const day=selectedDay||$('openingDate').value,from=$('openingStart').value,to=$('openingEnd').value;if(!day){$('openingStatus').textContent='請先選擇日期';return}if(enabled&&(!from||!to||to<=from)){$('openingStatus').textContent='請選擇正確的開始與結束時間';return}if(!enabled&&!confirm('確定刪除 '+day+' 的開放時段？刪除後客人將無法選擇該日。'))return;const buttons=[$('openingSave'),$('openingRemove')];buttons.forEach(b=>b.disabled=true);try{await api('/rest/v1/rpc/admin_save_opening_day',{method:'POST',body:JSON.stringify({p_day:day,p_open:from||'00:00',p_close:to||'00:30',p_enabled:enabled})});await loadOpeningDays();await previewCustomerSlots();$('openingStatus').textContent=enabled?'已儲存！客人重新開啟預約頁即可看到時段。':'已關閉此日期。'}catch(e){$('openingStatus').textContent=openingError(e)}finally{buttons.forEach(b=>b.disabled=false)}}
 $('openingDate').min=localDateToday();$('openingDate').value=localDateToday();$('openingSave').onclick=()=>saveOpening(true);$('openingRemove').onclick=()=>saveOpening(false);$('openingReload').onclick=loadOpeningDays;
 
@@ -1594,6 +1824,7 @@ function bookingTags(r){
  const tags=[];const s=r.package_id&&sessionNumber(r);
  const key=packageKeyOf(r),owned=memberPackages(key);
  if(s)tags.push(['plan','鬆活 第 '+s.n+'/'+s.total+' 次'+(s.after===0?'・最後一次':'')]);else if(owned.length&&!activePackage(key)&&['pending','confirmed'].includes(r.status))tags.push(['plan-out','鬆活已用完']);else if(isPlanService(r))tags.push(['plan','鬆活方案・待登記']);
+ if(isHome(r))tags.unshift(['home','🏠到府']);
  if(isTrialService(r))tags.push([trialUsedBefore(r)?'trial-warn':'trial',trialUsedBefore(r)?'體驗價・已用過':'新客體驗價']);
  return tags;
 }
@@ -1654,7 +1885,7 @@ function packageRevenueRows(from,to){return packages.filter(p=>{const d=String(p
 function packageWorkbookSheets(list){
  const adj=list.map(r=>r.package_id?{...r,price_ntd:0,service_name:(r.service_name||'')+'（鬆活方案扣次）'}:r);
  const sold=packages.map(p=>({id:'package-'+p.id,status:'completed',outcome:'normal',starts_at:String(p.purchased_at).slice(0,10)+'T12:00:00+08:00',price_ntd:Number(p.price_paid||0),service_name:'鬆活方案（售出，共 '+(Number(p.total_sessions)||PLAN_SESSIONS)+' 次）',submitted_name:p.customer_name||'',submitted_phone:p.customer_phone||'',outcome_note:p.note||''}));
- const sheets=revenueWorkbookSheets(adj.concat(sold));
+ const sheets=revenueWorkbookSheets(adj.concat(sold));if(records.some(isHome))sheets.push(homeSheet(records));
  if(packages.length)sheets.push({name:'鬆活方案',rows:[['客人','手機','購買日期','實收（NT$）','總次數','已用','已預約','剩餘','備註'],...packages.map(p=>{const u=packageUsage(p);return [p.customer_name||'',p.customer_phone||'',String(p.purchased_at).slice(0,10),Number(p.price_paid||0),u.total,u.used,u.booked,u.remaining,p.note||'']})]});
  return sheets;
 }
