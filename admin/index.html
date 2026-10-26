@@ -789,7 +789,7 @@ body:not([data-view="bookings"]) .admin-page-header #bookingCountSummary{display
 .copy-phone{margin:0 0 0 8px!important;min-height:0!important;padding:2px 10px!important;font-size:12px!important;border-radius:99px!important;border:1px solid #b9cdbf!important;background:#fff!important;color:#1c4431!important;vertical-align:middle;cursor:pointer}
 .copy-phone:hover{background:#eef4ef!important}
 .tag.home{background:#e4efe6!important;color:#1c4431!important}
-.reminder.home-reminder{border-left:4px solid #c8673f}.reminder.urgent-reminder{border-left:4px solid #c0392b;background:#fdecea;padding:8px 10px;border-radius:8px;border-top:0;margin-top:4px}.reminder.urgent-reminder strong{color:#a52a1d}.urgent-tag{display:inline-block;background:#c0392b;color:#fff;font-size:12px;font-weight:700;border-radius:99px;padding:1px 8px;margin-right:6px}.owner-line-card h2{font-size:18px;margin:0 0 4px}.owner-line-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}.owner-line-link{margin-top:10px;padding:10px 12px;border-radius:10px;background:#eef4ef;font-size:14px;line-height:1.6;word-break:break-all}.owner-line-link a{color:#1c4431;font-weight:700}#ownerLineStatus.bound{color:#1c4431;font-weight:700}
+.reminder.home-reminder{border-left:4px solid #c8673f}.tag.proposal{background:#e8f0fb!important;color:#24508a!important}.tag.proposal-no{background:#fdecea!important;color:#a52a1d!important}.tag.proposal-ok{background:#e4efe6!important;color:#1c4431!important}.home-hint.proposal-wait{background:#e8f0fb;color:#24508a;border-radius:10px;padding:8px 10px}.home-plan-panel .booking-secondary{display:block;margin-top:8px;background:#fff;color:#1c4431;border:1.5px solid #1c4431;border-radius:10px;padding:10px 14px;font:inherit;cursor:pointer}.home-plan-panel .booking-secondary:disabled{opacity:.45;cursor:not-allowed}.home-hint.is-warn b,.home-hint.ok b{display:block;margin-bottom:2px}.home-hint div{margin-top:2px}.home-ok-times{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 10px}.home-ok-times .copy-phone{margin:0!important;font-size:14px!important;padding:4px 12px!important}.home-ok-label{width:100%;margin:0;font-size:13px;color:#1c4431;font-weight:600}.home-plan-panel .booking-primary:disabled{opacity:.45;cursor:not-allowed}.reminder.urgent-reminder{border-left:4px solid #c0392b;background:#fdecea;padding:8px 10px;border-radius:8px;border-top:0;margin-top:4px}.reminder.urgent-reminder strong{color:#a52a1d}.urgent-tag{display:inline-block;background:#c0392b;color:#fff;font-size:12px;font-weight:700;border-radius:99px;padding:1px 8px;margin-right:6px}.owner-line-card h2{font-size:18px;margin:0 0 4px}.owner-line-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}.owner-line-link{margin-top:10px;padding:10px 12px;border-radius:10px;background:#eef4ef;font-size:14px;line-height:1.6;word-break:break-all}.owner-line-link a{color:#1c4431;font-weight:700}#ownerLineStatus.bound{color:#1c4431;font-weight:700}
 .reminder-note{display:block;font-size:13px;color:#8a5a3c;margin-top:4px}
 .home-plan-panel .home-time-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .home-plan-panel .home-hint{font-size:14px;line-height:1.6;color:#5b625d;margin:8px 0}
@@ -1296,7 +1296,7 @@ function dayTimeline(date){
  if(cursor!==null&&close-cursor>=30*6e4)gap(cursor,close);
  if(!ul.children.length){const p=document.createElement('p');p.className='cal-day-empty';p.textContent=o?'這天還沒有預約，整天都是空檔。':'這天未開放，也沒有預約。';box.append(p)}else box.append(ul)}
 function dayStats(date){const o=dayOpening(date),items=recordsOn(date),sched=items.filter(r=>!homeUnscheduled(r)).sort((a,b)=>busyRange(a)[0]-busyRange(b)[0]);let free=0;
- if(o){const d0=Date.parse(date+'T00:00:00+08:00');let cur=d0+openMinutes(o)[0]*6e4;const close=d0+openMinutes(o)[1]*6e4;for(const r of sched){const [bs,be]=busyRange(r);if(bs-6e5>cur&&Math.min(bs-6e5,close)-cur>=30*6e4)free+=Math.min(bs-6e5,close)-cur;cur=Math.max(cur,be+6e5)}if(close-cur>=30*6e4)free+=close-cur}
+ if(o){const d0=Date.parse(date+'T00:00:00+08:00');let cur=d0+openMinutes(o)[0]*6e4;const close=d0+openMinutes(o)[1]*6e4;sched.forEach((r,i)=>{const [bs,be]=busyRange(r),nx=sched[i+1],back=isHome(r)&&nx&&!isHome(nx)?HOME_BACK:0;if(bs-6e5>cur&&Math.min(bs-6e5,close)-cur>=30*6e4)free+=Math.min(bs-6e5,close)-cur;cur=Math.max(cur,be+back+6e5)});if(close-cur>=30*6e4)free+=close-cur}
  return {o,count:sched.length,todo:items.filter(homeUnscheduled).length,pending:items.filter(r=>r.status==='pending'&&!homeUnscheduled(r)).length,home:sched.filter(isHome).length,free:Math.round(free/6e4)}}
 function weekDays(){const base=new Date(calendarMonthDate);base.setDate(base.getDate()-base.getDay());return [...Array(7)].map((_,i)=>{const x=new Date(base);x.setDate(base.getDate()+i);return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0')})}
 function drawWeekList(){
@@ -1324,7 +1324,7 @@ function drawWeek(){
   for(let m=lo;m<=hi;m+=60){const l=document.createElement('span');l.className='hl';l.style.top=y(m)+'px';col.append(l)}
   if(o){const [a,b]=openMinutes(o);const band=document.createElement('span');band.className='openband';band.style.top=y(a)+'px';band.style.height=(b-a)*PX+'px';col.append(band)}
   for(const r of recordsOn(d).filter(r=>!homeUnscheduled(r))){const [bs,be]=busyRange(r),s1=twMinutes(Date.parse(r.starts_at)),e1=s1+r.duration_minutes;
-   if(isHome(r)){const t=twMinutes(bs);for(const [a,b] of [[t,s1],[e1,e1+(s1-t)]]){if(b>a){const tr=document.createElement('span');tr.className='tr';tr.style.top=y(a)+'px';tr.style.height=(b-a)*PX+'px';col.append(tr)}}}
+   if(isHome(r)){const t=twMinutes(bs),nx=recordsOn(d).filter(x=>!homeUnscheduled(x)&&Date.parse(x.starts_at)>Date.parse(r.starts_at)).sort((a,b)=>Date.parse(a.starts_at)-Date.parse(b.starts_at))[0],back=nx&&!isHome(nx)?15:0;for(const [a,b] of [[t,s1],[e1,e1+(s1-t)+back]]){if(b>a){const tr=document.createElement('span');tr.className='tr';tr.style.top=y(a)+'px';tr.style.height=(b-a)*PX+'px';col.append(tr)}}}
    const k=document.createElement('button');k.type='button';k.className='blk '+r.status;k.style.top=y(s1)+'px';k.style.height=Math.max(18,(e1-s1)*PX-2)+'px';k.textContent=(isHome(r)?'🏠':'')+formatTime(r.starts_at)+' '+bookingName(r);k.title=k.textContent+'・'+(r.service_name||'')+'・'+(labels[r.status]||r.status);k.onclick=()=>focusBooking(r);col.append(k)}
   wrap.append(col)}}
 function drawBookingCalendar(){
@@ -1388,7 +1388,7 @@ function homeWishWindow(r){const q=r.home_request||{};if(!q.date)return null;if(
 function conflictText(list){return list.slice(0,3).map(x=>formatTime(x.starts_at)+' '+bookingName(x)+(isHome(x)?'（到府）':'')).join('、')+(list.length>3?' 等':'')}
 function homePanel(r,run,savedResult,feedback){
  const d=document.createElement('details');d.className='booking-edit-panel home-plan-panel';d.open=homeUnscheduled(r)&&(openHomePanelId===r.id||r.status==='pending')||(!homeUnscheduled(r)&&openHomePanelId===r.id);
- const sm=document.createElement('summary');sm.textContent=homeUnscheduled(r)?'安排到府時間（確認後才會占用時段）':r.status==='pending'?'確認或更改到府時間（客人指定，已先保留）':'更改到府時間';d.append(sm);
+ const sm=document.createElement('summary');sm.textContent=homeUnscheduled(r)?'安排到府時間（確認後才會占用時段）':r.status==='pending'?(r.proposal_status==='sent'?'更改到府時間（已傳 LINE，等客人確認）':'確認或更改到府時間（客人指定，已先保留）'):'更改到府時間';d.append(sm);
  const q=r.home_request||{};
  const wish=document.createElement('p');wish.className='home-hint';wish.textContent='客人希望：'+(homeWish(r)||'未填')+(q.alt?'；其他可以：'+q.alt:'');d.append(wish);
  const grid=document.createElement('div');grid.className='home-time-grid';
@@ -1407,16 +1407,41 @@ function homePanel(r,run,savedResult,feedback){
  const ml=document.createElement('label');ml.textContent='單程車程＋架設（分鐘）';const travel=document.createElement('input');travel.type='number';travel.min='0';travel.max='120';travel.step='5';travel.value=String(r.travel_minutes||30);ml.append(travel);
  grid.append(dl,tl,ml);d.append(grid);
  const hint=document.createElement('p');hint.className='home-hint';hint.setAttribute('role','status');d.append(hint);
- const save=document.createElement('button');save.type='button';save.className='booking-primary';save.textContent=r.status==='pending'?'確認時間並接受預約':'儲存新時間';d.append(save);
+ const canLine=r.status==='pending'&&!!r.line_member_id;
+ if(r.proposal_status==='sent'&&r.status==='pending'){const ps=document.createElement('p');ps.className='home-hint proposal-wait';ps.textContent='📨 '+(r.proposal_sent_at?formatDay(taiwanDay(r.proposal_sent_at))+' '+formatTime(r.proposal_sent_at)+' ':'')+'已傳 LINE 請客人確認 '+formatDay(taiwanDay(r.starts_at))+' '+formatTime(r.starts_at)+'，等待回覆中（時段先保留）。';d.insertBefore(ps,grid)}
+ if(r.proposal_status==='declined'&&r.status==='pending'){const ps=document.createElement('p');ps.className='home-hint is-warn';ps.textContent='↩ 客人想改時間'+(r.proposal_note?'：「'+r.proposal_note+'」':'，請聯絡客人。');d.insertBefore(ps,grid)}
+ const propose=document.createElement('button');propose.type='button';propose.className='booking-primary';propose.textContent='📨 傳 LINE 請客人確認這個時間';
+ const save=document.createElement('button');save.type='button';save.className=canLine?'booking-secondary':'booking-primary';save.textContent=r.status==='pending'?(canLine?'已電話約好，直接確認':'確認時間並接受預約'):'儲存新時間';if(canLine)d.append(propose);d.append(save);
  const calc=()=>{if(!date.value||!time.value)return null;const start=Date.parse(date.value+'T'+time.value+':00+08:00'),end=start+r.duration_minutes*6e4,t=(Number(travel.value)||0)*6e4;return {start,end,busyStart:start-t,busyEnd:end+t}};
- const update=()=>{const c=calc();if(!c){hint.className='home-hint is-warn';hint.textContent=date.value?'這天門市沒有開放，請改選其他日期，或先到「時段設定」開放這天。':'目前沒有開放的日期，請先到「時段設定」開放日期。';save.disabled=true;return}
-  const list=scheduleConflicts(r,c.busyStart,c.busyEnd);save.disabled=c.start<=Date.now();
-  hint.className='home-hint '+(list.length||c.start<=Date.now()?'is-warn':'ok');
-  hint.textContent=(c.start<=Date.now()?'⚠ 這個時間已經過了。':'')+'服務 '+formatTime(new Date(c.start).toISOString())+'–'+formatTime(new Date(c.end).toISOString())+'；含車程占用 '+formatTime(new Date(c.busyStart).toISOString())+'–'+formatTime(new Date(c.busyEnd).toISOString())+'。'+(list.length?'⚠ 會撞到：'+conflictText(list)+'，請改時間。':'這段時間沒有其他預約。')};
+ const hhmm=t=>formatTime(new Date(t).toISOString());
+ // 防呆：說明為什麼排不下（車程、整理、回店時間），並算出最早／最晚可以開始的時間
+ const reasons=(c,list)=>{const T=c.start-c.busyStart,dur=c.end-c.start;return list.map(x=>{const [xs,xe]=busyRange(x),xh=isHome(x),xt=(Number(x.travel_minutes)||0),nm=hhmm(Date.parse(x.starts_at))+'–'+hhmm(Date.parse(x.ends_at))+' '+bookingName(x)+'（'+(xh?'到府':'定點')+(x.status==='pending'?'・待確認':'')+'）';
+  if(Date.parse(x.starts_at)<c.end&&Date.parse(x.ends_at)>c.start)return '和 '+nm+' 的服務時間直接重疊。';
+  if(Date.parse(x.starts_at)<c.start){const earliest=xe+6e5+T;return '前面有 '+nm+'：結束後'+(xh?'回程 '+xt+' 分＋':'')+'整理 10 分＋你出發車程 '+T/6e4+' 分，最早 '+hhmm(earliest)+' 才能開始服務。'}
+  const back=xh?0:HOME_BACK,latest=xs-6e5-back-T-dur;return '後面有 '+nm+'：你服務完回程 '+T/6e4+' 分'+(back?'＋回店 15 分':'')+'＋整理 10 分'+(xh?'＋前往下一位車程 '+xt+' 分':'')+'，'+(latest>Date.now()?'最晚 '+hhmm(latest)+' 就要開始服務，選的時間太晚會壓縮到下一位客人。':'這筆前面已經沒有足夠的時間。')})};
+ const fits=(day,t)=>{const s=Date.parse(day+'T'+t+':00+08:00'),e=s+r.duration_minutes*6e4,tv=(Number(travel.value)||0)*6e4;return s>Date.now()&&!scheduleConflicts(r,s-tv,e+tv).length};
+ const okBox=document.createElement('div');okBox.className='home-ok-times';d.insertBefore(okBox,canLine?propose:save);
+ const update=()=>{const c=calc();okBox.replaceChildren();if(!c){hint.className='home-hint is-warn';hint.textContent=date.value?'這天門市沒有開放，請改選其他日期，或先到「時段設定」開放這天。':'目前沒有開放的日期，請先到「時段設定」開放日期。';save.disabled=true;return}
+  const list=scheduleConflicts(r,c.busyStart,c.busyEnd),past=c.start<=Date.now();
+  // 下拉選單：排不下的時間加註
+  for(const op of time.options){const ok=fits(date.value,op.value);op.textContent=op.value+(ok?'':'　✕ 排不下')}
+  const blocked=past||list.length>0;save.disabled=blocked;propose.disabled=blocked;save.title=blocked?'這個時間排不下，請改時間':'';
+  hint.className='home-hint '+(blocked?'is-warn':'ok');hint.replaceChildren();
+  const head=document.createElement('b');head.textContent=blocked?'⛔ 這個時間排不下，不能確認':'✅ 可以排';hint.append(head);
+  const line=document.createElement('div');line.textContent='服務 '+hhmm(c.start)+'–'+hhmm(c.end)+'；含前後車程占用 '+hhmm(c.busyStart)+'–'+hhmm(c.busyEnd)+'。'+(blocked?'':'前後都有留足車程與整理時間。');hint.append(line);
+  if(past){const p=document.createElement('div');p.textContent='・這個時間已經過了。';hint.append(p)}
+  for(const t of reasons(c,list)){const p=document.createElement('div');p.textContent='・'+t;hint.append(p)}
+  if(blocked){const ok=[...time.options].map(o=>o.value).filter(t=>fits(date.value,t));const lab=document.createElement('p');lab.className='home-ok-label';lab.textContent=ok.length?'這天可以排的開始時間（點一下套用）：':'這天已經排不下了，請改其他日期，或把車程分鐘數調小（若實際較近）。';okBox.append(lab);
+   for(const t of ok.slice(0,12)){const b=document.createElement('button');b.type='button';b.className='copy-phone';b.textContent=t;b.onclick=()=>{time.value=t;update()};okBox.append(b)}}};
  date.onchange=()=>{fillTimes(time.value);update()};time.onchange=travel.oninput=update;update();
+ propose.onclick=()=>{const c=calc();if(!c||propose.disabled)return;
+  if(!confirm('會傳 LINE 給 '+bookingName(r)+'，請客人確認：\n'+formatDay(date.value)+' '+time.value+' 開始\n\n傳出後時段先幫你保留；客人按確認就自動成立預約，想改時間會通知你。'))return;
+  return run(async()=>{const rows=await api('/rest/v1/rpc/admin_propose_home_time',{method:'POST',body:JSON.stringify({p_id:r.id,p_start:new Date(c.start).toISOString(),p_travel:Number(travel.value)||0})});const row=Array.isArray(rows)?rows[0]:rows;if(!row)throw Error('這筆預約已變更，請更新資料後再試。');Object.assign(r,row);
+   let res={};try{res=await api('/functions/v1/booking-api',{method:'POST',body:JSON.stringify({action:'send_proposal',appointment_id:r.id})})||{}}catch(e){res={pushed:false,message:'LINE 沒有送出：'+(e.message||e)}}
+   openHomePanelId=null;savedResult(res.pushed?'已傳 LINE 請客人確認 '+formatDay(date.value)+' '+time.value+'，時段先保留。':'時段已保留，但'+(res.message||'LINE 沒有送出')+'，請打電話跟客人確認。')})};
  d.refreshHome=()=>{const keep=time.value||initTime;fillDates();fillTimes(keep);update()};d.addEventListener('toggle',()=>{if(d.open)d.refreshHome()});
  save.onclick=()=>{const c=calc();if(!c)return;const list=scheduleConflicts(r,c.busyStart,c.busyEnd);
-  if(list.length&&!confirm('這段時間會撞到：'+conflictText(list)+'\n仍要儲存嗎？（已確認的預約重疊時，系統會擋下）'))return;
+  if(list.length||c.start<=Date.now()){update();msg('這個時間排不下，請改時間');return}
   if(!confirm('客人：'+bookingName(r)+'\n到府：'+(r.home_district||'')+(r.home_address||'')+'\n時間：'+formatDay(date.value)+' '+time.value+'\n\n確認已與客人約好這個時間？'))return;
   return run(async()=>{const body={starts_at:new Date(c.start).toISOString(),ends_at:new Date(c.end).toISOString(),travel_minutes:Number(travel.value)||0,time_confirmed:true};if(r.status==='pending')body.status='confirmed';
    const saved=await api('/rest/v1/appointments?id=eq.'+r.id+'&status=eq.'+r.status+'&starts_at=eq.'+encodeURIComponent(r.starts_at),{method:'PATCH',headers:{Prefer:'return=representation'},body:JSON.stringify(body)});
@@ -1433,9 +1458,10 @@ function hideReminder(id){const h=hiddenReminders();h.add(String(id));try{localS
 function urgentToday(r){if(r.status!=='pending'||isArchived(r)||!r.created_at)return false;const today=taiwanDay(Date.now()),day=homeUnscheduled(r)?String((r.home_request||{}).date||''):taiwanDay(r.starts_at);return taiwanDay(r.created_at)===today&&day===today}
 function renderReminders(box){
  const hidden=hiddenReminders(),failed=records.filter(r=>r.line_notification_status==='failed'&&!hidden.has(String(r.id))).sort((a,b)=>Date.parse(b.starts_at)-Date.parse(a.starts_at));
- const homes=records.filter(r=>r.status==='pending'&&homeUnscheduled(r)&&!isArchived(r)).sort((a,b)=>String((a.home_request||{}).date).localeCompare(String((b.home_request||{}).date)));
+ const declined=records.filter(r=>r.status==='pending'&&r.proposal_status==='declined'&&!isArchived(r)),silent=records.filter(r=>r.status==='pending'&&r.proposal_status==='sent'&&r.proposal_sent_at&&Date.now()-Date.parse(r.proposal_sent_at)>12*36e5&&!isArchived(r));
+ const homes=records.filter(r=>r.status==='pending'&&homeUnscheduled(r)&&r.proposal_status!=='declined'&&!isArchived(r)).sort((a,b)=>String((a.home_request||{}).date).localeCompare(String((b.home_request||{}).date)));
  const urgent=records.filter(urgentToday).sort((a,b)=>Date.parse(b.created_at)-Date.parse(a.created_at));
- if(!failed.length&&!homes.length&&!urgent.length)return;
+ if(!failed.length&&!homes.length&&!urgent.length&&!declined.length&&!silent.length)return;
  const wrap=document.createElement('section');wrap.className='reminders';wrap.setAttribute('aria-label','提醒');
  const h=document.createElement('h3');h.className='reminders-title';h.textContent='🔔 提醒';wrap.append(h);
  for(const r of urgent){
@@ -1446,6 +1472,16 @@ function renderReminders(box){
   const note=document.createElement('span');note.className='reminder-note';note.textContent=formatTime(r.created_at)+' 剛送出，請盡快確認或聯絡客人';text.append(note);
   const actions=document.createElement('div');actions.className='reminder-actions';
   const go=document.createElement('button');go.type='button';go.className='reminder-retry';go.textContent=homeUnscheduled(r)?'安排時間':'查看並確認';go.onclick=()=>{if(homeUnscheduled(r))openHomePanelId=r.id;focusBooking(r)};actions.append(go);
+  const phone=r.submitted_phone||r.customers?.phone;if(phone){const a=document.createElement('a');a.href='tel:'+String(phone).replace(/[^0-9+]/g,'');a.className='reminder-call';a.textContent='📞 '+phone;actions.append(a,copyPhoneButton(phone))}
+  row.append(text,actions);wrap.append(row);
+ }
+ for(const r of [...declined,...silent]){
+  const row=document.createElement('div');row.className='reminder home-reminder';
+  const text=document.createElement('p');text.className='reminder-text';const who=document.createElement('strong');who.textContent=bookingName(r);
+  text.append(who,document.createTextNode(r.proposal_status==='declined'?'・↩ 客人想改到府時間（原排 '+formatDay(taiwanDay(r.starts_at))+' '+formatTime(r.starts_at)+'），時段已釋放':'・📨 傳 LINE 確認到府時間超過 12 小時還沒回覆（'+formatDay(taiwanDay(r.starts_at))+' '+formatTime(r.starts_at)+'，時段保留中）'));
+  const note=document.createElement('span');note.className='reminder-note';note.textContent=r.proposal_status==='declined'?(r.proposal_note?'客人留言：'+r.proposal_note:'客人沒有留言，建議打電話問方便的時間'):'建議打電話確認，或在 LINE 聊天室提醒客人';text.append(note);
+  const actions=document.createElement('div');actions.className='reminder-actions';
+  const go=document.createElement('button');go.type='button';go.className='reminder-retry';go.textContent=r.proposal_status==='declined'?'重新安排':'查看';go.onclick=()=>{openHomePanelId=r.id;focusBooking(r)};actions.append(go);
   const phone=r.submitted_phone||r.customers?.phone;if(phone){const a=document.createElement('a');a.href='tel:'+String(phone).replace(/[^0-9+]/g,'');a.className='reminder-call';a.textContent='📞 '+phone;actions.append(a,copyPhoneButton(phone))}
   row.append(text,actions);wrap.append(row);
  }
@@ -1492,7 +1528,7 @@ function renderTodayAgenda(active,today){
   const label=document.createElement('li');label.className='today-group '+key;const t=document.createElement('span');t.textContent=title;const c=document.createElement('b');c.textContent=items.length+' 筆';label.append(t,c);list.append(label);
   for(const r of items){
    const day=taiwanDay(r.starts_at),start=Date.parse(r.starts_at),end=completionAvailability(r,now).end;let tagText,tagClass,phrase;
-   if(key==='pending'&&homeUnscheduled(r)){tagText='到府待排';tagClass='pending';phrase='到府申請，請安排時間'}else if(key==='pending'&&isHome(r)){tagText='到府待確認';tagClass='pending';phrase='客人指定時間，已先保留，請確認'}
+   if(key==='pending'&&homeUnscheduled(r)){tagText='到府待排';tagClass='pending';phrase='到府申請，請安排時間'}else if(key==='pending'&&isHome(r)){tagText='到府待確認';tagClass='pending';phrase=r.proposal_status==='sent'?'已傳 LINE，等客人確認時間':'客人指定時間，已先保留，請確認'}
    else if(key==='pending'){tagText='待確認';tagClass='pending';phrase=start<=now?'已過預約時間，請盡快處理':startsIn(start-now)}
    else if(key==='ended'){tagText='待按完成';tagClass='ready';phrase=day===today?'服務已結束，記得按完成':'之前漏按，記得按完成'}
    else if(start<=now){tagText='服務中';tagClass='in-progress';phrase='預計 '+formatTime(end)+' 結束'}
@@ -1543,7 +1579,7 @@ function bookingRow(r,groupKey,visits,now,today){
  const sum=document.createElement('summary');sum.className='booking-row-summary';
  const when=document.createElement('span');when.className='row-when';if(groupKey==='action'||groupKey==='later'){const d=document.createElement('span');d.className='row-date';d.textContent=formatDay(taiwanDay(r.starts_at));when.append(d)}const t=document.createElement('span');t.className='row-time';t.textContent=homeUnscheduled(r)?'待排':formatTime(r.starts_at);when.append(t);
  const main=document.createElement('span');main.className='row-main';const nm=document.createElement('strong');nm.textContent=bookingName(r);const sv=document.createElement('span');sv.textContent=r.service_name||'—';main.append(nm,sv);
- const side=document.createElement('span');side.className='row-side';const tag=document.createElement('span');tag.className='tag '+st.key;tag.textContent=st.label;const v=visitLabel(r,visits),vis=document.createElement('span');vis.className='row-visit'+(v.fresh?' new':'');vis.textContent=v.text;side.append(tag,vis);for(const [cls,text] of bookingTags(r)){const x=document.createElement('span');x.className='tag '+cls;x.textContent=text;side.append(x)}if(st.key==='pending'&&homeUnscheduled(r)){const u=document.createElement('span');u.className='row-urgent';u.textContent='請安排時間';side.append(u)}else if(st.key==='pending'&&isHome(r)&&Date.parse(r.starts_at)>now){const u=document.createElement('span');u.className='row-urgent';u.textContent='客人指定・已先保留';side.append(u)}else if(st.key==='pending'){const left=Date.parse(r.starts_at)-now,u=document.createElement('span');u.className='row-urgent';u.textContent=left<=0?'⚠ 已過預約時間':left<36e5?'⚠ 1 小時內開始':left<864e5?'⚠ '+Math.ceil(left/36e5)+' 小時後開始':'';if(u.textContent)side.append(u)}else if(st.key==='ready'){const u=document.createElement('span');u.className='row-urgent ready';u.textContent='服務已結束，記得按完成';side.append(u)}
+ const side=document.createElement('span');side.className='row-side';const tag=document.createElement('span');tag.className='tag '+st.key;tag.textContent=st.label;const v=visitLabel(r,visits),vis=document.createElement('span');vis.className='row-visit'+(v.fresh?' new':'');vis.textContent=v.text;side.append(tag,vis);for(const [cls,text] of bookingTags(r)){const x=document.createElement('span');x.className='tag '+cls;x.textContent=text;side.append(x)}if(st.key==='pending'&&homeUnscheduled(r)){const u=document.createElement('span');u.className='row-urgent';u.textContent='請安排時間';side.append(u)}else if(st.key==='pending'&&isHome(r)&&Date.parse(r.starts_at)>now){const u=document.createElement('span');u.className='row-urgent';u.textContent=r.proposal_status==='sent'?'已傳 LINE・等客人確認':'客人指定・已先保留';side.append(u)}else if(st.key==='pending'){const left=Date.parse(r.starts_at)-now,u=document.createElement('span');u.className='row-urgent';u.textContent=left<=0?'⚠ 已過預約時間':left<36e5?'⚠ 1 小時內開始':left<864e5?'⚠ '+Math.ceil(left/36e5)+' 小時後開始':'';if(u.textContent)side.append(u)}else if(st.key==='ready'){const u=document.createElement('span');u.className='row-urgent ready';u.textContent='服務已結束，記得按完成';side.append(u)}
  sum.append(when,main,side);row.append(sum);
  const body=document.createElement('div');body.className='booking-row-body';
  const g=document.createElement('div');g.className='grid';field(g,'手機',r.submitted_phone||r.customers?.phone);field(g,'金額',r.price_ntd?'NT$ '+Number(r.price_ntd).toLocaleString('zh-TW'):'');field(g,'預約時間',homeUnscheduled(r)?'客人希望：'+homeWish(r):formatWhen(r.starts_at));field(g,'預約狀態',labels[r.status]||r.status);if(isHome(r)){const q=r.home_request||{};field(g,'到府地址',(r.home_district||'')+(r.home_address||'')+(q.floor?'（'+q.floor+'）':''));field(g,'停車',[q.place,r.home_parking].filter(Boolean).join('・'));field(g,'到府費','NT$ '+Number(r.travel_fee||0).toLocaleString('zh-TW')+(r.travel_minutes?'・車程 '+r.travel_minutes+' 分（單程）':''));if(q.people>1)field(g,'人數',q.people+' 位')}body.append(g);
@@ -1848,6 +1884,7 @@ function bookingTags(r){
  const key=packageKeyOf(r),owned=memberPackages(key);
  if(s)tags.push(['plan','鬆活 第 '+s.n+'/'+s.total+' 次'+(s.after===0?'・最後一次':'')]);else if(owned.length&&!activePackage(key)&&['pending','confirmed'].includes(r.status))tags.push(['plan-out','鬆活已用完']);else if(isPlanService(r))tags.push(['plan','鬆活方案・待登記']);
  if(isHome(r))tags.unshift(['home','🏠到府']);
+ if(r.status==='pending'&&r.proposal_status==='sent')tags.push(['proposal','📨 等客人回覆時間']);else if(r.status==='pending'&&r.proposal_status==='declined')tags.push(['proposal-no','↩ 客人想改時間']);else if(r.proposal_status==='accepted'&&r.status==='confirmed')tags.push(['proposal-ok','✅ 客人已用 LINE 確認']);
  if(isTrialService(r))tags.push([trialUsedBefore(r)?'trial-warn':'trial',trialUsedBefore(r)?'體驗價・已用過':'新客體驗價']);
  return tags;
 }
