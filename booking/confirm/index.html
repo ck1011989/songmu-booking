@@ -77,6 +77,7 @@ async function reply(accept){if(busy)return;busy=true;document.querySelectorAll(
  catch(e){const el=document.getElementById('err');if(el)el.textContent=e.message;busy=false;document.querySelectorAll('button').forEach(b=>b.disabled=false)}}
 const closeBtn=()=>window.liff&&liff.isInClient&&liff.isInClient()?'<button type="button" class="second" id="close">關閉</button>':'';
 const bindClose=()=>{const c=document.getElementById('close');if(c)c.onclick=()=>liff.closeWindow()};
+const tokOk=()=>{try{const d=liff.getDecodedIDToken();return !!d&&d.exp*1000>Date.now()+120000}catch{return false}};
 async function start(){
  if(!/^[0-9a-f-]{36}$/i.test(q.get('id')||'')||!/^[0-9a-f-]{36}$/i.test(q.get('t')||''))return msg('⚠️','連結不完整','<p class="err">請回到 LINE，從店家傳的訊息重新開啟。</p>');
  msg('⏳','讀取中…','<p style="text-align:center">正在透過 LINE 確認你的帳號，請稍候。</p>');
@@ -84,6 +85,7 @@ async function start(){
   const c=await fetch(API+'?action=config',{headers:H,cache:'no-store'}).then(r=>r.json());
   if(!c.enabled||!c.liff_id)throw Error('LINE 登入暫時無法使用');
   await liff.init({liffId:c.liff_id});
+  if(liff.isLoggedIn()&&!tokOk()){try{liff.logout()}catch{}}// 登入憑證過期：重新登入
   if(!liff.isLoggedIn()){liff.login({redirectUri:location.href});return}
   token=liff.getIDToken();if(!token)throw Error('LINE 登入缺少必要授權');
   info=await post({action:'proposal_info'});try{await loadOpen()}catch{}view();
