@@ -75,16 +75,18 @@ const feeText=t=>t?(t.fee?money(t.fee):'店家報價'):'—';
 const SLOTS=[['上午',9*60,12*60],['下午',12*60,17*60],['晚上',17*60,21*60]];
 let OPEN={};// 與門市相同的開放日期與時間：{日期:[開始分鐘,最晚開始分鐘,[[已佔用開始,結束]…]]}（已佔用時段含其他預約的車程）
 const PREP=10;// 每筆預約之間的整理準備時間（分鐘），與系統規則相同
+const BACK=15;// 到府結束後接定點：多留回店時間（分鐘），與系統規則相同
 const toMin=t=>{const [h,m]=String(t).split(':').map(Number);return h*60+(m||0)};
 const hm=m=>String(Math.floor(m/60)).padStart(2,'0')+':'+String(m%60).padStart(2,'0');
 function slotsFor(day){const o=OPEN[day];if(!o)return [];const out=[];for(const [n,a,b] of SLOTS){const s=Math.max(a,o[0]),e=Math.min(b,o[1]);if(e-s>=30)out.push([n,s,e])}out.push(['都可以',o[0],o[1]]);return out}
 const travelMin=()=>{const t=tierOf(d.district);return t?t.min:60};
 // 這個開始時間放得下嗎：本次服務前後各留單程車程，與其他預約（已含對方車程）之間再留整理準備時間
-function fits(day,m){const o=OPEN[day];if(!o)return false;const T=travelMin(),s=m-T,e=m+totalMin()+T;return !(o[2]||[]).some(([bs,be])=>bs<e+PREP&&be+PREP>s)}
+// 已佔用時段 [開始,結束,是否到府]：到府的結束時間已含 15 分鐘回店時間（給定點用），到府接到府時扣回；本次到府後面接定點則多留 15 分鐘
+function fits(day,m){const o=OPEN[day];if(!o)return false;const T=travelMin(),s=m-T,e=m+totalMin()+T;return !(o[2]||[]).some(([bs,be,home])=>bs<e+PREP+(home?0:BACK)&&(home?be-BACK:be)+PREP>s)}
 function inSlot(day,slot,m){if(!slot||slot==='都可以')return true;const x=slotsFor(day).find(z=>z[0]===slot);if(!x)return false;return m>=x[1]&&(m<x[2]||(x[2]===OPEN[day][1]&&m<=x[2]))}
 function timesFor(day,slot){return openTimes(day).filter(t=>fits(day,toMin(t))&&inSlot(day,slot,toMin(t)))}
 function openTimes(day){const o=OPEN[day];if(!o)return [];const now=new Date(Date.now()+8*36e5),today=now.toISOString().slice(0,10),nowMin=now.getUTCHours()*60+now.getUTCMinutes();const out=[];for(let m=o[0];m<=o[1];m+=30){if(day===today&&m<=nowMin+120)continue;out.push(hm(m))}return out}
-async function loadOpen(){try{const r=await fetch(API,{headers:apiHeaders,cache:'no-store'});const v=await r.json();const o={};const today=new Date(Date.now()+8*36e5).toISOString().slice(0,10);for(const [day,x] of Object.entries(v||{})){if(day>=today&&x&&x.start&&x.end)o[day]=[toMin(x.start),toMin(x.end),(Array.isArray(x.bookings)?x.bookings:[]).map(b=>[toMin(b.start),toMin(b.end)])]}OPEN=o;return true}catch{return false}}
+async function loadOpen(){try{const r=await fetch(API,{headers:apiHeaders,cache:'no-store'});const v=await r.json();const o={};const today=new Date(Date.now()+8*36e5).toISOString().slice(0,10);for(const [day,x] of Object.entries(v||{})){if(day>=today&&x&&x.start&&x.end)o[day]=[toMin(x.start),toMin(x.end),(Array.isArray(x.bookings)?x.bookings:[]).map(b=>[toMin(b.start),toMin(b.end),!!b.home])]}OPEN=o;return true}catch{return false}}
 const STEPS=['1. 服務','2. 地址','3. 時間','4. 資料','5. 確認'];
 const d={service:'',others:[],addEval:false,people:'1',date:'',slot:'',time:'',alt:'',district:'',address:'',home:'住家',floor:'',parking:'',name:'',phone:'',body:'',note:'',agree:false,request_id:''};
 let page=-1,lineToken=null,member=null,loginError='',sending=false,resultId='',sendError='';
