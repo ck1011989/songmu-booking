@@ -60,6 +60,7 @@ function bindPick(){document.querySelectorAll('[data-d]').forEach(b=>b.onclick=(
 function rerender(){const note=document.getElementById('note')?.value||'';const y=window.scrollY;view();const n=document.getElementById('note');if(n)n.value=note;window.scrollTo(0,y)}
 function view(){
  if(info.proposal_status==='accepted'||info.status==='confirmed')return msg('✅','這個時間已經確認了',card()+'<p class="ok">預約已成立，我們會準時到府。需要更改請直接在 LINE 聊天室告訴我們。</p>');
+ if(info.proposal_status==='expired')return msg('⌛','超過 24 小時，這次預約已自動取消','<p>因為 24 小時內沒有收到回覆，這個時段已經釋放給其他客人。</p><p>還需要到府服務的話，請重新預約，或直接在 LINE 聊天室告訴我們，我們再幫你安排。</p>');
  if(info.proposal_status!=='sent'||info.status!=='pending')return msg('ℹ️','這筆預約已經處理過了','<p>如需更改，請直接在 LINE 聊天室告訴我們。</p>');
  const wantChange=q.get('a')==='no';
  msg('🌿','到府時間確認','<p style="text-align:center">我們幫你安排了以下時間，這樣可以嗎？</p>'+card()+
